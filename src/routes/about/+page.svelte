@@ -3,13 +3,13 @@
 </script>
 
 <svelte:head>
-  <title>About - Tagalong</title>
+  	<title>About - TagAlong</title>
 </svelte:head>
 
 <div class="max-w-4xl mx-auto space-y-8">
   <!-- Hero Section -->
   <div class="text-center">
-    <h1 class="text-4xl font-bold text-gray-900 mb-4">About Tagalong</h1>
+    		<h1 class="text-4xl font-bold text-gray-900 mb-4">About TagAlong</h1>
     <p class="text-xl text-gray-600">
       A Progressive Web App for learning and sharing barbershop tags
     </p>
@@ -17,9 +17,9 @@
 
   <!-- What is Tagalong -->
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <h2 class="text-2xl font-semibold text-gray-900 mb-4">What is Tagalong?</h2>
+    		<h2 class="text-2xl font-semibold text-gray-900 mb-4">What is TagAlong?</h2>
     <p class="text-gray-700 mb-4">
-      Tagalong is a mobile-first web application designed specifically for barbershop singers to quickly find, 
+      		TagAlong is a mobile-first web application designed specifically for barbershop singers to quickly find, 
       learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for 
       spontaneous group singing.
     </p>
@@ -33,7 +33,7 @@
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
     <h2 class="text-2xl font-semibold text-gray-900 mb-4">Numeric Notation System</h2>
     <p class="text-gray-700 mb-4">
-      Tagalong uses a simple numeric notation system where numbers represent scale degrees:
+      		TagAlong uses a simple numeric notation system where numbers represent scale degrees:
     </p>
     
     <div class="bg-gray-50 rounded-lg p-4 mb-4">
@@ -101,7 +101,7 @@ Tenor: 5 5 5 5
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
     <h2 class="text-2xl font-semibold text-gray-900 mb-4">Contributing</h2>
     <p class="text-gray-700 mb-4">
-      Tagalong is an open-source project that thrives on community contributions. We welcome:
+      		TagAlong is an open-source project that thrives on community contributions. We welcome:
     </p>
     <ul class="list-disc list-inside text-gray-700 space-y-2 mb-4">
       <li>New tag submissions in our numeric notation format</li>

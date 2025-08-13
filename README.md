@@ -1,10 +1,10 @@
-# Tagalong
+# TagAlong
 
 A Progressive Web App for learning and sharing barbershop tags with custom numeric notation.
 
-## 🎵 What is Tagalong?
+## 🎵 What is TagAlong?
 
-Tagalong is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing.
+TagAlong is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing.
 
 Our app uses a custom numeric notation system that makes it easy to read and learn tags on any device, with a clean, searchable database that grows through community contributions.
 
@@ -19,7 +19,7 @@ Our app uses a custom numeric notation system that makes it easy to read and lea
 
 ## 🎼 Numeric Notation System
 
-Tagalong uses a simple numeric notation system where numbers represent scale degrees:
+TagAlong uses a simple numeric notation system where numbers represent scale degrees:
 
 ```
 1 = Root (Do)
@@ -146,7 +146,7 @@ We welcome contributions! Here's how you can help:
 
 ## 📱 PWA Features
 
-Tagalong is a Progressive Web App with the following features:
+TagAlong is a Progressive Web App with the following features:
 
 - **Offline Support**: Works without internet connection
 - **Installable**: Add to home screen on mobile devices

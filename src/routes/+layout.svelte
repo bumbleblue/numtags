@@ -43,7 +43,7 @@
 </script>
 
 <svelte:head>
-  <title>Tagalong - Barbershop Tags</title>
+  		<title>TagAlong - Barbershop Tags</title>
 </svelte:head>
 
 <div class="min-h-screen bg-gray-50">
@@ -56,7 +56,7 @@
             <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">T</span>
             </div>
-            <span class="text-xl font-bold text-gray-900">Tagalong</span>
+            				<span class="text-xl font-bold text-gray-900">TagAlong</span>
           </a>
         </div>
         
@@ -89,7 +89,7 @@
   <footer class="bg-white border-t border-gray-200 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center text-gray-500 text-sm">
-        <p>Tagalong - Learn and share barbershop tags</p>
+        			<p>TagAlong - Learn and share barbershop tags</p>
         <p class="mt-2">
           <a href="https://github.com/your-username/tag-along" class="text-primary-600 hover:text-primary-700">
             Open Source on GitHub

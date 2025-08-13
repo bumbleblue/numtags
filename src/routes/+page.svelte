@@ -70,7 +70,7 @@
 </script>
 
 <svelte:head>
-  <title>Search Tags - Tagalong</title>
+  <title>Search Tags - TagAlong</title>
 </svelte:head>
 
 <div class="space-y-6">

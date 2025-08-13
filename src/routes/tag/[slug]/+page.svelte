@@ -70,7 +70,7 @@
 </script>
 
 <svelte:head>
-  <title>{tag?.metadata.title || 'Tag Not Found'} - Tagalong</title>
+  	<title>{tag?.metadata.title || 'Tag Not Found'} - TagAlong</title>
 </svelte:head>
 
 {#if isLoading}

@@ -1,6 +1,6 @@
-# Contributing to Tagalong
+# Contributing to TagAlong
 
-Thank you for your interest in contributing to Tagalong! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to TagAlong! This document provides guidelines for contributing to the project.
 
 ## 🤝 How to Contribute
 
@@ -159,7 +159,7 @@ If you need help or have questions:
 
 ## 📄 License
 
-By contributing to Tagalong, you agree that your contributions will be licensed under the MIT License.
+By contributing to TagAlong, you agree that your contributions will be licensed under the MIT License.
 
 ## 🙏 Recognition
 
@@ -169,4 +169,4 @@ Contributors will be recognized in:
 - Project README (for significant contributions)
 - Release notes
 
-Thank you for contributing to Tagalong! 🎵
+Thank you for contributing to TagAlong! 🎵
