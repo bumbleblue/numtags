@@ -4,13 +4,14 @@
   "description": "A Progressive Web App for learning and sharing barbershop tags",
   "private": true,
   "scripts": {
-    "build": "vite build",
-    "dev": "vite dev",
+    "build": "node scripts/generate-tags.js && vite build",
+    "dev": "node scripts/generate-tags.js && vite dev",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "generate-tags": "node scripts/generate-tags.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.0",
