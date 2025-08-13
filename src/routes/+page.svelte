@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { searchTags, getUniqueArrangers, getUniqueDifficulties, getUniqueParts, initializeSearch } from '$lib/data';
+  import { searchTags, getUniqueDifficulties, getUniqueParts, initializeSearch, getAllTags } from '$lib/data';
   import type { SearchFilters, SearchResult } from '$lib/types';
   import TagCard from '$lib/components/TagCard.svelte';
   import SearchFiltersComponent from '$lib/components/SearchFilters.svelte';
@@ -18,22 +18,39 @@
     parts: []
   };
 
-  // Debug: Show data immediately
-  initializeSearch();
-  searchResults = searchTags({ query: '', arranger: undefined, difficulty: undefined, parts: [] });
+  // Initialize with all tags displayed
   difficulties = getUniqueDifficulties();
   parts = getUniqueParts();
-
-  onMount(() => {
-    // Additional initialization if needed
-  });
+  
+  // Load all tags immediately
+  const allTags = getAllTags();
+  searchResults = allTags.map((tag, index) => ({
+    item: tag,
+    refIndex: index,
+    score: 0
+  }));
 
   function handleSearch() {
     isLoading = true;
     filters.query = searchQuery;
     
     setTimeout(() => {
-      searchResults = searchTags(filters);
+      try {
+        // Only initialize Fuse.js if we have a search query
+        if (searchQuery.trim()) {
+          initializeSearch();
+        }
+        searchResults = searchTags(filters);
+      } catch (error) {
+        console.error('Search error:', error);
+        // Fallback to simple filtering
+        const allTags = getAllTags();
+        searchResults = allTags.map((tag, index) => ({
+          item: tag,
+          refIndex: index,
+          score: 0
+        }));
+      }
       isLoading = false;
     }, 100);
   }
