@@ -42,6 +42,13 @@
         <span class="ml-1">{tag.metadata.parts} part{tag.metadata.parts === 1 ? '' : 's'}</span>
       </div>
       
+      {#if tag.metadata.original_key}
+        <div class="flex items-center text-sm text-gray-600">
+          <span class="font-medium">Key:</span>
+          <span class="ml-1 font-mono">{tag.metadata.original_key}</span>
+        </div>
+      {/if}
+      
       {#if tag.metadata.lyrics}
         <div class="text-sm text-gray-600">
           <span class="font-medium">Lyrics:</span>

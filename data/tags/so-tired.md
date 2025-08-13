@@ -1,5 +1,5 @@
 ---
-title: "Ireland my Ireland"
+title: "So Tired of Waiting For You"
 tag_id: 53
 arranger: "Renee Craig"
 difficulty: "Medium"
@@ -8,10 +8,9 @@ date_added: "2008-12-15"
 parts: 4
 lyrics: "So tired of waiting for you."
 comments: ""
+original_key: "G"
 ---
 
-
-1=G
 |  1  3  5  |  4  6  -  1̇  |  1̇  —  |
 |  1  1 ♯1  |  2 ♭3  -  4  |  3  —  |
 |  1 ♭7̣  6̣  |  1  1  - ♭6̣  |  5̣  —  |

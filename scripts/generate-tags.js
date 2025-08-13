@@ -15,7 +15,8 @@ function parseTagFromMarkdown(content, slug) {
       date_added: data.date_added,
       parts: parseInt(data.parts),
       lyrics: data.lyrics,
-      comments: data.comments || ""
+      comments: data.comments || "",
+      original_key: data.original_key || ""
     },
     content: tagContent.trim(),
     slug: slug

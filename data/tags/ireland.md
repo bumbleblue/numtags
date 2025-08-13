@@ -8,10 +8,9 @@ date_added: "2008-12-15"
 parts: 4
 lyrics: "Ireland, my Ireland, I’m longing for  you."
 comments: ""
+original_key: "F"
 ---
 
-
-1=F
 |  1̇  3̇· 2̲  |  1̇  1̇  7  |  1̇  1̇  2̇  |  1̇  –  |
 |  5  1̇· 7̲  |  6 ♭6  6  |  5 ♯4  4  |  3  –  |
 |  3  5·♯5̲  |  3  2 ♯2  |  3  6̣  7̣  |  5̣  –  |

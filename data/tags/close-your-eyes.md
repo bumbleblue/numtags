@@ -1,13 +1,14 @@
 ---
 title: "Close your eyes in sleep."
-tag_id: 1002
-arranger: "John Smith"
-difficulty: "Medium"
-source_url: "https://www.barbershoptags.com/tags/1002"
-date_added: "2024-01-16"
+tag_id: 24
+arranger: "unknown"
+difficulty: "Easy"
+source_url: "https://www.barbershoptags.com/tag-24-Close-Your-Eyes-in-Sleep"
+date_added: "2008-12-12"
 parts: 4
-lyrics: "Goodbye my Coney Island baby"
-comments: "Beautiful tag with rich harmonies. Features some chromatic movement and close harmony."
+lyrics: "Close your eyes,  in sleep."
+comments: ""
+original_key: "B"
 ---
 
 
@@ -16,3 +17,5 @@ comments: "Beautiful tag with rich harmonies. Features some chromatic movement a
 |  5̣  5̣  5̣  -  |  5̣  5̣  —  |
 |  1̣  3̣  2̣  -  |  2̣  1̣  —  |
 Close your eyes,  in sleep.
+
+// Need an edit, original tag has a more interesting lead line.

@@ -8,6 +8,7 @@ export interface TagMetadata {
   parts: number;
   lyrics?: string;
   comments?: string;
+  original_key?: string;
 }
 
 export interface Tag {

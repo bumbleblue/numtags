@@ -112,6 +112,12 @@
           <span class="text-sm font-medium text-gray-700">Parts:</span>
           <span class="ml-2 text-gray-900">{tag.metadata.parts} part{tag.metadata.parts === 1 ? '' : 's'}</span>
         </div>
+        {#if tag.metadata.original_key}
+          <div>
+            <span class="text-sm font-medium text-gray-700">Original Key:</span>
+            <span class="ml-2 text-gray-900 font-mono">{tag.metadata.original_key}</span>
+          </div>
+        {/if}
         {#if tag.metadata.source_url}
           <div>
             <span class="text-sm font-medium text-gray-700">Source:</span>
