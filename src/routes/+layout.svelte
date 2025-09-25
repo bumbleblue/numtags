@@ -43,28 +43,26 @@
 </script>
 
 <svelte:head>
-  		<title>TagAlong - Barbershop Tags</title>
+  		<title>numtags - Barbershop Tags</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-nord-0">
   <!-- Header -->
-  <header class="bg-white shadow-sm border-b border-gray-200">
+  <header class="card-bg shadow-sm border-b">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center">
           <a href="/" class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">T</span>
-            </div>
-            				<span class="text-xl font-bold text-gray-900">TagAlong</span>
+            <img src="/numtag-logo.svg" alt="TagAlong Logo" class="w-8 h-8" />
+            	<span class="text-xl font-bold text-nord-4">numtags</span>
           </a>
         </div>
         
         <nav class="flex items-center space-x-4">
-          <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+          <a href="/" class="text-nord-5 hover:text-nord-4 px-3 py-2 rounded text-sm font-medium">
             Search
           </a>
-          <a href="/about" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+          <a href="/about" class="text-nord-5 hover:text-nord-4 px-3 py-2 rounded text-sm font-medium">
             About
           </a>
           {#if showInstallButton}
@@ -86,12 +84,12 @@
   </main>
 
   <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 mt-auto">
+  <footer class="card-bg border-t mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="text-center text-gray-500 text-sm">
-        			<p>TagAlong - Learn and share barbershop tags</p>
+      <div class="text-center text-nord-5 text-sm">
+        			<p>numtags - Learn and share barbershop tags</p>
         <p class="mt-2">
-          <a href="https://github.com/your-username/tag-along" class="text-primary-600 hover:text-primary-700">
+          <a href="https://github.com/your-username/tag-along" class="text-nord-8 hover:text-nord-9">
             Open Source on GitHub
           </a>
         </p>

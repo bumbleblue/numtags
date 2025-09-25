@@ -10,7 +10,7 @@ Our app uses a custom numeric notation system that makes it easy to read and lea
 
 ## ✨ Features
 
-- **🔍 Smart Search**: Search by title, lyrics, arranger, or notation content
+- **🔍 Smart Search**: Search by ID, title, lyrics, or arranger
 - **📱 Mobile First**: Optimized for mobile devices with PWA capabilities
 - **🖼️ Share as Image**: Generate beautiful images of tags to share
 - **⚡ Offline Ready**: Works offline once loaded

@@ -70,23 +70,22 @@
 </script>
 
 <svelte:head>
-  <title>Search Tags - TagAlong</title>
+  <title>Search Tags - numtags</title>
 </svelte:head>
 
 <div class="space-y-6">
   <!-- Hero Section -->
   <div class="text-center">
-    <h1 class="text-4xl font-bold text-gray-900 mb-4">
-      Find Your Perfect Barbershop Tag
+    <h1 class="text-4xl font-bold text-nord-4 mb-4">
+      Barbershop Tags in Numeric Notation
     </h1>
-    <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-      Search through hundreds of barbershop tags with our custom numeric notation system. 
-      Perfect for quartet practice and learning.
+    <p class="text-xl text-nord-5 max-w-2xl mx-auto">
+      A growing collection of barbershop tags in numeric notation, perfect for learning and teaching tags.
     </p>
   </div>
 
   <!-- Search Section -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="card-bg rounded shadow-sm border p-6">
     <div class="space-y-4">
       <!-- Search Input -->
       <div class="flex space-x-4">
@@ -95,7 +94,7 @@
             type="text"
             bind:value={searchQuery}
             on:keypress={handleKeyPress}
-            placeholder="Search by title, lyrics, or arranger..."
+            placeholder="Search by ID, title, lyrics, or arranger..."
             class="search-input"
           />
         </div>
@@ -120,7 +119,7 @@
   <!-- Results Section -->
   <div class="space-y-4">
     <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-semibold text-gray-900">
+      <h2 class="text-2xl font-semibold text-nord-4">
         {searchResults.length} tag{searchResults.length === 1 ? '' : 's'} found
       </h2>
     </div>
@@ -133,15 +132,15 @@
       </div>
     {:else if searchQuery && !isLoading}
       <div class="text-center py-12">
-        <div class="text-gray-400 text-6xl mb-4">🎵</div>
-        <h3 class="text-xl font-medium text-gray-900 mb-2">No tags found</h3>
-        <p class="text-gray-600">Try adjusting your search terms or filters</p>
+        <div class="text-nord-5 text-6xl mb-4">🎵</div>
+        <h3 class="text-xl font-medium text-nord-4 mb-2">No tags found</h3>
+        <p class="text-nord-5">Try adjusting your search terms or filters</p>
       </div>
     {:else}
       <div class="text-center py-12">
-        <div class="text-gray-400 text-6xl mb-4">🎼</div>
-        <h3 class="text-xl font-medium text-gray-900 mb-2">Ready to find some tags?</h3>
-        <p class="text-gray-600">Start typing to search for barbershop tags</p>
+        <div class="text-nord-5 text-6xl mb-4">🎼</div>
+        <h3 class="text-xl font-medium text-nord-4 mb-2">Ready to find some tags?</h3>
+        <p class="text-nord-5">Start typing to search for barbershop tags</p>
       </div>
     {/if}
   </div>

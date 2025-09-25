@@ -37,7 +37,8 @@
     "fuse.js": "^7.0.0",
     "gray-matter": "^4.0.3",
     "html-to-image": "^1.11.11",
-    "marked": "^9.1.6"
+    "marked": "^9.1.6",
+    "nord": "^0.2.1"
   },
   "type": "module"
 }

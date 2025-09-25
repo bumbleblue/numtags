@@ -1,6 +1,6 @@
 {
-  "name": "TagAlong",
-  "short_name": "TagAlong",
+  "name": "numtags",
+  "short_name": "numtags",
   "description": "Learn and share barbershop tags",
   "start_url": "/",
   "display": "standalone",
