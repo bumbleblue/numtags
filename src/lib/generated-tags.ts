@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-09-25T07:41:29.958Z
+// Generated on: 2025-09-25T18:57:28.124Z
 // Source: data/tags/ directory
 
 import type { Tag } from './types';
@@ -17,7 +17,7 @@ export const allTags: Tag[] = [
       "comments": "",
       "original_key": "B"
     },
-    "content": "|  3  5  4  -  |  4  3  —  |\n|  1  1  1  7̣  |  7̣  2  1  |\n|  5̣  5̣  5̣  -  |  5̣  5̣  —  |\n|  1̣  3̣  2̣  -  |  2̣  1̣  —  |\nClose your eyes,  in sleep.\n\n// Need an edit, original tag has a more interesting lead line.",
+    "content": "|  3  5  4  - |  4  -  -  4 |  3  -  -  - |\n|  1  1  1  - |  2  1  7̣  7̣ |  2  -  1  - |\n|  5̣  5̣  5̣  - |  5̣  -  -  5̣ |  5̣  -  -  - |\n|  1̣  3̣  2̣  - |  2̣  -  -  2̣ |  1̣  -  -  - |\n\nClose your eyes, \n                (close your eyes)\n                          in sleep.",
     "slug": "close-your-eyes"
   },
   {
@@ -74,10 +74,10 @@ export const allTags: Tag[] = [
       "date_added": "2008-12-08",
       "parts": 4,
       "lyrics": "When it’s sleepy time down south",
-      "comments": "",
+      "comments": "Short version",
       "original_key": "C"
     },
-    "content": "|  1  2  |  3  3  3  2  | ♭3  2  |  3  —  |\n|  1  2  |  1  1  1  -  |  1  —  |  1  —  |\n|  1  7̣  |  6̣  6̣  6̣  -  | ♭6̣  5̣  |  5̣  —  |\n|  1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |\nWhen it’s slee-py time   down -   south.  \n\n// This is the short version!",
+    "content": "|  1  2  |  3  3  3  2  | ♭3  2  |  3  —  |\n|  1  2  |  1  1  1  -  |  1  —  |  1  —  |\n|  1  7̣  |  6̣  6̣  6̣  -  | ♭6̣  5̣  |  5̣  —  |\n|  1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |\nWhen it’s slee-py time   down -   south.",
     "slug": "sleepy-time"
   },
   {

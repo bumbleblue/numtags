@@ -132,6 +132,159 @@
     transform: translateZ(0);
   }
   
+  /* Staff section styling - prevents breaking within musical staffs */
+  .staff-section {
+    @apply font-mono text-nord-4;
+    line-height: 2.2;
+    font-variant-ligatures: none;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    unicode-bidi: normal;
+    direction: ltr;
+    font-size: 1.1em;
+    letter-spacing: 0.05em;
+    /* Prevent breaking within staff sections */
+    page-break-inside: avoid;
+    break-inside: avoid;
+    /* Firefox-specific fixes */
+    -moz-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -moz-text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-unicode-bidi: normal;
+    -moz-font-smoothing: antialiased;
+    font-kerning: none;
+    font-variant-numeric: normal;
+    padding: 0.2em 0;
+    -moz-line-height: 2.2;
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);
+    /* Staff sections stack vertically */
+    display: block;
+    margin-bottom: 1.5em;
+    min-width: fit-content;
+  }
+  
+  .voice-line {
+    @apply font-mono;
+    line-height: 2.2;
+    font-variant-ligatures: none;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    unicode-bidi: normal;
+    direction: ltr;
+    letter-spacing: 0.05em;
+    /* Prevent breaking within individual voice lines */
+    white-space: nowrap;
+    /* Firefox-specific fixes */
+    -moz-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -moz-text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-unicode-bidi: normal;
+    -moz-font-smoothing: antialiased;
+    font-kerning: none;
+    font-variant-numeric: normal;
+    -moz-line-height: 2.2;
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  .lyrics-line {
+    @apply font-mono;
+    line-height: 2.2;
+    font-variant-ligatures: none;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    unicode-bidi: normal;
+    direction: ltr;
+    letter-spacing: 0.05em;
+    /* Lyrics can wrap but should stay together */
+    white-space: pre-wrap;
+    /* Firefox-specific fixes */
+    -moz-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -moz-text-rendering: optimizeLegibility;
+    -webkit-font-feature-settings: "liga" 0, "kern" 1, "mark" 1;
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-unicode-bidi: normal;
+    -moz-font-smoothing: antialiased;
+    font-kerning: none;
+    font-variant-numeric: normal;
+    -moz-line-height: 2.2;
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);
+    /* Slight indent for lyrics */
+    margin-left: 0.5em;
+    margin-top: 0.2em;
+  }
+  
+  /* Mobile-specific optimizations for tag notation */
+  @media (max-width: 640px) {
+    .tag-notation {
+      font-size: 1.0em;
+      line-height: 2.0;
+      letter-spacing: 0.03em;
+    }
+    
+    .tag-notation pre {
+      font-size: 1.0em;
+      line-height: 2.0;
+      letter-spacing: 0.03em;
+      /* Prevent horizontal scrolling on very long lines */
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    
+    .staff-section {
+      font-size: 1.0em;
+      line-height: 2.0;
+      letter-spacing: 0.03em;
+      /* Allow horizontal scrolling for very long staffs on mobile */
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .voice-line {
+      font-size: 1.0em;
+      line-height: 2.0;
+      letter-spacing: 0.03em;
+    }
+    
+    .lyrics-line {
+      font-size: 1.0em;
+      line-height: 2.0;
+      letter-spacing: 0.03em;
+    }
+  }
+  
+  /* Tablet optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .tag-notation {
+      font-size: 1.0em;
+      line-height: 1.9;
+    }
+    
+    .tag-notation pre {
+      font-size: 1.0em;
+      line-height: 1.9;
+    }
+    
+    .staff-section {
+      font-size: 1.0em;
+      line-height: 1.9;
+    }
+    
+    .voice-line {
+      font-size: 1.0em;
+      line-height: 1.9;
+    }
+    
+    .lyrics-line {
+      font-size: 1.0em;
+      line-height: 1.9;
+    }
+  }
+  
   /* Firefox-specific font override for pre elements */
   @-moz-document url-prefix() {
     .tag-notation pre {

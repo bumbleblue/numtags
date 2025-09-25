@@ -12,10 +12,11 @@ original_key: "B"
 ---
 
 
-|  3  5  4  -  |  4  3  —  |
-|  1  1  1  7̣  |  7̣  2  1  |
-|  5̣  5̣  5̣  -  |  5̣  5̣  —  |
-|  1̣  3̣  2̣  -  |  2̣  1̣  —  |
-Close your eyes,  in sleep.
+|  3  5  4  - |  4  -  -  4 |  3  -  -  - |
+|  1  1  1  - |  2  1  7̣  7̣ |  2  -  1  - |
+|  5̣  5̣  5̣  - |  5̣  -  -  5̣ |  5̣  -  -  - |
+|  1̣  3̣  2̣  - |  2̣  -  -  2̣ |  1̣  -  -  - |
 
-// Need an edit, original tag has a more interesting lead line.
+Close your eyes, 
+                (close your eyes)
+                          in sleep.

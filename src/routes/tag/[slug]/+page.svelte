@@ -88,17 +88,31 @@
   <div class="max-w-4xl mx-auto">
     <!-- Title and ID Header -->
     <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-nord-4 mb-2">{tag.metadata.title}</h1>
-      <p class="text-xl text-nord-5">Tag #{tag.metadata.tag_id}</p>
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-nord-4 mb-2">{tag.metadata.title}</h1>
+      <p class="text-lg sm:text-xl text-nord-5">Tag #{tag.metadata.tag_id}</p>
     </div>
     
     <!-- Tag Content -->
-    <div id="tag-content" class="card-bg rounded shadow-sm border p-8 mb-8">
-      <pre class="tag-notation text-center">{tag.content}</pre>
+    <div id="tag-content" class="card-bg rounded shadow-sm border p-4 sm:p-6 lg:p-8 mb-8">
+      <div class="tag-notation text-left text-sm sm:text-base lg:text-lg">
+        {#each tag.content.split('\n\n') as staff}
+          <div class="staff-section">
+            {#each staff.split('\n').filter(line => line.trim()) as line, index}
+              {#if line.startsWith('|')}
+                <!-- Voice part -->
+                <div class="voice-line">{line}</div>
+              {:else if !line.startsWith('//')}
+                <!-- Lyrics -->
+                <div class="lyrics-line">{line}</div>
+              {/if}
+            {/each}
+          </div>
+        {/each}
+      </div>
     </div>
     
     <!-- Action Buttons -->
-    <div class="flex justify-center space-x-3 mb-8">
+    <div class="flex flex-col sm:flex-row justify-center gap-3 mb-8">
       <button 
         on:click={shareAsImage}
         disabled={isSharing}

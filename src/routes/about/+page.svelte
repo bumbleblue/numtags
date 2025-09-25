@@ -267,6 +267,21 @@ Tenor: 5 5 5 5
       All tags are stored as Markdown files with YAML metadata, making it easy to contribute 
       through pull requests on GitHub.
     </p>
+    
+    <div class="bg-nord-2 rounded p-4 mb-4">
+      <h3 class="font-medium text-nord-4 mb-2">📱 Mobile Formatting Guidelines</h3>
+      <p class="text-sm text-nord-5 mb-2">
+        When creating tags, consider mobile display:
+      </p>
+      <ul class="text-sm text-nord-5 space-y-1 list-disc list-inside">
+        <li>Each staff contains 4 voice parts followed by their lyrics</li>
+        <li>Use double newlines to separate different staffs</li>
+        <li>Lyrics appear at the bottom of each staff</li>
+        <li>Test your tag on mobile devices before submitting</li>
+        <li>Long staffs will scroll horizontally on mobile to preserve musical structure</li>
+        <li>Each complete musical phrase (4 voices + lyrics) stays together as one unit</li>
+      </ul>
+    </div>
     <a 
       href="https://github.com/your-username/tag-along" 
       class="btn-primary inline-block"
