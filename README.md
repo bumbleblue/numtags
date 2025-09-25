@@ -1,25 +1,24 @@
-# TagAlong
+# numtags
 
-A Progressive Web App for learning and sharing barbershop tags with custom numeric notation.
+Barbershop tags in numeric notation
 
-## 🎵 What is TagAlong?
+## 🎵 What is numtags?
 
-TagAlong is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing.
+numtags is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing. The app uses a custom numeric notation system that makes it easy to read, learn, and teach tags on any device.
 
-Our app uses a custom numeric notation system that makes it easy to read and learn tags on any device, with a clean, searchable database that grows through community contributions.
+## Features
 
-## ✨ Features
+- **Search**: Search by ID, title, lyrics, or arranger
+- **Mobile First**: Optimized for mobile devices with PWA capabilities
+- **Share as Image**: Generate images of tags to share 
+- **Offline Ready**: Works offline once loaded
+- **Filter & Sort**: Filter by difficulty, arranger, or parts
+- **Open Source**: Openly licensed and welcoming community contributions
+- **Dark Mode**: Because let's face it, we mostly sing tags at afterglows
 
-- **🔍 Smart Search**: Search by ID, title, lyrics, or arranger
-- **📱 Mobile First**: Optimized for mobile devices with PWA capabilities
-- **🖼️ Share as Image**: Generate beautiful images of tags to share
-- **⚡ Offline Ready**: Works offline once loaded
-- **🎯 Filter & Sort**: Filter by difficulty, arranger, or parts
-- **🌐 Open Source**: Community-driven with transparent development
+## Numeric Notation System
 
-## 🎼 Numeric Notation System
-
-TagAlong uses a simple numeric notation system where numbers represent scale degrees:
+numtags uses a simple numeric notation system where numbers represent scale degrees:
 
 ```
 1 = Root (Do)
@@ -32,17 +31,20 @@ TagAlong uses a simple numeric notation system where numbers represent scale deg
 8 = Octave (Do)
 ```
 
-Each line represents a different voice part (Lead, Bass, Baritone, Tenor), and the numbers show which scale degree to sing.
+Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. 
 
 ### Example:
 ```
-Lead: 1 3 5 1
-Bass: 1 1 3 1
-Baritone: 3 3 3 3
-Tenor: 5 5 5 5
+
+Tenor:    3 - 3 - 4 4 - 3 - -
+Lead:     8 - 8 - 8 7 - 8 - -
+Baritone: 5 -♭7 - 6 5 - 5 - -
+Bass:     1 - 5 - 4 2 - 1 - -
+
+        "My town, my- town."
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -53,8 +55,8 @@ Tenor: 5 5 5 5
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/tag-along.git
-cd tag-along
+git clone https://github.com/bumbleblue/numtags.git
+cd numtags
 ```
 
 2. Install dependencies:
@@ -77,7 +79,7 @@ npm run build
 
 The built files will be in the `build` directory, ready for deployment.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 tag-along/
@@ -94,32 +96,32 @@ tag-along/
 └── package.json
 ```
 
-## 📝 Tag Data Format
+## Tag Data Format
 
 Tags are stored as Markdown files with YAML frontmatter:
 
 ```yaml
 ---
-title: "Sweet Adeline"
-tag_id: 1001
-arranger: "Traditional"
-difficulty: "Easy"
-source_url: "https://www.barbershoptags.com/tags/1001"
-date_added: "2024-01-15"
+title: "So Tired of Waiting For You"
+tag_id: 53
+arranger: "Renee Craig"
+difficulty: "Medium"
+source_url: "https://www.barbershoptags.com/tag-53-So-Tired-of-Waiting-for-You"
+date_added: "2008-12-15"
 parts: 4
-lyrics: "Sweet Adeline, my Adeline"
-comments: "Classic barbershop tag, great for beginners"
+lyrics: "So tired of waiting for you."
+comments: ""
+original_key: "G"
 ---
 
-Lead: 1 3 5 1
-Bass: 1 1 3 1
-Baritone: 3 3 3 3
-Tenor: 5 5 5 5
-
-Sweet Adeline, my Adeline
+|  1  3  5  |  4  6  -  1̇  |  1̇  —  |
+|  1  1 ♯1  |  2 ♭3  -  4  |  3  —  |
+|  1 ♭7̣  6̣  |  1  1  - ♭6̣  |  5̣  —  |
+|  1  5̣  3̣  |  6̣  4̣  -  2̣  |  1̣  —  |
+So tired of   wait-ing for   you.
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Here's how you can help:
 
@@ -144,38 +146,32 @@ We welcome contributions! Here's how you can help:
 - Test your changes thoroughly
 - Update documentation as needed
 
-## 📱 PWA Features
+## PWA Features
 
-TagAlong is a Progressive Web App with the following features:
+numtags is a Progressive Web App with the following features:
 
 - **Offline Support**: Works without internet connection
 - **Installable**: Add to home screen on mobile devices
 - **Fast Loading**: Optimized for quick access
 - **Responsive**: Works on all device sizes
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: SvelteKit
 - **Styling**: TailwindCSS
 - **Search**: Fuse.js
 - **PWA**: Service Worker + Manifest
-- **Deployment**: Static hosting (GitHub Pages, Vercel, Netlify)
+- **Deployment**: Static hosting (Netlify)
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- Barbershop Harmony Society for inspiration
-- The barbershop community for feedback and support
-- Open source contributors who make this possible
-
-## 📞 Contact
+## Contact
 
 - GitHub Issues: [Report bugs or request features](https://github.com/your-username/tag-along/issues)
 - GitHub Discussions: [Join the conversation](https://github.com/your-username/tag-along/discussions)
 
 ---
 
-Made with ❤️ for the barbershop community
+Made with ❤️ for all of you barbershop-obsessed people!
