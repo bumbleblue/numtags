@@ -34,11 +34,18 @@
     try {
       const element = document.getElementById('tag-content');
       if (element) {
+        // Add a temporary class to make all text black for image generation
+        element.classList.add('image-generation');
+        
         const dataUrl = await toPng(element, {
           backgroundColor: '#ffffff',
           width: 800,
           height: 600
         });
+        
+        // Remove the temporary class
+        element.classList.remove('image-generation');
+        
         shareImageUrl = dataUrl;
         
         // Create download link

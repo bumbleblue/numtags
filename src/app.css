@@ -296,6 +296,12 @@
     @apply w-full px-4 py-3 border border-nord-5 rounded focus:ring-2 focus:ring-nord-8 focus:border-transparent bg-nord-1 text-nord-4 placeholder-nord-5;
   }
   
+  /* Image generation styling - force black text */
+  .image-generation,
+  .image-generation * {
+    color: #000000 !important;
+  }
+  
   .btn-primary {
     @apply bg-nord-8 hover:bg-nord-9 text-nord-0 font-medium py-2 px-4 rounded transition-colors duration-200;
   }
