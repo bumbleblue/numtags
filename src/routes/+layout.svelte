@@ -90,12 +90,16 @@
   <footer class="card-bg border-t mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="text-center text-nord-5 text-sm">
-        			<p>numtags - Learn and share barbershop tags</p>
-        <p class="mt-2">
-          <a href="https://github.com/your-username/tag-along" class="text-nord-8 hover:text-nord-9">
+        <p>numtags - Learn and share barbershop tags</p>
+        <div class="mt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
+          <a href="https://github.com/bumbleblue/numtags" class="text-nord-8 hover:text-nord-9">
             Open Source on GitHub
           </a>
-        </p>
+          <span class="text-nord-4">•</span>
+          <a href="/impressum" class="text-nord-8 hover:text-nord-9">
+            Impressum
+          </a>
+        </div>
       </div>
     </div>
   </footer>

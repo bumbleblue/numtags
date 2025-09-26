@@ -176,6 +176,29 @@ numtags is a Progressive Web App with the following features:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Contributor License Agreement
+
+By contributing to numtags, you agree to the following terms:
+
+### Tag Translations and Content
+- **Source Attribution**: All tags are sourced from [barbershoptags.com](https://barbershoptags.com) and are only rewritten in our numeric notation system
+- **Original Links**: We maintain links to the original publication location on barbershoptags.com
+- **CC0 License**: Any copyright generated through tag translations or contributions to this project shall be licensed under CC0 1.0 Universal (Public Domain)
+- **No Original Composition**: We do not create original musical content - only translate existing tags into numeric notation
+
+### Website Code
+- **MIT License**: The website code is licensed under the MIT License
+- **Contributions**: By contributing code, you agree to license your contributions under the MIT License
+
+### Contributing
+When you contribute tag translations or other content to numtags, you:
+1. Confirm that you are translating from the original source on barbershoptags.com
+2. Agree to license any copyright in your contributions under CC0 1.0 Universal
+3. Understand that we maintain attribution to the original source
+4. Accept that your contributions will be freely available to the public domain
+
+This ensures that all tag translations remain freely available and that we respect the original sources while making barbershop tags more accessible through numeric notation.
+
 ## Contact
 
 - GitHub Issues: [Report bugs or request features](https://github.com/your-username/tag-along/issues)
