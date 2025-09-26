@@ -237,6 +237,33 @@ tag-along/
 | Component Splitting | -20% | -25% | - | +25% |
 | **Total Expected** | **-40%** | **-50%** | **+80%** | **+40%** |
 
+## 🆕 Recent Updates (Latest Session)
+
+### **URL System Overhaul**
+- ✅ **Replaced slug-based URLs** with ID-based system
+- ✅ **New URL structure**: `/tag/id/{id}` instead of `/tag/{slug}`
+- ✅ **Added `getTagById()` function** to data.ts
+- ✅ **Updated TagCard component** to use ID-based links
+- ✅ **Removed old slug-based route** and `getTagBySlug()` function
+
+### **Image Generation Improvements**
+- ✅ **Fixed text color issue** in generated images
+- ✅ **Added black text styling** for white background images
+- ✅ **Temporary CSS class** for image generation without affecting UI
+- ✅ **Improved readability** of shared tag images
+
+### **UI/UX Enhancements**
+- ✅ **Removed share button** from home page tag cards
+- ✅ **Simplified tag card actions** to focus on viewing
+- ✅ **Cleaner interface** with less visual clutter
+- ✅ **Full-width "View Tag" buttons** for better mobile experience
+
+### **Technical Improvements**
+- ✅ **Streamlined URL structure** for easier referencing
+- ✅ **Maintained all functionality** (sharing, image generation, etc.)
+- ✅ **Cleaner codebase** with removed unused functions
+- ✅ **Better URL predictability** with numeric IDs
+
 ## 📝 Next Steps (Optional Enhancements)
 
 1. **Add more sample tags** to demonstrate the system
