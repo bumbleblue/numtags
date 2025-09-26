@@ -11,8 +11,9 @@ comments: "Short version"
 original_key: "C"
 ---
 
-|  1  2  |  3  3  3  2  | ♭3  2  |  3  —  |
-|  1  2  |  1  1  1  -  |  1  —  |  1  —  |
-|  1  7̣  |  6̣  6̣  6̣  -  | ♭6̣  5̣  |  5̣  —  |
-|  1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |
-When it’s slee-py time   down -   south.  
+1  2  |  3  3  3 ⁀2  | ♭3 ⁀2  |  3  —  |
+1  2  |  1  1  1  -  |  1  —  |  1  —  |
+1  7̣  |  6̣  6̣  6̣  -  | ♭6̣ ⁀5̣  |  5̣  —  |
+1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |
+When it’s 
+        slee-py time   down -   south.  
