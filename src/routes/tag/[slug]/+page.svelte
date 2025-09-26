@@ -64,8 +64,6 @@
   function shareUrl() {
     if (navigator.share && tag) {
       navigator.share({
-        title: tag.metadata.title,
-        text: `Check out this barbershop tag: ${tag.metadata.title}`,
         url: window.location.href
       });
     } else {
