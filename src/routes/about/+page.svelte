@@ -14,16 +14,15 @@
 <div class="max-w-4xl mx-auto space-y-8">
   <!-- Hero Section -->
   <div class="text-center">
-    		<h1 class="text-4xl font-bold text-nord-4 mb-4">About numtags</h1>
+    		<h1 class="text-4xl font-bold text-nord-4 mb-4">About</h1>
     <p class="text-xl text-nord-5">
-      A Progressive Web App for learning and sharing barbershop tags
+      numtags: Barbershop tags in numeric notation
     </p>
   </div>
 
   <!-- Table of Contents -->
   <div class="bg-nord-2 border border-nord-8 rounded shadow-sm p-6">
     <h2 class="text-xl font-semibold text-nord-4 mb-4 flex items-center">
-      <span class="text-nord-8 mr-2">📋</span>
       Table of Contents
     </h2>
     <nav class="space-y-2">
@@ -34,10 +33,10 @@
         <span class="text-nord-8">•</span> Numeric Notation System
       </a>
       <a href="#key-features" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Key Features
+        <span class="text-nord-8">•</span> Features
       </a>
       <a href="#faq" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Frequently Asked Questions
+        <span class="text-nord-8">•</span> FAQs
       </a>
       <a href="#contributing" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
         <span class="text-nord-8">•</span> Contributing
@@ -52,22 +51,16 @@
   <div id="what-is-numtags" class="card-bg rounded shadow-sm border p-6">
     		<h2 class="text-2xl font-semibold text-nord-4 mb-4">What is numtags?</h2>
     <p class="text-nord-5 mb-4">
-      		numtags is a mobile-first web application designed specifically for barbershop singers to quickly find, 
-      learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for 
-      spontaneous group singing.
+      numtags is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing. The app uses a custom numeric notation system that makes it easy to read, learn, and teach tags on any device.
     </p>
-    <p class="text-nord-5">
-      Our app uses a custom numeric notation system that makes it easy to read and learn tags on any device, 
-      with a clean, searchable database that grows through community contributions.
-    </p>
+
   </div>
 
   <!-- Numeric Notation -->
   <div id="numeric-notation" class="card-bg rounded shadow-sm border p-6">
     <h2 class="text-2xl font-semibold text-nord-4 mb-4">Numeric Notation System</h2>
     <p class="text-nord-5 mb-4">
-      		numtags uses a simple numeric notation system where numbers represent scale degrees:
-    </p>
+      numtags uses a straightforward numeric notation system where numbers represent scale degrees:    </p>
     
     <div class="bg-nord-2 rounded p-4 mb-4">
       <pre class="tag-notation text-sm">
@@ -78,54 +71,46 @@
 5 = Fifth (So)
 6 = Sixth (La)
 7 = Seventh (Ti)
-8 = Octave (Do)
+
       </pre>
     </div>
     
     <p class="text-nord-5 mb-4">
-      Each line represents a different voice part (Lead, Bass, Baritone, Tenor), and the numbers 
-      show which scale degree to sing. This system makes it easy to learn tags quickly without 
-      needing to read traditional sheet music.
+      Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. Dots above and belowe show which octave the note is in.
     </p>
     
     <div class="bg-nord-2 rounded p-4">
       <h3 class="font-medium text-nord-4 mb-2">Example:</h3>
       <pre class="tag-notation text-sm">
-Lead: 1 3 5 1
-Bass: 1 1 3 1
-Baritone: 3 3 3 3
-Tenor: 5 5 5 5
+        Tenor:      3 - 3 - | 4⁀4 3 - |
+        Lead:       1 - 1 - | 1⁀7̣ 1 - |
+        Baritone:   5̣ -♭7̣ - | 6̣⁀5̣ 5̣ - |
+        Bass:       1̣ - 5̣ - | 4̣⁀2̣ 1̣ - |
+
+                    "My town, my town."
       </pre>
     </div>
   </div>
 
   <!-- Features -->
   <div id="key-features" class="card-bg rounded shadow-sm border p-6">
-    <h2 class="text-2xl font-semibold text-nord-4 mb-4">Key Features</h2>
+    <h2 class="text-2xl font-semibold text-nord-4 mb-4">Features</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">🔍 Smart Search</h3>
-        <p class="text-nord-5">Search by ID, title, lyrics, or arranger with instant results.</p>
+        <h3 class="text-lg font-medium text-nord-4 mb-2">Linked to barbershoptags.com</h3>
+        <p class="text-nord-5">Search by ID, title, lyrics, or arranger</p>
       </div>
       <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">📱 Mobile First</h3>
-        <p class="text-nord-5">Optimized for mobile devices with responsive design and PWA capabilities.</p>
+        <h3 class="text-lg font-medium text-nord-4 mb-2">Mobile First</h3>
+        <p class="text-nord-5">Optimized for mobile devices with PWA capabilities</p>
       </div>
       <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">🖼️ Share as Image</h3>
-        <p class="text-nord-5">Generate beautiful images of tags to share on social media or messaging apps.</p>
+        <h3 class="text-lg font-medium text-nord-4 mb-2">Offline Ready</h3>
+        <p class="text-nord-5">Works offline once loaded, perfect for rehearsals without internet access</p>
       </div>
       <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">⚡ Offline Ready</h3>
-        <p class="text-nord-5">Works offline once loaded, perfect for rehearsals without internet access.</p>
-      </div>
-      <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">🎯 Filter & Sort</h3>
-        <p class="text-nord-5">Filter by difficulty, arranger, or parts to find exactly what you need.</p>
-      </div>
-      <div>
-        <h3 class="text-lg font-medium text-nord-4 mb-2">🌐 Open Source</h3>
-        <p class="text-nord-5">Community-driven with open contribution guidelines and transparent development.</p>
+        <h3 class="text-lg font-medium text-nord-4 mb-2">Open Source</h3>
+        <p class="text-nord-5">Openly licensed and welcoming community contributions</p>
       </div>
     </div>
   </div>
@@ -267,21 +252,6 @@ Tenor: 5 5 5 5
       All tags are stored as Markdown files with YAML metadata, making it easy to contribute 
       through pull requests on GitHub.
     </p>
-    
-    <div class="bg-nord-2 rounded p-4 mb-4">
-      <h3 class="font-medium text-nord-4 mb-2">📱 Mobile Formatting Guidelines</h3>
-      <p class="text-sm text-nord-5 mb-2">
-        When creating tags, consider mobile display:
-      </p>
-      <ul class="text-sm text-nord-5 space-y-1 list-disc list-inside">
-        <li>Each staff contains 4 voice parts followed by their lyrics</li>
-        <li>Use double newlines to separate different staffs</li>
-        <li>Lyrics appear at the bottom of each staff</li>
-        <li>Test your tag on mobile devices before submitting</li>
-        <li>Long staffs will scroll horizontally on mobile to preserve musical structure</li>
-        <li>Each complete musical phrase (4 voices + lyrics) stays together as one unit</li>
-      </ul>
-    </div>
     <a 
       href="https://github.com/your-username/tag-along" 
       class="btn-primary inline-block"

@@ -165,6 +165,78 @@ tag-along/
 - Optional field - only shows when specified
 - Examples: "F", "G", "C", "Am", etc.
 
+## 🚀 Performance Optimization Roadmap
+
+### **🔥 High Priority (Immediate Impact)**
+
+#### **Search Performance**
+- [ ] **Remove artificial 100ms delay** in search function
+- [ ] **Add search debouncing** (150ms) for real-time search
+- [ ] **Optimize Fuse.js initialization** - initialize once, not on every search
+- [ ] **Implement lightweight search** for small datasets (replace Fuse.js)
+
+#### **Font Loading Optimization**
+- [ ] **Reduce font variants** - load only essential weights (400, 500)
+- [ ] **Add font subsetting** for Latin characters only
+- [ ] **Implement font preloading** for critical fonts
+- [ ] **Add font-display: swap** for better loading experience
+
+#### **Bundle Size Reduction**
+- [ ] **Replace Fuse.js** with lightweight custom search
+- [ ] **Optimize html-to-image** usage or replace with Web Worker
+- [ ] **Add CSS purging** to remove unused styles
+- [ ] **Implement tree-shaking** for dependencies
+
+### **📱 Medium Priority (Mobile Performance)**
+
+#### **Image Generation**
+- [ ] **Add Web Worker** for image generation (non-blocking)
+- [ ] **Implement image caching** for generated images
+- [ ] **Optimize image dimensions** (400x300 for mobile)
+- [ ] **Add lazy loading** for image generation
+
+#### **Component Architecture**
+- [ ] **Extract reusable components** (StaffNotation, ShareButton, FilterDropdown)
+- [ ] **Implement Svelte stores** for state management
+- [ ] **Add component composition** patterns
+- [ ] **Create shared component library**
+
+#### **CSS Optimization**
+- [ ] **Split CSS into chunks** (vendor, components, utilities)
+- [ ] **Remove duplicate font declarations**
+- [ ] **Implement CSS-in-JS** for dynamic styles
+- [ ] **Add CSS compression** in build process
+
+### **🔧 Long Term (Architecture Improvements)**
+
+#### **Data Loading**
+- [ ] **Implement virtual scrolling** for large tag lists
+- [ ] **Add lazy loading** for tag content
+- [ ] **Create pagination** for search results
+- [ ] **Add data caching** strategy
+
+#### **Build Optimization**
+- [ ] **Configure manual chunks** (vendor, utils, components)
+- [ ] **Add bundle analysis** tools
+- [ ] **Implement code splitting** by routes
+- [ ] **Add compression** (gzip, brotli)
+
+#### **Performance Monitoring**
+- [ ] **Add performance metrics** tracking
+- [ ] **Implement error boundaries**
+- [ ] **Add loading states** for all async operations
+- [ ] **Create performance budget** monitoring
+
+### **📊 Expected Performance Gains**
+
+| Optimization | Bundle Size | Load Time | Search Speed | Mobile Score |
+|-------------|-------------|-----------|--------------|--------------|
+| Font Optimization | -15% | -30% | - | +20% |
+| Search Debouncing | - | - | +80% | +15% |
+| CSS Purging | -25% | -20% | - | +10% |
+| Component Splitting | -20% | -25% | - | +25% |
+| **Total Expected** | **-40%** | **-50%** | **+80%** | **+40%** |
+
 ## 📝 Next Steps (Optional Enhancements)
 
 1. **Add more sample tags** to demonstrate the system

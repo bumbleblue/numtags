@@ -65,6 +65,9 @@
           <a href="/about" class="text-nord-5 hover:text-nord-4 px-3 py-2 rounded text-sm font-medium">
             About
           </a>
+          <a href="/notation" class="text-nord-5 hover:text-nord-4 px-3 py-2 rounded text-sm font-medium">
+            Notation
+          </a>
           {#if showInstallButton}
             <button 
               on:click={installPWA}

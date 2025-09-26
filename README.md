@@ -2,7 +2,7 @@
 
 Barbershop tags in numeric notation
 
-## 🎵 What is numtags?
+## What is numtags?
 
 numtags is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing. The app uses a custom numeric notation system that makes it easy to read, learn, and teach tags on any device.
 
@@ -18,7 +18,7 @@ numtags is a mobile-first web application designed specifically for barbershop s
 
 ## Numeric Notation System
 
-numtags uses a simple numeric notation system where numbers represent scale degrees:
+numtags uses a straightforward numeric notation system where numbers represent scale degrees:
 
 ```
 1 = Root (Do)
@@ -28,20 +28,18 @@ numtags uses a simple numeric notation system where numbers represent scale degr
 5 = Fifth (So)
 6 = Sixth (La)
 7 = Seventh (Ti)
-8 = Octave (Do)
 ```
 
-Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. 
+Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. Dots above and belowe show which octave the note is in.
 
 ### Example:
 ```
+Tenor:      3 - 3 - | 4⁀4 3 - |
+Lead:       1 - 1 - | 1⁀7̣ 1 - |
+Baritone:   5̣ -♭7̣ - | 6̣⁀5̣ 5̣ - |
+Bass:       1̣ - 5̣ - | 4̣⁀2̣ 1̣ - |
 
-Tenor:    3 - 3 - 4 4 - 3 - -
-Lead:     8 - 8 - 8 7 - 8 - -
-Baritone: 5 -♭7 - 6 5 - 5 - -
-Bass:     1 - 5 - 4 2 - 1 - -
-
-        "My town, my- town."
+            "My town, my town."
 ```
 
 ## Getting Started
@@ -120,6 +118,17 @@ original_key: "G"
 |  1  5̣  3̣  |  6̣  4̣  -  2̣  |  1̣  —  |
 So tired of   wait-ing for   you.
 ```
+
+### Mobile Formatting Guidelines
+
+When creating tags, consider mobile display:
+
+- Each staff contains 4 voice parts followed by their lyrics
+- Use double newlines to separate different staffs
+- Lyrics appear at the bottom of each staff
+- Test your tag on mobile devices before submitting
+- Long staffs will scroll horizontally on mobile to preserve musical structure
+- Each complete musical phrase (4 voices + lyrics) stays together as one unit
 
 ## Contributing
 
