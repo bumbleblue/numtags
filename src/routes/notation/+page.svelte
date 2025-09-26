@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-  <title>Notation System - NumTags</title>
+  <title>Notation System - numtags</title>
   <meta name="description" content="Learn how the numeric notation system works for barbershop tags" />
 </svelte:head>
 
@@ -24,7 +24,6 @@
   <!-- Table of Contents -->
   <div class="bg-nord-2 border border-nord-8 rounded shadow-sm p-6">
     <h2 class="text-xl font-semibold text-nord-4 mb-4 flex items-center">
-      <span class="text-nord-8 mr-2">📚</span>
       Table of Contents
     </h2>
     <nav class="space-y-2">
