@@ -17,8 +17,11 @@
   <div class="text-center">
     <h1 class="text-4xl font-bold text-nord-4 mb-4">Notation System</h1>
     <p class="text-xl text-nord-5">
-      A comprehensive guide to reading and writing barbershop tags in numeric notation
+      A  guide to reading and writing barbershop tags in numeric notation
     </p>
+    <p class="text-xl text-nord-5">
+        Version 1.0.0
+      </p>
   </div>
 
   <!-- Table of Contents -->
@@ -63,6 +66,44 @@
     <p class="text-nord-5">
       This system makes it easy to read, learn, and teach tags on any device, with a clean, searchable database that grows through community contributions.
     </p>
+  </div>
+
+
+
+  <!-- Numeric Notation -->
+  <div id="numeric-notation" class="card-bg rounded shadow-sm border p-6">
+    <h2 class="text-2xl font-semibold text-nord-4 mb-4">Numeric Notation System</h2>
+    <p class="text-nord-5 mb-4">
+      numtags uses a straightforward numeric notation system where numbers represent scale degrees:    </p>
+    
+    <div class="bg-nord-2 rounded p-4 mb-4">
+      <pre class="tag-notation text-sm">
+1 = Root (Do)
+2 = Second (Re)
+3 = Third (Mi)
+4 = Fourth (Fa)
+5 = Fifth (So)
+6 = Sixth (La)
+7 = Seventh (Ti)
+
+      </pre>
+    </div>
+    
+    <p class="text-nord-5 mb-4">
+      Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. Dots above and belowe show which octave the note is in.
+    </p>
+    
+    <div class="bg-nord-2 rounded p-4">
+      <h3 class="font-medium text-nord-4 mb-2">Example:</h3>
+      <pre class="tag-notation text-sm">
+        Tenor:      3 - 3 - | 4⁀4 3 - |
+        Lead:       1 - 1 - | 1⁀7̣ 1 - |
+        Baritone:   5̣ -♭7̣ - | 6̣⁀5̣ 5̣ - |
+        Bass:       1̣ - 5̣ - | 4̣⁀2̣ 1̣ - |
+
+                    "My town, my town."
+      </pre>
+    </div>
   </div>
 
   <!-- Scale Degree Mapping -->

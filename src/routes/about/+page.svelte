@@ -20,33 +20,6 @@
     </p>
   </div>
 
-  <!-- Table of Contents -->
-  <div class="bg-nord-2 border border-nord-8 rounded shadow-sm p-6">
-    <h2 class="text-xl font-semibold text-nord-4 mb-4 flex items-center">
-      Table of Contents
-    </h2>
-    <nav class="space-y-2">
-      <a href="#what-is-numtags" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> What is numtags?
-      </a>
-      <a href="#numeric-notation" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Numeric Notation System
-      </a>
-      <a href="#key-features" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Features
-      </a>
-      <a href="#faq" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> FAQs
-      </a>
-      <a href="#contributing" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Contributing
-      </a>
-      <a href="#get-in-touch" class="block text-nord-6 hover:text-nord-8 hover:bg-nord-1 px-3 py-2 rounded transition-all duration-200">
-        <span class="text-nord-8">•</span> Get in Touch
-      </a>
-    </nav>
-  </div>
-
   <!-- What is Tagalong -->
   <div id="what-is-numtags" class="card-bg rounded shadow-sm border p-6">
     		<h2 class="text-2xl font-semibold text-nord-4 mb-4">What is numtags?</h2>
@@ -54,42 +27,6 @@
       numtags is a mobile-first web application designed specifically for barbershop singers to quickly find, learn, and share barbershop tags. Tags are short, harmonically rich pieces of music meant for spontaneous group singing. The app uses a custom numeric notation system that makes it easy to read, learn, and teach tags on any device.
     </p>
 
-  </div>
-
-  <!-- Numeric Notation -->
-  <div id="numeric-notation" class="card-bg rounded shadow-sm border p-6">
-    <h2 class="text-2xl font-semibold text-nord-4 mb-4">Numeric Notation System</h2>
-    <p class="text-nord-5 mb-4">
-      numtags uses a straightforward numeric notation system where numbers represent scale degrees:    </p>
-    
-    <div class="bg-nord-2 rounded p-4 mb-4">
-      <pre class="tag-notation text-sm">
-1 = Root (Do)
-2 = Second (Re)
-3 = Third (Mi)
-4 = Fourth (Fa)
-5 = Fifth (So)
-6 = Sixth (La)
-7 = Seventh (Ti)
-
-      </pre>
-    </div>
-    
-    <p class="text-nord-5 mb-4">
-      Each line represents a different voice part (Tenor, Lead, Baritone, Bass), and the numbers show which scale degree to sing. Dots above and belowe show which octave the note is in.
-    </p>
-    
-    <div class="bg-nord-2 rounded p-4">
-      <h3 class="font-medium text-nord-4 mb-2">Example:</h3>
-      <pre class="tag-notation text-sm">
-        Tenor:      3 - 3 - | 4⁀4 3 - |
-        Lead:       1 - 1 - | 1⁀7̣ 1 - |
-        Baritone:   5̣ -♭7̣ - | 6̣⁀5̣ 5̣ - |
-        Bass:       1̣ - 5̣ - | 4̣⁀2̣ 1̣ - |
-
-                    "My town, my town."
-      </pre>
-    </div>
   </div>
 
   <!-- Features -->
