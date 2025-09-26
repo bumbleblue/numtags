@@ -65,19 +65,13 @@
     </div>
 
     <!-- Actions -->
-    <div class="flex space-x-2">
+    <div class="flex">
       <a 
         href="/tag/{tag.slug}" 
         class="btn-primary text-sm flex-1 text-center"
       >
         View Tag
       </a>
-      <button 
-        class="btn-secondary text-sm"
-        title="Share tag"
-      >
-        📤
-      </button>
     </div>
   </div>
 </div>
