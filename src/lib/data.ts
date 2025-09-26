@@ -59,8 +59,8 @@ export function searchTags(filters: SearchFilters): SearchResult[] {
   return results;
 }
 
-export function getTagBySlug(slug: string): Tag | undefined {
-  return allTags.find(tag => tag.slug === slug);
+export function getTagById(id: number): Tag | undefined {
+  return allTags.find(tag => tag.metadata.tag_id === id);
 }
 
 export function getAllTags(): Tag[] {

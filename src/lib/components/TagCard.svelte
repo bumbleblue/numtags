@@ -19,7 +19,7 @@
     <div class="flex justify-between items-start">
       <div class="flex-1">
         <h3 class="text-lg font-semibold text-nord-4 mb-1">
-          <a href="/tag/{tag.slug}" class="hover:text-nord-8 transition-colors">
+          <a href="/tag/id/{tag.metadata.tag_id}" class="hover:text-nord-8 transition-colors">
             {tag.metadata.title}
           </a>
         </h3>
@@ -67,7 +67,7 @@
     <!-- Actions -->
     <div class="flex">
       <a 
-        href="/tag/{tag.slug}" 
+        href="/tag/id/{tag.metadata.tag_id}" 
         class="btn-primary text-sm flex-1 text-center"
       >
         View Tag

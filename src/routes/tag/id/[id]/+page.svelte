@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  import { getTagBySlug } from '$lib/data';
+  import { getTagById } from '$lib/data';
   import type { Tag } from '$lib/types';
   import { toPng } from 'html-to-image';
   
@@ -11,9 +11,9 @@
   let isSharing = false;
   
   onMount(() => {
-    const slug = $page.params.slug;
-    if (slug) {
-      tag = getTagBySlug(slug);
+    const id = parseInt($page.params.id);
+    if (id) {
+      tag = getTagById(id);
     }
     isLoading = false;
   });
