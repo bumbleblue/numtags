@@ -108,7 +108,7 @@
       A "<code class="bg-nord-2 px-1 rounded">|</code>" stands for the start and end of a measure, and "<code class="bg-nord-2 px-1 rounded">-</code>" and "<code class="bg-nord-2 px-1 rounded">–</code>" are rudimentary rhythm symbols. So a tag might look like this:
     </p>
     <p class="text-nord-5 mb-4">
-      This notation does not allow for much rhythmic complexity: "<code class="bg-nord-2 px-1 rounded">·</code>" is a dotted note (add one half) and "<code class="bg-nord-2 px-1 rounded">_</code>" is the opposite (remove one half). You can have double-halfed notes (eighths and sixteenths and so on). A "<code class="bg-nord-2 px-1 rounded">⁀</code>" remains a tie.
+      This notation does not allow for much rhythmic complexity: "<code class="bg-nord-2 px-1 rounded">·</code>" is a dotted note (add one half) and "<code class="bg-nord-2 px-1 rounded">_</code>" is the opposite (remove one half). You can have double-halfed notes (eighths and sixteenths and so on). "<code class="bg-nord-2 px-1 rounded">0</code>" is a rest. A "<code class="bg-nord-2 px-1 rounded">⁀</code>" remains a tie.
     </p>
   </div>
 
