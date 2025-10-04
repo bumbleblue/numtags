@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-09-26T12:48:54.837Z
+// Generated on: 2025-10-03T21:29:15.093Z
 // Source: data/tags/ directory
 
 import type { Tag } from './types';
@@ -37,6 +37,21 @@ export const allTags: Tag[] = [
   },
   {
     "metadata": {
+      "title": "Seasons",
+      "tag_id": 961,
+      "arranger": "Mario Hernandez Gerety",
+      "difficulty": "Easy",
+      "date_added": "2009-07-09",
+      "parts": 4,
+      "lyrics": "Seasons may die, and so will I, but not my love for you.",
+      "comments": "Authentic version",
+      "original_key": "Bb"
+    },
+    "content": "|  5  6  7 |  6 - 6̲⁀5̲ |  5 - 5  | 3 - 3 | 6 - · | 5 - · | 4 - · | 0 0 0 | 3 4 5 | 5⁀4 - |  4 - · | 3 - 4 | 5 - 4 | 3 - · |\n|  1  3  5 |  5 - 4̲⁀3̲ |  2 - 1  | 2 - 5̣ | 3 - · | 2 - · | 5̣ - 2 | 1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |\n|  3  1  2 |  1 - 1̲⁀7̲ |  7̣ - 6̣  | 5̣ - 1 | 1 - · | 7̣ - · | 7̣ - · | 0 0 0 | 5̣ 6̣ 7̣ | 6̣ - · | ♭6̣ - · | 5̣ - 6̣ | 7̣ - 6̣ | 5̣ - · |\n|  5̣  5̣  5̣ |  4̣ - 4̲⁀5̲ |  5̣ - 4̣  | 1̣ - 1̣ | 4̣ - · | 3̣ - · | 2̣ - · | 0 0 0 | 5̣ 4̣ 3̣ | 2̣ - · | ♭2̣ - · | 1̣ XXXXXXXXXXXXXXXXXXX |\n\nSeasons may die,  and    so will I, but  not      my     love (for you) Oh not my love   for     you  (Oh not for you)",
+    "slug": "seasons"
+  },
+  {
+    "metadata": {
       "title": "When it’s sleepy time",
       "tag_id": 7,
       "arranger": "unknown",
@@ -47,7 +62,7 @@ export const allTags: Tag[] = [
       "comments": "Short version",
       "original_key": "C"
     },
-    "content": "|  1  2  |  3  3  3  2  | ♭3  2  |  3  —  |\n|  1  2  |  1  1  1  -  |  1  —  |  1  —  |\n|  1  7̣  |  6̣  6̣  6̣  -  | ♭6̣  5̣  |  5̣  —  |\n|  1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |\nWhen it’s slee-py time   down -   south.",
+    "content": "1  2  |  3  3  3 ⁀2  | ♭3 ⁀2  |  3  —  |\n1  2  |  1  1  1  -  |  1  —  |  1  —  |\n1  7̣  |  6̣  6̣  6̣  -  | ♭6̣ ⁀5̣  |  5̣  —  |\n1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |\nWhen it’s \n        slee-py time   down -   south.",
     "slug": "sleepy-time"
   },
   {
@@ -67,4 +82,4 @@ export const allTags: Tag[] = [
   }
 ];
 
-export const tagCount = 4;
+export const tagCount = 5;
