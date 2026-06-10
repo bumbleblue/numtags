@@ -9,10 +9,11 @@ parts: 4
 lyrics: "So tired of waiting for you."
 comments: ""
 original_key: "G"
+origin: "catalog"
 ---
 
-|  1  3  5  |  4  6  -  1̇  |  1̇  —  |
-|  1  1 ♯1  |  2 ♭3  -  4  |  3  —  |
-|  1 ♭7̣  6̣  |  1  1  - ♭6̣  |  5̣  —  |
-|  1  5̣  3̣  |  6̣  4̣  -  2̣  |  1̣  —  |
-So tired of   wait-ing for  you.
+| 1 3 5 | 4 6 - 1' | 1' - |
+| 1 1 #1 | 2 b3 - 4 | 3 - |
+| 1 b7, 6, | 1 1 - b6, | 5, - |
+| 1 5, 3, | 6, 4, - 2, | 1, - |
+So tired of wait-ing _ for you.

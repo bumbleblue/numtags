@@ -9,14 +9,14 @@ parts: 4
 lyrics: "Close your eyes,  in sleep."
 comments: ""
 original_key: "B"
+origin: "catalog"
 ---
 
 
-|  3  5  4  - | ⁀4  -  -  4 |  3  -  -  - |
-|  1  1  1  - |  2  1  7̣  7̣ |  2  -  1  - |
-|  5̣  5̣  5̣  - | ⁀5̣  -  -  5̣ |  5̣  -  -  - |
-|  1̣  3̣  2̣  - | ⁀2̣  -  -  2̣ |  1̣  -  -  - |
-
-Close your eyes, 
-                (close your eyes)
-                          in sleep.
+| 3 5 4 - | ~4 - - 4 | 3 - - - |
+| 1 1 1 - | 2 1 7, 7, | 2 - 1 - |
+| 5, 5, 5, - | ~5, - - 5, | 5, - - - |
+| 1, 3, 2, - | ~2, - - 2, | 1, - - - |
+Close your eyes,
+_ _ _ _ (close your eyes)
+_ _ _ _ _ _ _ _ in _ sleep.

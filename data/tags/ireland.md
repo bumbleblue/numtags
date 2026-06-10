@@ -9,10 +9,11 @@ parts: 4
 lyrics: "Ireland, my Ireland, I’m longing for  you."
 comments: ""
 original_key: "F"
+origin: "catalog"
 ---
 
-|  1̇  3̇· 2̲  |  1̇  1̇  7  |  1̇  1̇  2̇  |  1̇  –  |
-|  5  1̇· 7̲  |  6 ♭6  6  |  5 ♯4  4  |  3  –  |
-|  3  5· ♯5̲  |  3  2 ♯2  |  3  6̣  7̣  |  5̣  –  |
-|  1  1· 3̣̲  |  6̣  4̣ ♯4̣  |  5̣  2̣  5̣  |  1̣  –  |
-Ire-land, my Ire-land, I’m long-ing for  you.
+| 1' 3'. 2/ | 1' 1' 7 | 1' 1' 2' | 1' - |
+| 5 1'. 7/ | 6 b6 6 | 5 #4 4 | 3 - |
+| 3 5. #5/ | 3 2 #2 | 3 6, 7, | 5, - |
+| 1 1. 3,/ | 6, 4, #4, | 5, 2, 5, | 1, - |
+Ire-land, my Ire-land, I’m long-ing for you.

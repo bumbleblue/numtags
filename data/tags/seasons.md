@@ -9,11 +9,11 @@ parts: 4
 lyrics: "Seasons may die, and so will I, but not my love for you."
 comments: "Authentic version"
 original_key: "Bb"
+origin: "catalog"
 ---
 
-|  5  6  7 |  6 - 6̲⁀5̲ |  5 - 5  | 3 - 3 | 6 - · | 5 - · | 4 - · | 0 0 0 | 3 4 5 | 5⁀4 - |  4 - · | 3 - 4 | 5 - 4 | 3 - · |
-|  1  3  5 |  5 - 4̲⁀3̲ |  2 - 1  | 2 - 5̣ | 3 - · | 2 - · | 5̣ - 2 | 1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |
-|  3  1  2 |  1 - 1̲⁀7̲ |  7̣ - 6̣  | 5̣ - 1 | 1 - · | 7̣ - · | 7̣ - · | 0 0 0 | 5̣ 6̣ 7̣ | 6̣ - · | ♭6̣ - · | 5̣ - 6̣ | 7̣ - 6̣ | 5̣ - · |
-|  5̣  5̣  5̣ |  4̣ - 4̲⁀5̲ |  5̣ - 4̣  | 1̣ - 1̣ | 4̣ - · | 3̣ - · | 2̣ - · | 0 0 0 | 5̣ 4̣ 3̣ | 2̣ - · | ♭2̣ - · | 1̣ XXXXXXXXXXXXXXXXXXX |
-
-Sea-sons may die,  and    so will I, but  not      my     love (for you) Oh not my love   for     you  (Oh not for you)
+| 5 6 7 | 6 - 6/ ~5/ | 5 - 5 | 3 - 3 | 6 - 0 | 5 - 0 | 4 - 0 | 0 0 0 | 3 4 5 | 5 ~4 - | 4 - 0 | 3 - 4 | 5 - 4 | 3 - 0 |
+| 1 3 5 | 5 - 4/ ~3/ | 2 - 1 | 2 - 5, | 3 - 0 | 2 - 0 | 5, - 2 | 1 X |
+| 3 1 2 | 1 - 1/ ~7/ | 7, - 6, | 5, - 1 | 1 - 0 | 7, - 0 | 7, - 0 | 0 0 0 | 5, 6, 7, | 6, - 0 | b6, - 0 | 5, - 6, | 7, - 6, | 5, - 0 |
+| 5, 5, 5, | 4, - 4/ ~5/ | 5, - 4, | 1, - 1, | 4, - 0 | 3, - 0 | 2, - 0 | 0 0 0 | 5, 4, 3, | 2, - 0 | b2, - 0 | 1, X |
+Sea-sons may die, _ and _ so _ will I, _ but not _ _ my _ _ love _ _ (for you) _ Oh not my love _ _ for _ _ you _ (Oh not _ for you)

@@ -9,11 +9,11 @@ parts: 4
 lyrics: "When it’s sleepy time down south"
 comments: "Short version"
 original_key: "C"
+origin: "catalog"
 ---
 
-1  2  |  3  3  3 ⁀2  | ♭3 ⁀2  |  3  —  |
-1  2  |  1  1  1  -  |  1  —  |  1  —  |
-1  7̣  |  6̣  6̣  6̣  -  | ♭6̣ ⁀5̣  |  5̣  —  |
-1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |
-When it’s 
-        slee-py time   down -   south.  
+1 2 | 3 3 3 ~2 | b3 ~2 | 3 - |
+1 2 | 1 1 1 - | 1 - | 1 - |
+1 7, | 6, 6, 6, - | b6, ~5, | 5, - |
+1 7, | 6, 5, #4, - | 4, - | 1, - |
+When it’s slee-py time _ down _ south.

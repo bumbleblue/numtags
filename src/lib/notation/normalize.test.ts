@@ -92,6 +92,18 @@ describe('normalize — legacy glyph mappings', () => {
 	});
 });
 
+// The pre-migration sleepy-time.md body, verbatim from git history
+// (9edb17e) — data/tags/ now stores canonical ASCII, so the legacy
+// form lives here as the migration fixture.
+const LEGACY_SLEEPY_TIME = `
+1  2  |  3  3  3 ⁀2  | ♭3 ⁀2  |  3  —  |
+1  2  |  1  1  1  -  |  1  —  |  1  —  |
+1  7̣  |  6̣  6̣  6̣  -  | ♭6̣ ⁀5̣  |  5̣  —  |
+1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |
+When it’s 
+        slee-py time   down -   south.  
+`;
+
 describe('normalize — idempotence', () => {
 	const canonical = [
 		'1 2 | 3 3 3 ~2 | b3 ~2 | 3 - |',
@@ -112,7 +124,7 @@ describe('normalize — idempotence', () => {
 	});
 
 	it('is idempotent on legacy input', () => {
-		const legacy = readTagBody('sleepy-time.md');
+		const legacy = LEGACY_SLEEPY_TIME;
 		expect(normalize(normalize(legacy))).toBe(normalize(legacy));
 	});
 });
@@ -120,7 +132,6 @@ describe('normalize — idempotence', () => {
 describe('normalize — legacy golden round-trip', () => {
 	it('migrates sleepy-time.md verbatim to exact canonical ASCII', () => {
 		const expected = [
-			'',
 			'',
 			'1 2 | 3 3 3 ~2 | b3 ~2 | 3 - |',
 			'1 2 | 1 1 1 - | 1 - | 1 - |',
@@ -130,7 +141,7 @@ describe('normalize — legacy golden round-trip', () => {
 			'        slee-py time   down -   south.',
 			'',
 		].join('\n');
-		expect(normalize(readTagBody('sleepy-time.md'))).toBe(expected);
+		expect(normalize(LEGACY_SLEEPY_TIME)).toBe(expected);
 	});
 
 	it.each([
@@ -157,7 +168,7 @@ describe('normalize — legacy golden round-trip', () => {
 
 	it('parses the migrated sleepy-time body into the expected semantic beats', () => {
 		const { staffs, warnings } = parse(
-			normalize(readTagBody('sleepy-time.md')),
+			normalize(LEGACY_SLEEPY_TIME),
 		);
 		expect(warnings).toEqual([]);
 		expect(staffs).toHaveLength(1);
