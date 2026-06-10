@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-06-10T15:31:26.374Z
+// Generated on: 2026-06-10T16:13:44.443Z
 // Source: data/tags/ directory
 
 import type { Tag } from './types';
@@ -15,9 +15,10 @@ export const allTags: Tag[] = [
       "parts": 4,
       "lyrics": "Close your eyes,  in sleep.",
       "comments": "",
-      "original_key": "B"
+      "original_key": "B",
+      "origin": "catalog"
     },
-    "content": "|  3  5  4  - | ⁀4  -  -  4 |  3  -  -  - |\n|  1  1  1  - |  2  1  7̣  7̣ |  2  -  1  - |\n|  5̣  5̣  5̣  - | ⁀5̣  -  -  5̣ |  5̣  -  -  - |\n|  1̣  3̣  2̣  - | ⁀2̣  -  -  2̣ |  1̣  -  -  - |\n\nClose your eyes, \n                (close your eyes)\n                          in sleep.",
+    "content": "| 3 5 4 - | ~4 - - 4 | 3 - - - |\n| 1 1 1 - | 2 1 7, 7, | 2 - 1 - |\n| 5, 5, 5, - | ~5, - - 5, | 5, - - - |\n| 1, 3, 2, - | ~2, - - 2, | 1, - - - |\nClose your eyes,\n_ _ _ _ (close your eyes)\n_ _ _ _ _ _ _ _ in _ sleep.",
     "slug": "close-your-eyes"
   },
   {
@@ -30,9 +31,10 @@ export const allTags: Tag[] = [
       "parts": 4,
       "lyrics": "Ireland, my Ireland, I’m longing for  you.",
       "comments": "",
-      "original_key": "F"
+      "original_key": "F",
+      "origin": "catalog"
     },
-    "content": "|  1̇  3̇· 2̲  |  1̇  1̇  7  |  1̇  1̇  2̇  |  1̇  –  |\n|  5  1̇· 7̲  |  6 ♭6  6  |  5 ♯4  4  |  3  –  |\n|  3  5· ♯5̲  |  3  2 ♯2  |  3  6̣  7̣  |  5̣  –  |\n|  1  1· 3̣̲  |  6̣  4̣ ♯4̣  |  5̣  2̣  5̣  |  1̣  –  |\nIre-land, my Ire-land, I’m long-ing for  you.",
+    "content": "| 1' 3'. 2/ | 1' 1' 7 | 1' 1' 2' | 1' - |\n| 5 1'. 7/ | 6 b6 6 | 5 #4 4 | 3 - |\n| 3 5. #5/ | 3 2 #2 | 3 6, 7, | 5, - |\n| 1 1. 3,/ | 6, 4, #4, | 5, 2, 5, | 1, - |\nIre-land, my Ire-land, I’m long-ing for you.",
     "slug": "ireland"
   },
   {
@@ -45,9 +47,10 @@ export const allTags: Tag[] = [
       "parts": 4,
       "lyrics": "Seasons may die, and so will I, but not my love for you.",
       "comments": "Authentic version",
-      "original_key": "Bb"
+      "original_key": "Bb",
+      "origin": "catalog"
     },
-    "content": "|  5  6  7 |  6 - 6̲⁀5̲ |  5 - 5  | 3 - 3 | 6 - · | 5 - · | 4 - · | 0 0 0 | 3 4 5 | 5⁀4 - |  4 - · | 3 - 4 | 5 - 4 | 3 - · |\n|  1  3  5 |  5 - 4̲⁀3̲ |  2 - 1  | 2 - 5̣ | 3 - · | 2 - · | 5̣ - 2 | 1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |\n|  3  1  2 |  1 - 1̲⁀7̲ |  7̣ - 6̣  | 5̣ - 1 | 1 - · | 7̣ - · | 7̣ - · | 0 0 0 | 5̣ 6̣ 7̣ | 6̣ - · | ♭6̣ - · | 5̣ - 6̣ | 7̣ - 6̣ | 5̣ - · |\n|  5̣  5̣  5̣ |  4̣ - 4̲⁀5̲ |  5̣ - 4̣  | 1̣ - 1̣ | 4̣ - · | 3̣ - · | 2̣ - · | 0 0 0 | 5̣ 4̣ 3̣ | 2̣ - · | ♭2̣ - · | 1̣ XXXXXXXXXXXXXXXXXXX |\n\nSea-sons may die,  and    so will I, but  not      my     love (for you) Oh not my love   for     you  (Oh not for you)",
+    "content": "| 5 6 7 | 6 - 6/ ~5/ | 5 - 5 | 3 - 3 | 6 - 0 | 5 - 0 | 4 - 0 | 0 0 0 | 3 4 5 | 5 ~4 - | 4 - 0 | 3 - 4 | 5 - 4 | 3 - 0 |\n| 1 3 5 | 5 - 4/ ~3/ | 2 - 1 | 2 - 5, | 3 - 0 | 2 - 0 | 5, - 2 | 1 X |\n| 3 1 2 | 1 - 1/ ~7/ | 7, - 6, | 5, - 1 | 1 - 0 | 7, - 0 | 7, - 0 | 0 0 0 | 5, 6, 7, | 6, - 0 | b6, - 0 | 5, - 6, | 7, - 6, | 5, - 0 |\n| 5, 5, 5, | 4, - 4/ ~5/ | 5, - 4, | 1, - 1, | 4, - 0 | 3, - 0 | 2, - 0 | 0 0 0 | 5, 4, 3, | 2, - 0 | b2, - 0 | 1, X |\nSea-sons may die, _ and _ so _ will I, _ but not _ _ my _ _ love _ _ (for you) _ Oh not my love _ _ for _ _ you _ (Oh not _ for you)",
     "slug": "seasons"
   },
   {
@@ -60,9 +63,10 @@ export const allTags: Tag[] = [
       "parts": 4,
       "lyrics": "When it’s sleepy time down south",
       "comments": "Short version",
-      "original_key": "C"
+      "original_key": "C",
+      "origin": "catalog"
     },
-    "content": "1  2  |  3  3  3 ⁀2  | ♭3 ⁀2  |  3  —  |\n1  2  |  1  1  1  -  |  1  —  |  1  —  |\n1  7̣  |  6̣  6̣  6̣  -  | ♭6̣ ⁀5̣  |  5̣  —  |\n1  7̣  |  6̣  5̣ ♯4̣  -  |  4̣  —  |  1̣  —  |\nWhen it’s \n        slee-py time   down -   south.",
+    "content": "1 2 | 3 3 3 ~2 | b3 ~2 | 3 - |\n1 2 | 1 1 1 - | 1 - | 1 - |\n1 7, | 6, 6, 6, - | b6, ~5, | 5, - |\n1 7, | 6, 5, #4, - | 4, - | 1, - |\nWhen it’s slee-py time _ down _ south.",
     "slug": "sleepy-time"
   },
   {
@@ -75,9 +79,10 @@ export const allTags: Tag[] = [
       "parts": 4,
       "lyrics": "So tired of waiting for you.",
       "comments": "",
-      "original_key": "G"
+      "original_key": "G",
+      "origin": "catalog"
     },
-    "content": "|  1  3  5  |  4  6  -  1̇  |  1̇  —  |\n|  1  1 ♯1  |  2 ♭3  -  4  |  3  —  |\n|  1 ♭7̣  6̣  |  1  1  - ♭6̣  |  5̣  —  |\n|  1  5̣  3̣  |  6̣  4̣  -  2̣  |  1̣  —  |\nSo tired of   wait-ing for  you.",
+    "content": "| 1 3 5 | 4 6 - 1' | 1' - |\n| 1 1 #1 | 2 b3 - 4 | 3 - |\n| 1 b7, 6, | 1 1 - b6, | 5, - |\n| 1 5, 3, | 6, 4, - 2, | 1, - |\nSo tired of wait-ing _ for you.",
     "slug": "so-tired"
   }
 ];
