@@ -20,6 +20,7 @@
 	import { clearDraft, getDraft, setDraft, type Draft } from '$lib/draft';
 	import { allTags } from '$lib/generated-tags';
 	import { deleteLocalTag, getLocalTag, saveLocalTag } from '$lib/library/db';
+	import { composeBody, splitBody, type LyricCells } from '$lib/notation/lyrics';
 	import { normalize } from '$lib/notation/normalize';
 	import { parse } from '$lib/notation/parse';
 	import { beatMismatchWarnings, shiftVoiceOctave } from '$lib/notation/transform';
@@ -41,7 +42,10 @@
 	let loaded = $state(false);
 	let notFound = $state(false);
 
-	let body = $state('');
+	// The source textarea holds ONLY voice lines; lyrics live as per-beat
+	// cells typed under the rendered notes (beat-anchored lyric editor).
+	let voiceBody = $state('');
+	let lyricCells = $state<LyricCells>([]);
 	let meta = $state({
 		title: '',
 		arranger: '',
@@ -120,7 +124,7 @@
 		}
 
 		const m = draft.tag.metadata;
-		body = draft.tag.content;
+		({ voiceBody, lyricCells } = splitBody(draft.tag.content));
 		meta = {
 			title: m.title === 'Untitled' ? '' : m.title,
 			arranger: m.arranger === 'unknown' ? '' : m.arranger,
@@ -130,17 +134,64 @@
 			lyrics: m.lyrics ?? '',
 			comments: m.comments ?? '',
 		};
-		parsed = parse(body);
+		parsed = parse(voiceBody);
 		loaded = true;
 	});
 
 	// Live preview: re-parse debounced ~150ms on keystroke (§6.5).
 	$effect(() => {
-		const b = body;
+		const b = voiceBody;
 		if (!loaded) return;
 		const t = setTimeout(() => (parsed = parse(b)), 150);
 		return () => clearTimeout(t);
 	});
+
+	// Keep the lyric grid shaped to the parsed staffs: every staff gets at
+	// least one (possibly empty) row to type into; extra cells are retained
+	// while editing and trimmed on compose.
+	$effect(() => {
+		const staffCount = parsed.staffs.length;
+		if (!loaded || staffCount === 0) return;
+		if (lyricCells.length < staffCount || lyricCells.some((rows) => rows.length === 0)) {
+			const next = [...lyricCells];
+			for (let si = 0; si < staffCount; si++) {
+				if (!next[si]) next[si] = [];
+				if (next[si].length === 0) next[si] = [[]];
+			}
+			lyricCells = next;
+		}
+	});
+
+	/** The canonical body: voice lines + composed lyric lines (§3.3). */
+	function composedBody(): string {
+		return composeBody(voiceBody, lyricCells);
+	}
+
+	function onLyricInput(si: number, ri: number, flat: number, value: string) {
+		const next = lyricCells.map((rows) => rows.map((r) => [...r]));
+		while (next.length <= si) next.push([]);
+		while (next[si].length <= ri) next[si].push([]);
+		const row = next[si][ri];
+		while (row.length <= flat) row.push('');
+		row[flat] = value;
+		lyricCells = next;
+		touch();
+	}
+
+	function addLyricRow() {
+		lyricCells = lyricCells.map((rows) => [...rows, []]);
+		touch();
+	}
+
+	function removeEmptyLyricRows() {
+		lyricCells = lyricCells.map((rows) => {
+			const kept = rows.filter((r) => r.some((c) => c.trim()));
+			return kept.length ? kept : [[]];
+		});
+		touch();
+	}
+
+	const hasExtraRows = $derived(lyricCells.some((rows) => rows.length > 1));
 
 	// ── never lose work: persist the draft on every meaningful change ───────
 	let persistTimer: ReturnType<typeof setTimeout> | undefined;
@@ -176,7 +227,7 @@
 		opt('source_url', meta.source_url);
 		opt('lyrics', meta.lyrics);
 		opt('comments', meta.comments);
-		return { ...base, metadata, content: body };
+		return { ...base, metadata, content: composedBody() };
 	}
 
 	function currentDraft(): Draft {
@@ -194,13 +245,13 @@
 			draft.score.keyName = key;
 			draft.score.mode = /m\s*$/.test(key) ? 'minor' : 'major';
 			draft.score.tonicPitchClass = ((LETTER_PC[tonic.letter] + tonic.alter) % 12 + 12) % 12;
-			body = encode(draft.score);
+			({ voiceBody, lyricCells } = splitBody(encode(draft.score)));
 		}
 		touch();
 	}
 
 	function shiftVoice(voiceIndex: number, delta: number) {
-		body = shiftVoiceOctave(body, voiceIndex, delta);
+		voiceBody = shiftVoiceOctave(voiceBody, voiceIndex, delta);
 		touch();
 	}
 
@@ -208,9 +259,9 @@
 
 	async function insertGlyph(glyph: string) {
 		const el = srcEl;
-		const start = el?.selectionStart ?? body.length;
+		const start = el?.selectionStart ?? voiceBody.length;
 		const end = el?.selectionEnd ?? start;
-		body = body.slice(0, start) + glyph + body.slice(end);
+		voiceBody = voiceBody.slice(0, start) + glyph + voiceBody.slice(end);
 		touch();
 		await tick();
 		if (el) {
@@ -219,13 +270,21 @@
 		}
 	}
 
-	/** Lenient normalize on blur/paste — never blocking (§6.6). */
+	/**
+	 * Lenient normalize on blur/paste — never blocking (§6.6). If a full body
+	 * (with lyric lines) lands in the voice textarea, the lyric lines move
+	 * into the beat-anchored editor instead of staying as stray text.
+	 */
 	function normalizeBody() {
-		const n = normalize(body);
-		if (n !== body) {
-			body = n;
-			touch();
+		const n = normalize(voiceBody);
+		const hasLyricLines = n.split('\n').some((l) => l.trim() && !l.includes('|'));
+		if (n === voiceBody && !hasLyricLines) return;
+		const pasted = splitBody(n);
+		voiceBody = pasted.voiceBody;
+		if (pasted.lyricCells.some((rows) => rows.length > 0)) {
+			lyricCells = pasted.lyricCells.map((rows, si) => (rows.length ? rows : (lyricCells[si] ?? [])));
 		}
+		touch();
 	}
 
 	// ── actions ──────────────────────────────────────────────────────────────
@@ -390,11 +449,32 @@
 			</div>
 		{/if}
 
-		<!-- live preview (§6.5/§6.6: the alignment teacher) -->
-		<section class="card-bg border rounded p-3 sm:p-4">
-			<NotationRenderer {parsed} mode="wrapped" fontScale={settings.fontScale} />
+		<!-- live preview + beat-anchored lyric editor (§6.5/§6.6) -->
+		<section class="card-bg border rounded p-3 sm:p-4 space-y-2">
+			<NotationRenderer
+				{parsed}
+				mode="wrapped"
+				fontScale={settings.fontScale}
+				editableLyrics
+				{lyricCells}
+				onlyricinput={onLyricInput}
+			/>
+			<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+				<p class="text-xs text-nord-5">
+					Type lyrics under the notes — <kbd class="font-mono">Tab</kbd> continues a word
+					(adds the hyphen), <kbd class="font-mono">Space</kbd> starts the next word.
+				</p>
+				<button class="text-xs text-nord-8 underline min-h-[44px]" onclick={addLyricRow}>
+					+ alternate lyric row
+				</button>
+				{#if hasExtraRows}
+					<button class="text-xs text-nord-5 underline min-h-[44px]" onclick={removeEmptyLyricRows}>
+						remove empty rows
+					</button>
+				{/if}
+			</div>
 			{#if liveWarnings.length > 0}
-				<ul class="mt-3 text-sm text-nord-13 list-disc ml-5 space-y-0.5" aria-live="polite">
+				<ul class="text-sm text-nord-13 list-disc ml-5 space-y-0.5" aria-live="polite">
 					{#each liveWarnings as w}<li>{w}</li>{/each}
 				</ul>
 			{/if}
@@ -480,21 +560,22 @@
 				</div>
 				<textarea
 					bind:this={srcEl}
-					bind:value={body}
+					bind:value={voiceBody}
 					oninput={touch}
 					onblur={normalizeBody}
 					onpaste={() => setTimeout(normalizeBody)}
-					rows={Math.max(8, body.split('\n').length + 2)}
+					rows={Math.max(6, voiceBody.split('\n').length + 2)}
 					spellcheck="false"
 					autocapitalize="off"
 					autocomplete="off"
 					class="w-full font-mono text-sm leading-relaxed p-3 rounded border border-nord-3 bg-nord-1 text-nord-4 focus:ring-2 focus:ring-nord-8 focus:border-transparent whitespace-pre overflow-x-auto"
-					aria-label="Notation source (ASCII shorthand)"
+					aria-label="Notation source — voice lines only (ASCII shorthand)"
 				></textarea>
 				<p class="text-xs text-nord-5">
-					Voices top-to-bottom: Tenor, Lead, Baritone, Bass; lyric line below. Whitespace is
-					cosmetic — only <code class="font-mono">|</code> and lyric
-					<code class="font-mono">_</code>/space/<code class="font-mono">-</code> carry meaning.
+					Notes and measures only — voices top-to-bottom: Tenor, Lead, Baritone, Bass.
+					Whitespace is cosmetic; <code class="font-mono">|</code> marks measures. Lyrics are
+					typed under the notes in the preview above (pasting a full tag with lyric lines
+					still works — they move up into the lyric editor).
 				</p>
 			</section>
 		{:else}

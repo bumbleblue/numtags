@@ -29,15 +29,36 @@
 		/** Truncate each staff to N measures (card previews; lyrics hidden). */
 		maxMeasures?: number;
 		fontScale?: number;
+		/**
+		 * Beat-anchored lyric editing (§6.5/§6.6): when set, lyric rows render
+		 * as per-beat inputs fed from `lyricCells` ([staff][row][flatBeat])
+		 * instead of the parsed lyric lines. Tab continues a word (appends a
+		 * hyphen and moves on), Space starts the next word, Backspace on an
+		 * empty cell steps back.
+		 */
+		editableLyrics?: boolean;
+		lyricCells?: string[][][];
+		onlyricinput?: (staff: number, row: number, flat: number, value: string) => void;
 	}
 
-	let { body, parsed, mode = 'wrapped', maxMeasures, fontScale = 1 }: Props = $props();
+	let {
+		body,
+		parsed,
+		mode = 'wrapped',
+		maxMeasures,
+		fontScale = 1,
+		editableLyrics = false,
+		lyricCells,
+		onlyricinput,
+	}: Props = $props();
 
 	const tag: ParsedTag = $derived(parsed ?? parse(body ?? ''));
 	const showLyrics = $derived(maxMeasures === undefined);
 
 	/* ── Layout constants (px — must mirror the CSS vars below) ─────────── */
-	const BEAT_PX = $derived(Math.round(38 * fontScale)); // beat-column width
+	// Edit mode widens beat columns so syllables fit their inputs (inputs
+	// can't overhang the way rendered spans do); wrapping refits automatically.
+	const BEAT_PX = $derived(Math.round((editableLyrics ? 56 : 38) * fontScale));
 	const LABEL_PX = $derived(Math.round(26 * fontScale)); // voice-label column
 	const MEASURE_EXTRA = 8; // measure block inline padding + border
 	const MEASURE_GAP = 2; // column-gap between blocks in a system
@@ -92,13 +113,67 @@
 			? c
 			: [...c.slice(0, len), ...Array(Math.max(0, len - c.length)).fill(null)];
 	}
+
+	/** Slice `len` cells out of a flat per-beat array starting at `off`. */
+	function sliceFlat(row: string[], off: number, len: number): string[] {
+		return Array.from({ length: len }, (_, i) => row[off + i] ?? '');
+	}
+
+	/** Flat-beat offset of each measure (pickup occupies 0..pickupLen-1). */
+	function measureOffsets(beatCounts: number[], pickupLen: number): number[] {
+		const out: number[] = [];
+		let acc = pickupLen;
+		for (const n of beatCounts) {
+			out.push(acc);
+			acc += n;
+		}
+		return out;
+	}
+
+	/* ── Lyric-input keyboard navigation (edit mode) ─────────────────────── */
+	function focusLyric(si: number, ri: number, flat: number): boolean {
+		const el = container?.querySelector<HTMLInputElement>(
+			`input[data-lyric="${si}:${ri}:${flat}"]`,
+		);
+		if (!el) return false;
+		el.focus();
+		el.select();
+		return true;
+	}
+
+	function lyricKeydown(e: KeyboardEvent, si: number, ri: number, flat: number) {
+		const input = e.currentTarget as HTMLInputElement;
+		if (e.key === 'Tab') {
+			// Tab continues the word: hyphenate this syllable, move to the next
+			// beat. At either end, fall through to natural tab order.
+			if (!e.shiftKey && input.value.trim() && !input.value.endsWith('-')) {
+				onlyricinput?.(si, ri, flat, input.value + '-');
+			}
+			if (focusLyric(si, ri, flat + (e.shiftKey ? -1 : 1))) e.preventDefault();
+		} else if (e.key === ' ') {
+			e.preventDefault(); // syllables never contain spaces — space = next word
+			focusLyric(si, ri, flat + 1);
+		} else if (e.key === 'Backspace' && input.value === '') {
+			if (focusLyric(si, ri, flat - 1)) e.preventDefault();
+		} else if (
+			e.key === 'ArrowRight' &&
+			input.selectionStart === input.value.length &&
+			input.selectionEnd === input.selectionStart
+		) {
+			if (focusLyric(si, ri, flat + 1)) e.preventDefault();
+		} else if (e.key === 'ArrowLeft' && input.selectionStart === 0 && input.selectionEnd === 0) {
+			if (focusLyric(si, ri, flat - 1)) e.preventDefault();
+		}
+	}
 </script>
 
 {#snippet measureBlock(
 	measure: Beat[][],
-	lyricCells: (string | null)[][],
+	lyricSlices: (string | null)[][],
 	alt: boolean,
 	isPickup: boolean,
+	si: number,
+	flatOffset: number,
 )}
 	<div
 		class="measure"
@@ -111,10 +186,25 @@
 				<BeatCell {beat} />
 			{/each}
 		{/each}
-		{#each lyricCells as row, li}
-			{#each row as syllable}
+		{#each lyricSlices as row, li}
+			{#each row as syllable, ci}
 				<div class="lyric-cell" class:lyric-sep={li === 0}>
-					<span class="lyric-text">{syllable ?? ' '}</span>
+					{#if editableLyrics}
+						<input
+							class="lyric-input"
+							type="text"
+							value={syllable ?? ''}
+							data-lyric="{si}:{li}:{flatOffset + ci}"
+							spellcheck="false"
+							autocapitalize="off"
+							autocomplete="off"
+							aria-label="Syllable for beat {flatOffset + ci + 1}, row {li + 1}"
+							oninput={(e) => onlyricinput?.(si, li, flatOffset + ci, e.currentTarget.value)}
+							onkeydown={(e) => lyricKeydown(e, si, li, flatOffset + ci)}
+						/>
+					{:else}
+						<span class="lyric-text">{syllable ?? ' '}</span>
+					{/if}
 				</div>
 			{/each}
 		{/each}
@@ -144,27 +234,32 @@
 		{@const voiceCount = (measures[0] ?? staff.pickup).length}
 		{@const beatCounts = measures.map((m) => m[0]?.length ?? 1)}
 		{@const lyricRows = showLyrics ? staff.lyricRows : []}
+		{@const editRows = editableLyrics ? (lyricCells?.[si] ?? []) : null}
+		{@const offsets = measureOffsets(beatCounts, pickupLen)}
+		{@const rowCount = editRows ? editRows.length : lyricRows.length}
+		{@const pickupSlices = editRows
+			? editRows.map((r) => sliceFlat(r, 0, pickupLen))
+			: lyricRows.map((r) => padCells(r.pickup, pickupLen))}
 
 		{#if measures.length > 0 || pickupLen > 0}
 			{#if mode === 'wrapped'}
 				<div class="staff-frame" class:staff-gap={si > 0}>
 					{#each fitSystems(beatCounts, pickupLen) as system, sysIdx}
 						<div class="system">
-							{@render labelCol(voiceCount, lyricRows.length, false)}
+							{@render labelCol(voiceCount, rowCount, false)}
 							{#if sysIdx === 0 && pickupLen > 0}
-								{@render measureBlock(
-									staff.pickup,
-									lyricRows.map((r) => padCells(r.pickup, pickupLen)),
-									false,
-									true,
-								)}
+								{@render measureBlock(staff.pickup, pickupSlices, false, true, si, 0)}
 							{/if}
 							{#each system as mi}
 								{@render measureBlock(
 									measures[mi],
-									lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
+									editRows
+										? editRows.map((r) => sliceFlat(r, offsets[mi], beatCounts[mi]))
+										: lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
 									mi % 2 === 1,
 									false,
+									si,
+									offsets[mi],
 								)}
 							{/each}
 						</div>
@@ -173,21 +268,20 @@
 			{:else}
 				<div class="staff-frame scroll" class:staff-gap={si > 0}>
 					<div class="strip">
-						{@render labelCol(voiceCount, lyricRows.length, true)}
+						{@render labelCol(voiceCount, rowCount, true)}
 						{#if pickupLen > 0}
-							{@render measureBlock(
-								staff.pickup,
-								lyricRows.map((r) => padCells(r.pickup, pickupLen)),
-								false,
-								true,
-							)}
+							{@render measureBlock(staff.pickup, pickupSlices, false, true, si, 0)}
 						{/if}
 						{#each measures as measure, mi}
 							{@render measureBlock(
 								measure,
-								lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
+								editRows
+									? editRows.map((r) => sliceFlat(r, offsets[mi], beatCounts[mi]))
+									: lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
 								mi % 2 === 1,
 								false,
+								si,
+								offsets[mi],
 							)}
 						{/each}
 					</div>
@@ -324,11 +418,33 @@
 		font-size: 0.7em;
 		font-weight: 700;
 		white-space: nowrap;
-		color: var(--gold);
+		color: var(--lyric);
 	}
 
 	/* Separator between the last voice row and the first lyric row */
 	.lyric-sep {
 		border-top: 1px solid color-mix(in srgb, var(--paper-3) 50%, transparent);
+	}
+
+	/* ── Lyric inputs (edit mode): same anchor + type as .lyric-text ────── */
+	.lyric-input {
+		width: 100%;
+		min-width: 0;
+		background: transparent;
+		border: none;
+		border-bottom: 1px dashed color-mix(in srgb, var(--lyric) 35%, transparent);
+		border-radius: 0;
+		padding: 0 0 0.05em;
+		text-align: right;
+		font: inherit;
+		font-size: 0.7em;
+		font-weight: 700;
+		color: var(--lyric);
+	}
+
+	.lyric-input:focus {
+		outline: none;
+		border-bottom: 1px solid var(--amber);
+		background: color-mix(in srgb, var(--amber) 10%, transparent);
 	}
 </style>
