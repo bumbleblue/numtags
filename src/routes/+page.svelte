@@ -1,147 +1,171 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { searchTags, getUniqueDifficulties, getUniqueParts, initializeSearch, getAllTags } from '$lib/data';
-  import type { SearchFilters, SearchResult } from '$lib/types';
-  import TagCard from '$lib/components/TagCard.svelte';
-  import SearchFiltersComponent from '$lib/components/SearchFilters.svelte';
+	import { browser } from '$app/environment';
+	import {
+		searchTags,
+		getUniqueDifficulties,
+		getUniqueParts,
+		refreshLocalLibrary,
+		getCachedLocalTags,
+	} from '$lib/data';
+	import { isLocalId } from '$lib/library/db';
+	import type { SearchResult } from '$lib/types';
+	import TagCard from '$lib/components/TagCard.svelte';
+	import SearchFiltersComponent from '$lib/components/SearchFilters.svelte';
 
-  let searchQuery = '';
-  let searchResults: SearchResult[] = [];
-  let isLoading = false;
-  let difficulties: string[] = [];
-  let parts: number[] = [];
-  
-  let filters: SearchFilters = {
-    query: '',
-    arranger: undefined,
-    difficulty: undefined,
-    parts: []
-  };
+	let searchQuery = $state('');
+	let arranger = $state('');
+	let difficulty = $state('');
+	let selectedParts = $state<number[]>([]);
 
-  // Initialize with all tags displayed
-  difficulties = getUniqueDifficulties();
-  parts = getUniqueParts();
-  
-  // Load all tags immediately
-  const allTags = getAllTags();
-  searchResults = allTags.map((tag, index) => ({
-    item: tag,
-    refIndex: index,
-    score: 0
-  }));
+	/** Bumped whenever the local library refreshes so the search re-runs. */
+	let libraryVersion = $state(0);
+	let libraryError = $state(false);
 
-  function handleSearch() {
-    isLoading = true;
-    filters.query = searchQuery;
-    
-    setTimeout(() => {
-      try {
-        // Only initialize Fuse.js if we have a search query
-        if (searchQuery.trim()) {
-          initializeSearch();
-        }
-        searchResults = searchTags(filters);
-      } catch (error) {
-        console.error('Search error:', error);
-        // Fallback to simple filtering
-        const allTags = getAllTags();
-        searchResults = allTags.map((tag, index) => ({
-          item: tag,
-          refIndex: index,
-          score: 0
-        }));
-      }
-      isLoading = false;
-    }, 100);
-  }
+	// Library refresh (§7.1: catalog renders instantly from the bundle; the
+	// local library joins quietly once IndexedDB answers — never an error page).
+	$effect(() => {
+		if (!browser) return;
+		refreshLocalLibrary().then(({ ok }) => {
+			libraryError = !ok;
+			libraryVersion++;
+		});
+	});
 
-  function handleFilterChange(newFilters: SearchFilters) {
-    filters = { ...filters, ...newFilters };
-    if (searchQuery) {
-      handleSearch();
-    }
-  }
+	const difficulties = $derived.by(() => {
+		void libraryVersion;
+		return getUniqueDifficulties();
+	});
+	const parts = $derived.by(() => {
+		void libraryVersion;
+		return getUniqueParts();
+	});
 
-  function handleKeyPress(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  }
+	const results: SearchResult[] = $derived.by(() => {
+		void libraryVersion;
+		return searchTags({
+			query: searchQuery,
+			arranger: arranger || undefined,
+			difficulty: difficulty || undefined,
+			parts: selectedParts.length > 0 ? selectedParts : undefined,
+		});
+	});
+
+	const localResults = $derived(results.filter((r) => isLocalId(r.item.metadata.tag_id)));
+	const catalogResults = $derived(results.filter((r) => !isLocalId(r.item.metadata.tag_id)));
+
+	const hasFilters = $derived(
+		searchQuery.trim() !== '' || arranger !== '' || difficulty !== '' || selectedParts.length > 0,
+	);
+
+	// Distinguish "nothing imported ever" from "filtered out by the search".
+	const anyLocalAtAll = $derived.by(() => {
+		void libraryVersion;
+		return getCachedLocalTags().length > 0;
+	});
+
+	function clearAll() {
+		searchQuery = '';
+		arranger = '';
+		difficulty = '';
+		selectedParts = [];
+	}
 </script>
 
 <svelte:head>
-  <title>Search Tags - numtags</title>
+	<title>Library - numtags</title>
 </svelte:head>
 
 <div class="space-y-6">
-  <!-- Hero Section -->
-  <div class="text-center">
-    <h1 class="text-4xl font-bold text-nord-4 mb-4">
-      Barbershop Tags in Numeric Notation
-    </h1>
-    <p class="text-xl text-nord-5 max-w-2xl mx-auto">
-      A growing collection of barbershop tags in numeric notation, perfect for learning and teaching tags.
-    </p>
-  </div>
+	<!-- Hero -->
+	<div class="text-center">
+		<h1 class="text-3xl sm:text-4xl font-bold text-nord-4 mb-3">
+			Barbershop Tags in Numeric Notation
+		</h1>
+		<p class="text-lg text-nord-5 max-w-2xl mx-auto mb-5">
+			A growing collection of barbershop tags in numeric notation, perfect for learning and
+			teaching tags.
+		</p>
+		<a
+			href="/import"
+			class="btn-primary inline-flex items-center justify-center gap-2 min-h-[44px] px-6 text-base"
+		>
+			<span class="text-xl leading-none" aria-hidden="true">+</span>
+			Import / Write a tag
+		</a>
+	</div>
 
-  <!-- Search Section -->
-  <div class="card-bg rounded shadow-sm border p-6">
-    <div class="space-y-4">
-      <!-- Search Input -->
-      <div class="flex space-x-4">
-        <div class="flex-1">
-          <input
-            type="text"
-            bind:value={searchQuery}
-            on:keypress={handleKeyPress}
-            placeholder="Search by ID, title, lyrics, or arranger..."
-            class="search-input"
-          />
-        </div>
-        <button 
-          on:click={handleSearch}
-          class="btn-primary whitespace-nowrap"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Searching...' : 'Search'}
-        </button>
-      </div>
+	<!-- Search + filters -->
+	<div class="card-bg rounded shadow-sm border p-4 sm:p-6">
+		<div class="space-y-4">
+			<input
+				type="search"
+				bind:value={searchQuery}
+				placeholder="Search by ID, title, lyrics, or arranger..."
+				class="search-input min-h-[44px]"
+				aria-label="Search tags"
+			/>
+			<SearchFiltersComponent {difficulties} {parts} bind:arranger bind:difficulty bind:selectedParts />
+		</div>
+	</div>
 
-      <!-- Filters -->
-      <SearchFiltersComponent 
-        {difficulties}
-        {parts}
-        on:filterChange={(event) => handleFilterChange(event.detail)}
-      />
-    </div>
-  </div>
+	{#if libraryError}
+		<p class="text-sm text-nord-13 text-center">
+			Couldn't read your local library — showing the catalog only.
+		</p>
+	{/if}
 
-  <!-- Results Section -->
-  <div class="space-y-4">
-    <div class="flex justify-between items-center">
-      <h2 class="text-2xl font-semibold text-nord-4">
-        {searchResults.length} tag{searchResults.length === 1 ? '' : 's'} found
-      </h2>
-    </div>
-    
-    {#if searchResults.length > 0}
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {#each searchResults as result (result.item.slug)}
-          <TagCard tag={result.item} />
-        {/each}
-      </div>
-    {:else if searchQuery && !isLoading}
-      <div class="text-center py-12">
-        <div class="text-nord-5 text-6xl mb-4">🎵</div>
-        <h3 class="text-xl font-medium text-nord-4 mb-2">No tags found</h3>
-        <p class="text-nord-5">Try adjusting your search terms or filters</p>
-      </div>
-    {:else}
-      <div class="text-center py-12">
-        <div class="text-nord-5 text-6xl mb-4">🎼</div>
-        <h3 class="text-xl font-medium text-nord-4 mb-2">Ready to find some tags?</h3>
-        <p class="text-nord-5">Start typing to search for barbershop tags</p>
-      </div>
-    {/if}
-  </div>
+	<!-- Your tags (local imports & drafts) -->
+	<section class="space-y-4">
+		<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">Your tags</h2>
+		{#if localResults.length > 0}
+			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+				{#each localResults as result (result.item.metadata.tag_id)}
+					<TagCard tag={result.item} />
+				{/each}
+			</div>
+		{:else if anyLocalAtAll}
+			<p class="text-sm text-nord-5">None of your tags match the current search.</p>
+		{:else}
+			<div class="card-bg rounded border border-dashed border-nord-3 p-6 text-center">
+				<p class="text-nord-5 mb-3">
+					Nothing of your own yet — import a file or write a tag from scratch. It stays private on
+					this device.
+				</p>
+				<a
+					href="/import"
+					class="btn-secondary inline-flex items-center justify-center min-h-[44px] px-5"
+				>
+					Import or write a tag
+				</a>
+			</div>
+		{/if}
+	</section>
+
+	<!-- Catalog -->
+	<section class="space-y-4">
+		<div class="flex justify-between items-center">
+			<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">
+				Catalog
+				<span class="text-base font-normal text-nord-5 ml-1">
+					{catalogResults.length} tag{catalogResults.length === 1 ? '' : 's'}
+				</span>
+			</h2>
+		</div>
+
+		{#if catalogResults.length > 0}
+			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+				{#each catalogResults as result (result.item.metadata.tag_id)}
+					<TagCard tag={result.item} />
+				{/each}
+			</div>
+		{:else if hasFilters}
+			<div class="text-center py-12">
+				<h3 class="text-xl font-medium text-nord-4 mb-2">No tags match</h3>
+				<p class="text-nord-5 mb-4">Try different search terms, or start over.</p>
+				<button onclick={clearAll} class="btn-secondary min-h-[44px] px-5">Clear filters</button>
+			</div>
+		{:else}
+			<p class="text-nord-5 text-center py-8">The catalog is empty.</p>
+		{/if}
+	</section>
 </div>
