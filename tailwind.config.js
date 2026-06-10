@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'mono': ['JetBrains Mono', 'monospace'],
-        'sans': ['Inter', 'system-ui', 'sans-serif']
+        'mono': ['Everson Mono', 'monospace'],
+        'sans': ['Source Sans 3', 'Source Sans Pro', 'system-ui', 'sans-serif']
       },
       colors: {
         // Nord color palette

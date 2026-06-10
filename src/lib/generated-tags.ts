@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2025-10-03T21:29:15.093Z
+// Generated on: 2026-04-10T07:03:08.804Z
 // Source: data/tags/ directory
 
 import type { Tag } from './types';
@@ -32,7 +32,7 @@ export const allTags: Tag[] = [
       "comments": "",
       "original_key": "F"
     },
-    "content": "|  1̇  3̇· 2̲  |  1̇  1̇  7  |  1̇  1̇  2̇  |  1̇  –  |\n|  5  1̇· 7̲  |  6 ♭6  6  |  5 ♯4  4  |  3  –  |\n|  3  5·♯5̲  |  3  2 ♯2  |  3  6̣  7̣  |  5̣  –  |\n|  1  1· 3̣̲  |  6̣  4̣ ♯4̣  |  5̣  2̣  5̣  |  1̣  –  |\nIre-land, my Ire-land, I’m long-ing for  you.",
+    "content": "|  1̇  3̇· 2̲  |  1̇  1̇  7  |  1̇  1̇  2̇  |  1̇  –  |\n|  5  1̇· 7̲  |  6 ♭6  6  |  5 ♯4  4  |  3  –  |\n|  3  5· ♯5̲  |  3  2 ♯2  |  3  6̣  7̣  |  5̣  –  |\n|  1  1· 3̣̲  |  6̣  4̣ ♯4̣  |  5̣  2̣  5̣  |  1̣  –  |\nIre-land, my Ire-land, I’m long-ing for  you.",
     "slug": "ireland"
   },
   {
@@ -47,7 +47,7 @@ export const allTags: Tag[] = [
       "comments": "Authentic version",
       "original_key": "Bb"
     },
-    "content": "|  5  6  7 |  6 - 6̲⁀5̲ |  5 - 5  | 3 - 3 | 6 - · | 5 - · | 4 - · | 0 0 0 | 3 4 5 | 5⁀4 - |  4 - · | 3 - 4 | 5 - 4 | 3 - · |\n|  1  3  5 |  5 - 4̲⁀3̲ |  2 - 1  | 2 - 5̣ | 3 - · | 2 - · | 5̣ - 2 | 1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |\n|  3  1  2 |  1 - 1̲⁀7̲ |  7̣ - 6̣  | 5̣ - 1 | 1 - · | 7̣ - · | 7̣ - · | 0 0 0 | 5̣ 6̣ 7̣ | 6̣ - · | ♭6̣ - · | 5̣ - 6̣ | 7̣ - 6̣ | 5̣ - · |\n|  5̣  5̣  5̣ |  4̣ - 4̲⁀5̲ |  5̣ - 4̣  | 1̣ - 1̣ | 4̣ - · | 3̣ - · | 2̣ - · | 0 0 0 | 5̣ 4̣ 3̣ | 2̣ - · | ♭2̣ - · | 1̣ XXXXXXXXXXXXXXXXXXX |\n\nSeasons may die,  and    so will I, but  not      my     love (for you) Oh not my love   for     you  (Oh not for you)",
+    "content": "|  5  6  7 |  6 - 6̲⁀5̲ |  5 - 5  | 3 - 3 | 6 - · | 5 - · | 4 - · | 0 0 0 | 3 4 5 | 5⁀4 - |  4 - · | 3 - 4 | 5 - 4 | 3 - · |\n|  1  3  5 |  5 - 4̲⁀3̲ |  2 - 1  | 2 - 5̣ | 3 - · | 2 - · | 5̣ - 2 | 1 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX |\n|  3  1  2 |  1 - 1̲⁀7̲ |  7̣ - 6̣  | 5̣ - 1 | 1 - · | 7̣ - · | 7̣ - · | 0 0 0 | 5̣ 6̣ 7̣ | 6̣ - · | ♭6̣ - · | 5̣ - 6̣ | 7̣ - 6̣ | 5̣ - · |\n|  5̣  5̣  5̣ |  4̣ - 4̲⁀5̲ |  5̣ - 4̣  | 1̣ - 1̣ | 4̣ - · | 3̣ - · | 2̣ - · | 0 0 0 | 5̣ 4̣ 3̣ | 2̣ - · | ♭2̣ - · | 1̣ XXXXXXXXXXXXXXXXXXX |\n\nSea-sons may die,  and    so will I, but  not      my     love (for you) Oh not my love   for     you  (Oh not for you)",
     "slug": "seasons"
   },
   {

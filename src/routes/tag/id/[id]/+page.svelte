@@ -4,6 +4,7 @@
   import { getTagById } from '$lib/data';
   import type { Tag } from '$lib/types';
   import { toPng } from 'html-to-image';
+  import TagNotation from '$lib/components/TagNotation.svelte';
   
   let tag: Tag | undefined;
   let isLoading = true;
@@ -98,22 +99,8 @@
     </div>
     
     <!-- Tag Content -->
-    <div id="tag-content" class="card-bg rounded shadow-sm border p-4 sm:p-6 lg:p-8 mb-8">
-      <div class="tag-notation text-left text-sm sm:text-base lg:text-lg">
-        {#each tag.content.split('\n\n') as staff}
-          <div class="staff-section">
-            {#each staff.split('\n').filter(line => line.trim()) as line, index}
-              {#if line.startsWith('|')}
-                <!-- Voice part -->
-                <div class="voice-line">{line}</div>
-              {:else if !line.startsWith('//')}
-                <!-- Lyrics -->
-                <div class="lyrics-line">{line}</div>
-              {/if}
-            {/each}
-          </div>
-        {/each}
-      </div>
+    <div id="tag-content" class="card-bg rounded shadow-sm border p-4 sm:p-6 lg:p-8 mb-8 overflow-x-auto">
+      <TagNotation content={tag.content} />
     </div>
     
     <!-- Action Buttons -->

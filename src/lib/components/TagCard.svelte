@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Tag } from '$lib/types';
+  import TagNotation from '$lib/components/TagNotation.svelte';
   
   export let tag: Tag;
   
@@ -58,10 +59,8 @@
     </div>
 
     <!-- Preview -->
-    <div class="bg-nord-2 rounded p-3">
-      <pre class="tag-notation text-sm text-nord-4 overflow-hidden" style="max-height: 80px;">
-{tag.content.split('\n').slice(0, 4).join('\n')}
-      </pre>
+    <div class="bg-nord-2 rounded p-3 overflow-hidden" style="max-height: 120px;">
+      <TagNotation content={tag.content} maxMeasures={3} />
     </div>
 
     <!-- Actions -->
