@@ -1,44 +1,63 @@
-const CACHE_NAME = 'tagalong-v1';
-const urlsToCache = [
-  '/',
-  '/about',
-  '/static/manifest.json'
-];
+// numtags service worker — offline app shell + runtime asset cache (spec §5, §7.1).
+// Navigations are network-first (fresh app when online, cached shell offline);
+// same-origin assets are stale-while-revalidate. The catalog snapshot is bundled
+// into the JS, so cached assets = offline catalog.
+const CACHE_NAME = 'numtags-v2';
+const SHELL = ['/', '/import', '/notation', '/about', '/settings', '/manifest.json'];
 
-// Install event - cache resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(SHELL))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Fetch event - serve from cache when offline
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      })
-  );
-});
-
-// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+    caches
+      .keys()
+      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return; // never intercept cross-origin (e.g. the OMR/catalog service)
+
+  if (request.mode === 'navigate') {
+    // Network-first: fresh HTML when online; cached page, then shell, offline.
+    event.respondWith(
+      fetch(request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(request, copy));
+          return res;
         })
-      );
+        .catch(() =>
+          caches.match(request).then((hit) => hit || caches.match('/'))
+        )
+    );
+    return;
+  }
+
+  // Assets: stale-while-revalidate.
+  event.respondWith(
+    caches.match(request).then((hit) => {
+      const refresh = fetch(request)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(request, copy));
+          }
+          return res;
+        })
+        .catch(() => hit);
+      return hit || refresh;
     })
   );
 });

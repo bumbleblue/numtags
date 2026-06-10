@@ -28,8 +28,14 @@
 			showInstallButton = true;
 		});
 
-		// Register service worker for PWA
-		if ('serviceWorker' in navigator) {
+		// In dev, evict any previously registered worker — runtime caching
+		// would serve stale modules under the dev server's HMR.
+		if ('serviceWorker' in navigator && import.meta.env.DEV) {
+			navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+		}
+
+		// Register service worker for PWA (production only)
+		if ('serviceWorker' in navigator && !import.meta.env.DEV) {
 			navigator.serviceWorker
 				.register('/sw.js')
 				.then((registration) => {

@@ -12,7 +12,7 @@ Barbershop tags (short 4-voice a cappella snippets) in a custom numeric notation
 
 ## Architecture (spec §5)
 
-Everything except OMR is client-side and offline. SvelteKit 2 + **Svelte 5 (runes)** + Tailwind (Nord palette) + Cloudflare adapter.
+Everything except OMR is client-side and offline. SvelteKit 2 + **Svelte 5 (runes)** + Tailwind + Cloudflare adapter. Theme: warm "field recordings" dark palette — the `nord-*` Tailwind slots are remapped to it (see tailwind.config.js), and `app.css` exposes it as CSS vars (`--paper-*`, `--ink*`, `--brass`, `--rust`) for the notation components. Page background `#1a1714` (also the PWA theme_color).
 
 - `src/lib/notation/` — the canonical notation core:
   - `types.ts` — semantic `Beat` token model (spec §4.4). Octave/subdivision are **integers, not glyphs**.
