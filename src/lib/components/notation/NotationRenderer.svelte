@@ -305,18 +305,23 @@
 		border-radius: 0;
 	}
 
-	/* ── Lyric cells ───────────────────────────────────────────────────── */
+	/* ── Lyric cells ───────────────────────────────────────────────────────
+	   Right-aligned to the same anchor as the note cells: digits end 0.45em
+	   from the column's right edge (modifiers extend left), so syllables do
+	   too — each syllable lines up under its note. Long syllables overhang
+	   leftward, like accidentals. */
 	.lyric-cell {
 		height: var(--lyric-h);
 		display: flex;
 		align-items: flex-end;
+		justify-content: flex-end;
 		padding-bottom: 0.15em;
-		padding-left: 0.1em;
+		padding-right: 0.45em;
 		overflow: visible;
 	}
 
 	.lyric-text {
-		font-size: 0.78em;
+		font-size: 0.7em;
 		font-weight: 700;
 		white-space: nowrap;
 		color: #d8dee9; /* nord-4 */

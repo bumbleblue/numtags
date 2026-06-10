@@ -95,8 +95,11 @@
 		margin-right: 0.05em;
 	}
 
+	/* Out of flow so a dotted digit stays column-aligned with plain digits;
+	   the dot overhangs into the cell's 0.45em right padding. */
 	.dotafter {
-		margin-left: 0.1em;
+		position: absolute;
+		left: calc(100% + 0.08em);
 	}
 
 	/* Octave colour cues (§9, secondary to the marks) */
