@@ -2,42 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Everson Mono Font Loading */
+/* Notation font: Cutive Mono (single 400 weight; bold is synthesized) */
 @font-face {
-  font-family: "Everson Mono";
-  src: url("/fonts/Everson Mono.ttf") format("truetype");
+  font-family: "Cutive Mono";
+  src: url("/fonts/CutiveMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* UI font: iA Writer Quattro */
+@font-face {
+  font-family: "iA Writer Quattro";
+  src: url("/fonts/iAWriterQuattroS-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Everson Mono";
-  src: url("/fonts/Everson Mono Oblique.ttf") format("truetype");
+  font-family: "iA Writer Quattro";
+  src: url("/fonts/iAWriterQuattroS-Italic.woff2") format("woff2");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Everson Mono";
-  src: url("/fonts/Everson Mono Bold.ttf") format("truetype");
+  font-family: "iA Writer Quattro";
+  src: url("/fonts/iAWriterQuattroS-Bold.woff2") format("woff2");
   font-weight: 700;
-  font-style: bold;
+  font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Everson Mono";
-  src: url("/fonts/Everson Mono Bold Oblique.ttf") format("truetype");
+  font-family: "iA Writer Quattro";
+  src: url("/fonts/iAWriterQuattroS-BoldItalic.woff2") format("woff2");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
 }
 
 @layer base {
+  /* "Field recordings" theme tokens — mirror the nord-* slots in
+     tailwind.config.js; components that can't use utility classes
+     (NotationRenderer, BeatCell) read these. */
+  :root {
+    --paper-0: #1a1714; /* page background */
+    --paper-1: #221e19; /* cards / measure blocks */
+    --paper-2: #2e2823; /* raised / alternate measures */
+    --paper-3: #3d352c; /* lightest structure, borders */
+    --ink: #e8e0d1; /* primary text */
+    --ink-bright: #f5efe4; /* emphasis */
+    --ink-muted: #b9ab96; /* secondary text */
+    --brass: #c8a96d; /* muted accent (octave-shifted notes) */
+    --amber: #e3a84e; /* primary accent */
+    --gold: #ebcb8b; /* lyrics */
+    --rust: #d4665a; /* errors */
+  }
+
   html {
-    font-family: "Source Sans 3", "Source Sans Pro", system-ui, sans-serif;
+    font-family: "iA Writer Quattro", system-ui, sans-serif;
   }
 
   body {
@@ -90,7 +116,7 @@
     appearance: none;
 
     /* Add custom arrow */
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23e5e9f0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23b9ab96' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;

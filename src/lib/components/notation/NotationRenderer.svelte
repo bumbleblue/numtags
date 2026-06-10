@@ -204,7 +204,7 @@
 		   arithmetic and the CSS agree exactly. */
 		--row-h: 2.6em; /* room for octave dots above + tick/dot bands below */
 		--lyric-h: 1.5em;
-		color: #d8dee9; /* nord-4 */
+		color: var(--ink);
 		min-width: 0;
 	}
 
@@ -214,8 +214,8 @@
 
 	/* Frame around one staff (carries the old renderer's look) */
 	.staff-frame {
-		background: #2e3440; /* nord-0 — darker than the measure blocks */
-		border: 1px solid #4c566a; /* nord-3 */
+		background: var(--paper-0); /* darker than the measure blocks */
+		border: 1px solid var(--paper-3);
 		border-radius: 4px;
 		padding: 0.35rem;
 	}
@@ -259,7 +259,7 @@
 		position: sticky;
 		left: 0;
 		z-index: 2;
-		background: #2e3440; /* nord-0, covers content scrolling beneath */
+		background: var(--paper-0); /* covers content scrolling beneath */
 	}
 
 	/* NOTE: cells that size themselves with var(--row-h)/var(--lyric-h) must
@@ -276,7 +276,7 @@
 	.label-text {
 		font-size: 0.6em;
 		font-weight: 400;
-		color: rgba(216, 222, 233, 0.45); /* nord-4, subtle */
+		color: color-mix(in srgb, var(--ink) 45%, transparent);
 	}
 
 	.label-cell.lyric-row {
@@ -287,7 +287,7 @@
 	.measure {
 		display: grid;
 		grid-template-columns: repeat(var(--cols), var(--beat-w));
-		background: #3b4252; /* nord-1 */
+		background: var(--paper-1);
 		border-radius: 2px;
 		padding: 0.15rem 3px; /* inline padding ≈ MEASURE_EXTRA */
 		overflow: visible;
@@ -295,13 +295,13 @@
 	}
 
 	.measure.alt {
-		background: #434c5e; /* nord-2 */
+		background: var(--paper-2);
 	}
 
 	/* Pickup floats on the frame background; its right border is barline 1 */
 	.measure.pickup {
 		background: transparent;
-		border-right: 1px solid #4c566a; /* nord-3 */
+		border-right: 1px solid var(--paper-3);
 		border-radius: 0;
 	}
 
@@ -324,11 +324,11 @@
 		font-size: 0.7em;
 		font-weight: 700;
 		white-space: nowrap;
-		color: #d8dee9; /* nord-4 */
+		color: var(--gold);
 	}
 
 	/* Separator between the last voice row and the first lyric row */
 	.lyric-sep {
-		border-top: 1px solid rgba(76, 86, 106, 0.5); /* nord-3, subtle */
+		border-top: 1px solid color-mix(in srgb, var(--paper-3) 50%, transparent);
 	}
 </style>

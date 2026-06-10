@@ -75,7 +75,7 @@
 		position: relative;
 		font-weight: 700;
 		line-height: 1;
-		color: #d8dee9; /* nord-4 — home octave */
+		color: var(--ink); /* home octave */
 		overflow: visible;
 	}
 
@@ -104,10 +104,10 @@
 
 	/* Octave colour cues (§9, secondary to the marks) */
 	.oct-up {
-		color: #eceff4; /* nord-6, brighter */
+		color: var(--ink-bright);
 	}
 	.oct-down {
-		color: #81a1c1; /* nord-9, steel blue */
+		color: var(--brass);
 	}
 
 	/* ── CSS-drawn marks, centred on the digit ─────────────────────────── */
@@ -145,17 +145,17 @@
 		border-radius: 9999px;
 	}
 	.odot.up {
-		background: #eceff4; /* nord-6 */
+		background: var(--ink-bright);
 	}
 	.odot.down {
-		background: #81a1c1; /* nord-9 */
+		background: var(--brass);
 	}
 
 	.tick {
 		width: 0.55em;
 		height: 0.1em;
 		border-radius: 0.05em;
-		background: rgba(229, 233, 240, 0.85); /* nord-5 — line shape, neutral colour */
+		background: color-mix(in srgb, var(--ink) 85%, transparent); /* line shape, neutral colour */
 	}
 
 	/* Tie arc ⌒ entering the cell from the left (CSS border arc, no glyph) */
@@ -189,14 +189,14 @@
 	}
 
 	.invalid {
-		background: rgba(191, 97, 106, 0.12); /* nord-11 wash */
+		background: color-mix(in srgb, var(--rust) 12%, transparent);
 		border-radius: 2px;
 		justify-content: center;
 		cursor: help;
 	}
 	.invalid-text {
 		font-size: 0.85em;
-		text-decoration: underline wavy #bf616a; /* nord-11 */
+		text-decoration: underline wavy var(--rust);
 		text-decoration-thickness: 0.08em;
 		text-underline-offset: 0.2em;
 	}
