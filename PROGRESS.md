@@ -3,6 +3,26 @@
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
 Last updated: 2026-06-11 (branch `fable-rebuild`).
 
+## Where we left off (session of 2026-06-10/11)
+
+- Branch `fable-rebuild`, 14 commits ahead of the `9edb17e` baseline; latest
+  is `d5edb0e` (beat-anchored lyric editor). **Not yet merged to `main`.**
+- 193 vitest green, svelte-check clean, production build passing at the last
+  commit. Run `npm test && npm run build` after finishing the theme pass.
+- **Uncommitted in the working tree (in-progress theme iteration, second
+  round):** `app.css`, `app.html`, `tailwind.config.js`, `BeatCell.svelte`,
+  `TagCard.svelte`, `OriginBadge.svelte`, `+layout.svelte`, `+page.svelte`,
+  `manifest.json`, `static/fonts/` changes (CutiveMono-Regular.woff2 deleted
+  — if the notation font changes, update the `@font-face` + the preload in
+  `app.html`, which currently points at CutiveMono).
+- The **review screen lyric editor** is new (`d5edb0e`): source textarea =
+  voice lines only; lyrics are per-beat inputs in the preview (Tab =
+  hyphenate + advance, Space = next word). Helpers in
+  `src/lib/notation/lyrics.ts`; renderer edit mode in `NotationRenderer`.
+- Next candidates: finish/commit the theme; merge to `main`; then the M5
+  items below (deploy `services/`, History screen). A `/dev/notation`
+  torture-test route exists for renderer work.
+
 ## Done
 
 - **M1 — Core read app.** Library (search/filter over catalog + your local

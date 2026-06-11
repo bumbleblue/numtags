@@ -1,6 +1,6 @@
 # numtags
 
-Barbershop tags (short 4-voice a cappella snippets) in a custom numeric notation. Installable PWA, mobile-first, offline-capable. **FABLE_SPEC.md is the source of truth** — when this file and the spec disagree, the spec wins; read the relevant section before changing notation/import/catalog behavior.
+Barbershop tags (short 4-voice a cappella snippets) in a custom numeric notation. Installable PWA, mobile-first, offline-capable. **FABLE_SPEC.md is the source of truth** — when this file and the spec disagree, the spec wins; read the relevant section before changing notation/import/catalog behavior. **PROGRESS.md tracks build status and where the last session left off** — read it at the start of a session.
 
 ## Commands
 
