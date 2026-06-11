@@ -188,16 +188,16 @@
 		opacity: 0.1;
 	}
 
+	/* Unparseable token: shown muted, not alarmed — the error affordance
+	   (squiggle + message) lives with the source input, not the preview. */
 	.invalid {
-		background: color-mix(in srgb, var(--error) 12%, transparent);
-		border-radius: 2px;
 		justify-content: center;
 		cursor: help;
+		opacity: 0.55;
 	}
 	.invalid-text {
 		font-size: 0.85em;
-		text-decoration: underline wavy var(--error);
-		text-decoration-thickness: 0.08em;
-		text-underline-offset: 0.2em;
+		font-weight: 400;
+		border-bottom: 1px dotted var(--ink-muted);
 	}
 </style>

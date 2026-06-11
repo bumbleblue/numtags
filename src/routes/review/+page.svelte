@@ -15,8 +15,9 @@
 	import { beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { env } from '$env/dynamic/public';
-	import { onMount, tick } from 'svelte';
+	import { onMount } from 'svelte';
 	import NotationRenderer from '$lib/components/notation/NotationRenderer.svelte';
+	import SourceEditor from '$lib/components/notation/SourceEditor.svelte';
 	import { clearDraft, getDraft, setDraft, type Draft } from '$lib/draft';
 	import { allTags } from '$lib/generated-tags';
 	import { deleteLocalTag, getLocalTag, saveLocalTag } from '$lib/library/db';
@@ -64,7 +65,8 @@
 	let publishError = $state('');
 	let editorName = $state('');
 	let tab = $state<'source' | 'details'>('source');
-	let srcEl = $state<HTMLTextAreaElement>();
+	// Mobile (< lg): the input and the preview toggle; desktop shows both.
+	let view = $state<'edit' | 'preview'>('edit');
 
 	const isCatalogEdit = $derived(draft?.editing?.kind === 'catalog');
 	const isImageImport = $derived(draft?.tag.metadata.origin === 'imported-image');
@@ -77,10 +79,7 @@
 				? "You're offline — save a private copy now, publish later"
 				: '',
 	);
-	const liveWarnings = $derived([
-		...parsed.warnings.map((w) => w.message + (w.line ? ` (line ${w.line})` : '')),
-		...beatMismatchWarnings(parsed),
-	]);
+	const beatWarnings = $derived(beatMismatchWarnings(parsed));
 
 	onMount(async () => {
 		editorName = localStorage.getItem('numtags-editor-name') ?? '';
@@ -255,21 +254,6 @@
 		touch();
 	}
 
-	const GLYPHS = ['#', 'b', "'", ',', '/', '.', '~', '0', 'X', '|', '_', '-'];
-
-	async function insertGlyph(glyph: string) {
-		const el = srcEl;
-		const start = el?.selectionStart ?? voiceBody.length;
-		const end = el?.selectionEnd ?? start;
-		voiceBody = voiceBody.slice(0, start) + glyph + voiceBody.slice(end);
-		touch();
-		await tick();
-		if (el) {
-			el.focus();
-			el.selectionStart = el.selectionEnd = start + glyph.length;
-		}
-	}
-
 	/**
 	 * Lenient normalize on blur/paste — never blocking (§6.6). If a full body
 	 * (with lyric lines) lands in the voice textarea, the lyric lines move
@@ -390,7 +374,7 @@
 
 <svelte:window ononline={() => (online = true)} onoffline={() => (online = false)} />
 
-<div class="max-w-4xl mx-auto space-y-4">
+<div class="max-w-6xl mx-auto space-y-4">
 	<header class="flex items-baseline justify-between gap-3 flex-wrap">
 		<h1 class="text-2xl sm:text-3xl font-bold text-nord-6">Review &amp; edit</h1>
 		{#if loaded && draft}
@@ -449,36 +433,125 @@
 			</div>
 		{/if}
 
-		<!-- live preview + beat-anchored lyric editor (§6.5/§6.6) -->
-		<section class="card-bg border rounded p-3 sm:p-4 space-y-2">
-			<NotationRenderer
-				{parsed}
-				mode="wrapped"
-				fontScale={settings.fontScale}
-				editableLyrics
-				{lyricCells}
-				onlyricinput={onLyricInput}
-			/>
-			<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-				<p class="text-xs text-nord-5">
-					Type lyrics under the notes — <kbd class="font-mono">Tab</kbd> continues a word
-					(adds the hyphen), <kbd class="font-mono">Space</kbd> starts the next word.
-				</p>
-				<button class="text-xs text-nord-8 underline min-h-[44px]" onclick={addLyricRow}>
-					+ alternate lyric row
-				</button>
-				{#if hasExtraRows}
-					<button class="text-xs text-nord-5 underline min-h-[44px]" onclick={removeEmptyLyricRows}>
-						remove empty rows
-					</button>
+		<!-- mobile: the input and the preview toggle (desktop shows both) -->
+		<div class="lg:hidden inline-flex rounded border border-nord-3 overflow-hidden" role="tablist" aria-label="Editor view">
+			<button
+				role="tab"
+				aria-selected={view === 'edit'}
+				class="px-4 min-h-[44px] text-sm {view === 'edit'
+					? 'bg-nord-8 text-nord-0 font-medium'
+					: 'bg-nord-1 text-nord-4'}"
+				onclick={() => (view = 'edit')}>Input</button
+			>
+			<button
+				role="tab"
+				aria-selected={view === 'preview'}
+				class="px-4 min-h-[44px] text-sm {view === 'preview'
+					? 'bg-nord-8 text-nord-0 font-medium'
+					: 'bg-nord-1 text-nord-4'}"
+				onclick={() => (view = 'preview')}>Preview</button
+			>
+		</div>
+
+		<!-- input ⟷ preview, side by side on desktop (§6.5) -->
+		<div class="lg:grid lg:grid-cols-2 lg:gap-4 lg:items-start space-y-4 lg:space-y-0">
+			<!-- input pane: source ⟷ metadata tabs, errors live here -->
+			<div class="space-y-3 {view === 'preview' ? 'hidden lg:block' : ''}">
+				<div class="inline-flex rounded border border-nord-3 overflow-hidden" role="tablist">
+					<button
+						role="tab"
+						aria-selected={tab === 'source'}
+						class="px-4 min-h-[44px] text-sm {tab === 'source'
+							? 'bg-nord-8 text-nord-0 font-medium'
+							: 'bg-nord-1 text-nord-4'}"
+						onclick={() => (tab = 'source')}>Notation source</button
+					>
+					<button
+						role="tab"
+						aria-selected={tab === 'details'}
+						class="px-4 min-h-[44px] text-sm {tab === 'details'
+							? 'bg-nord-8 text-nord-0 font-medium'
+							: 'bg-nord-1 text-nord-4'}"
+						onclick={() => (tab = 'details')}>Details</button
+					>
+				</div>
+
+				{#if tab === 'source'}
+					<SourceEditor
+						bind:value={voiceBody}
+						warnings={parsed.warnings}
+						extraWarnings={beatWarnings}
+						oninput={touch}
+						onnormalize={normalizeBody}
+					/>
+					<p class="text-xs text-nord-5">
+						Notes and measures only — voices top-to-bottom: Tenor, Lead, Baritone, Bass.
+						Whitespace is cosmetic; <code class="font-mono">|</code> marks measures. Lyrics are
+						typed under the notes in the preview (pasting a full tag with lyric lines
+						still works — they move into the lyric editor).
+					</p>
+				{:else}
+					<section class="card-bg border rounded p-4 grid gap-4 sm:grid-cols-2">
+						<label class="block text-sm text-nord-4">
+							Title
+							<input type="text" class="search-input !py-2 mt-1" bind:value={meta.title} oninput={touch} placeholder="Untitled" />
+						</label>
+						<label class="block text-sm text-nord-4">
+							Arranger
+							<input type="text" class="search-input !py-2 mt-1" bind:value={meta.arranger} oninput={touch} placeholder="unknown" />
+						</label>
+						<label class="block text-sm text-nord-4">
+							Difficulty
+							<select class="search-input !py-2 mt-1" bind:value={meta.difficulty} onchange={touch}>
+								<option>Easy</option>
+								<option>Medium</option>
+								<option>Hard</option>
+							</select>
+						</label>
+						<label class="block text-sm text-nord-4">
+							Source URL
+							<input type="url" class="search-input !py-2 mt-1" bind:value={meta.source_url} oninput={touch} placeholder="https://www.barbershoptags.com/…" />
+						</label>
+						<label class="block text-sm text-nord-4 sm:col-span-2">
+							Lyrics
+							<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.lyrics} oninput={touch}></textarea>
+						</label>
+						<label class="block text-sm text-nord-4 sm:col-span-2">
+							Comments
+							<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.comments} oninput={touch}></textarea>
+						</label>
+					</section>
 				{/if}
 			</div>
-			{#if liveWarnings.length > 0}
-				<ul class="text-sm text-nord-13 list-disc ml-5 space-y-0.5" aria-live="polite">
-					{#each liveWarnings as w}<li>{w}</li>{/each}
-				</ul>
-			{/if}
-		</section>
+
+			<!-- preview pane: live render + beat-anchored lyric editor (§6.5/§6.6) -->
+			<div class="{view === 'edit' ? 'hidden lg:block' : ''} lg:sticky lg:top-4">
+				<section class="card-bg border rounded p-3 sm:p-4 space-y-2">
+					<NotationRenderer
+						{parsed}
+						mode="wrapped"
+						fontScale={settings.fontScale}
+						editableLyrics
+						{lyricCells}
+						onlyricinput={onLyricInput}
+					/>
+					<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+						<p class="text-xs text-nord-5">
+							Type lyrics under the notes — <kbd class="font-mono">Tab</kbd> continues a word
+							(adds the hyphen), <kbd class="font-mono">Space</kbd> starts the next word.
+						</p>
+						<button class="text-xs text-nord-8 underline min-h-[44px]" onclick={addLyricRow}>
+							+ alternate lyric row
+						</button>
+						{#if hasExtraRows}
+							<button class="text-xs text-nord-5 underline min-h-[44px]" onclick={removeEmptyLyricRows}>
+								remove empty rows
+							</button>
+						{/if}
+					</div>
+				</section>
+			</div>
+		</div>
 
 		<!-- §6.5 controls: key (re-encodes when a score exists) + voice octaves -->
 		<section class="card-bg border rounded p-3 sm:p-4 space-y-3">
@@ -526,90 +599,6 @@
 				{/each}
 			</div>
 		</section>
-
-		<!-- tabs: source ⟷ metadata -->
-		<div class="inline-flex rounded border border-nord-3 overflow-hidden" role="tablist">
-			<button
-				role="tab"
-				aria-selected={tab === 'source'}
-				class="px-4 min-h-[44px] text-sm {tab === 'source'
-					? 'bg-nord-8 text-nord-0 font-medium'
-					: 'bg-nord-1 text-nord-4'}"
-				onclick={() => (tab = 'source')}>Notation source</button
-			>
-			<button
-				role="tab"
-				aria-selected={tab === 'details'}
-				class="px-4 min-h-[44px] text-sm {tab === 'details'
-					? 'bg-nord-8 text-nord-0 font-medium'
-					: 'bg-nord-1 text-nord-4'}"
-				onclick={() => (tab = 'details')}>Details</button
-			>
-		</div>
-
-		{#if tab === 'source'}
-			<section class="space-y-2">
-				<!-- glyph toolbar (§6.6 discoverability) -->
-				<div class="flex flex-wrap gap-1" aria-label="Insert notation glyph">
-					{#each GLYPHS as g}
-						<button
-							class="btn-secondary !px-0 w-11 min-h-[44px] font-mono text-base"
-							onclick={() => insertGlyph(g)}>{g}</button
-						>
-					{/each}
-				</div>
-				<textarea
-					bind:this={srcEl}
-					bind:value={voiceBody}
-					oninput={touch}
-					onblur={normalizeBody}
-					onpaste={() => setTimeout(normalizeBody)}
-					rows={Math.max(6, voiceBody.split('\n').length + 2)}
-					spellcheck="false"
-					autocapitalize="off"
-					autocomplete="off"
-					class="w-full font-mono text-sm leading-relaxed p-3 rounded border border-nord-3 bg-nord-1 text-nord-4 focus:ring-2 focus:ring-nord-8 focus:border-transparent whitespace-pre overflow-x-auto"
-					aria-label="Notation source — voice lines only (ASCII shorthand)"
-				></textarea>
-				<p class="text-xs text-nord-5">
-					Notes and measures only — voices top-to-bottom: Tenor, Lead, Baritone, Bass.
-					Whitespace is cosmetic; <code class="font-mono">|</code> marks measures. Lyrics are
-					typed under the notes in the preview above (pasting a full tag with lyric lines
-					still works — they move up into the lyric editor).
-				</p>
-			</section>
-		{:else}
-			<section class="card-bg border rounded p-4 grid gap-4 sm:grid-cols-2">
-				<label class="block text-sm text-nord-4">
-					Title
-					<input type="text" class="search-input !py-2 mt-1" bind:value={meta.title} oninput={touch} placeholder="Untitled" />
-				</label>
-				<label class="block text-sm text-nord-4">
-					Arranger
-					<input type="text" class="search-input !py-2 mt-1" bind:value={meta.arranger} oninput={touch} placeholder="unknown" />
-				</label>
-				<label class="block text-sm text-nord-4">
-					Difficulty
-					<select class="search-input !py-2 mt-1" bind:value={meta.difficulty} onchange={touch}>
-						<option>Easy</option>
-						<option>Medium</option>
-						<option>Hard</option>
-					</select>
-				</label>
-				<label class="block text-sm text-nord-4">
-					Source URL
-					<input type="url" class="search-input !py-2 mt-1" bind:value={meta.source_url} oninput={touch} placeholder="https://www.barbershoptags.com/…" />
-				</label>
-				<label class="block text-sm text-nord-4 sm:col-span-2">
-					Lyrics
-					<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.lyrics} oninput={touch}></textarea>
-				</label>
-				<label class="block text-sm text-nord-4 sm:col-span-2">
-					Comments
-					<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.comments} oninput={touch}></textarea>
-				</label>
-			</section>
-		{/if}
 
 		<!-- actions (§6.5) -->
 		{#if saveError}<p class="text-sm text-nord-11" role="alert">{saveError}</p>{/if}
