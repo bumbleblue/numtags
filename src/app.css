@@ -37,34 +37,37 @@
 }
 
 @layer base {
-  /* "Field recordings" theme tokens — warm-ish monochrome. Mirror the
-     nord-* slots in tailwind.config.js; components that can't use
-     utility classes (NotationRenderer, BeatCell) read these. */
+  /* Theme tokens — Base16 Default Dark (Chris Kempson). Mirror the
+     paper/ink/accent slots in tailwind.config.js; components that can't
+     use utility classes (NotationRenderer, BeatCell) read these. */
   :root {
-    --paper-0: #121110; /* page background */
-    --paper-1: #181716; /* cards / measure blocks */
-    --paper-2: #21201e; /* raised / alternate measures */
-    --paper-3: #34322e; /* box borders, structure */
-    --ink: #e5e3de; /* primary text */
-    --ink-bright: #f2f1ed; /* emphasis */
-    --ink-muted: #93908a; /* secondary text */
-    --note-alt: #b1aea7; /* octave-shifted notes */
-    --lyric: #b1aea7; /* lyric line */
-    --error: #c46a5e; /* errors */
+    --paper-0: #151515; /* page background (base00) */
+    --paper-1: #202020; /* cards / measure blocks (base01) */
+    --paper-2: #303030; /* raised / alternate measures (base02) */
+    --paper-3: #505050; /* box borders, structure (base03) */
+    --ink: #e0e0e0; /* primary text (base06) */
+    --ink-bright: #f5f5f5; /* emphasis (base07) */
+    --ink-muted: #b0b0b0; /* secondary text (base04) */
+    --note-up: #b0bf8f; /* octave-up notes (base0B green, 60% toward ink) */
+    --note-down: #c0a0b9; /* octave-down notes (base0E magenta, 60% toward ink) */
+    --lyric: #f4bf75; /* lyric line (base0A yellow) */
+    --error: #ac4142; /* errors (base08 red) */
   }
 
   html {
     font-family: "iA Writer Quattro", system-ui, sans-serif;
+    /* Quattro ss02: the double-story "squiggly" g (inherits everywhere) */
+    font-feature-settings: "ss02" on;
   }
 
   body {
-    @apply bg-nord-0 text-nord-4;
+    @apply bg-paper-0 text-ink;
   }
 }
 
 @layer components {
   .search-input {
-    @apply w-full px-4 py-3 border border-nord-3 rounded focus:outline-none focus:border-nord-5 focus:ring-0 bg-transparent text-nord-4 placeholder-nord-5;
+    @apply w-full px-4 py-3 border border-paper-3 rounded focus:outline-none focus:border-ink-muted focus:ring-0 bg-transparent text-ink placeholder-ink-muted;
   }
 
   /* Image generation styling - force black text */
@@ -74,30 +77,30 @@
   }
 
   .btn-primary {
-    @apply bg-nord-8 hover:bg-nord-9 text-nord-0 font-medium py-2 px-4 rounded transition-colors duration-200;
+    @apply bg-accent hover:bg-accent-hover text-paper-0 font-medium py-2 px-4 rounded transition-colors duration-200;
   }
 
   .btn-secondary {
-    @apply bg-transparent border border-nord-3 hover:border-nord-5 text-nord-4 font-medium py-2 px-4 rounded transition-colors duration-200;
+    @apply bg-transparent border border-paper-3 hover:border-ink-muted text-ink font-medium py-2 px-4 rounded transition-colors duration-200;
   }
 
   /* JD-style boxes: transparent fill, the 1px border does the work
      (pair with the `border` utility in markup). */
   .card-bg {
-    @apply bg-transparent border-nord-3;
+    @apply bg-transparent border-paper-3;
   }
 
   /* Text colors - all using Snow Storm for better readability */
   .text-primary {
-    @apply text-nord-4;
+    @apply text-ink;
   }
 
   .text-secondary {
-    @apply text-nord-4;
+    @apply text-ink;
   }
 
   .text-muted {
-    @apply text-nord-5;
+    @apply text-ink-muted;
   }
 
   /* Dropdown arrow */
@@ -108,7 +111,7 @@
     appearance: none;
 
     /* Add custom arrow */
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2393908a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23b0b0b0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
