@@ -77,17 +77,29 @@ describe('parse — other tokens', () => {
 		expect(beat('0')).toEqual({ kind: 'rest' });
 	});
 
-	it('parses one or more X as posted', () => {
+	it('parses one or more X as posted — lowercase x accepted as input', () => {
 		expect(beat('X')).toEqual({ kind: 'posted' });
 		expect(beat('XXX')).toEqual({ kind: 'posted' });
+		expect(beat('x')).toEqual({ kind: 'posted' });
+		expect(beat('xx')).toEqual({ kind: 'posted' });
 	});
 
 	it('marks unparseable tokens invalid with raw set, plus a warning — never throws', () => {
 		for (const raw of ['9', '5x', "5',", '3///', '..', 'wat', '~-']) {
 			const { staffs, warnings } = parse(`| ${raw} |`);
-			expect(staffs[0].measures[0][0][0]).toEqual({ kind: 'invalid', raw });
+			expect(staffs[0].measures[0][0][0]).toEqual({ kind: 'invalid', raw, col: 2 });
 			expect(warnings.some((w) => w.message.includes(`"${raw}"`))).toBe(true);
 		}
+	});
+
+	it('reports the column and length of an invalid token (for inline markers)', () => {
+		const { warnings } = parse('| 1 wat 2 |\n| 1 2 3 |\n| 1 2 3 |\n| 1 2 3 |');
+		expect(warnings).toMatchObject([{ token: 'wat', line: 1, col: 4, length: 3 }]);
+	});
+
+	it('counts the column after a voice label prefix', () => {
+		const { warnings } = parse('Tenor: | wat |\n| 1 |\n| 1 |\n| 1 |');
+		expect(warnings).toMatchObject([{ token: 'wat', col: 9 }]);
 	});
 
 	it('reports the line and staff of an invalid token', () => {

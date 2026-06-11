@@ -23,6 +23,7 @@ export interface Beat {
 	dotted?: boolean; // `.`
 	tiedFromPrev?: boolean; // `~`
 	raw?: string; // original token text (always set for 'invalid')
+	col?: number; // 0-based source column of the token (set for 'invalid')
 }
 
 /**
@@ -50,6 +51,9 @@ export interface ParseWarning {
 	message: string;
 	staffIndex?: number;
 	line?: number; // 1-based line number in the body
+	col?: number; // 0-based column of the offending token, when known
+	length?: number; // length of the offending token, when known
+	token?: string; // the offending token text, when the warning is about one
 }
 
 export interface ParsedTag {
