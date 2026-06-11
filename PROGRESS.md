@@ -1,7 +1,30 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-06-11 (branch `fable-rebuild`).
+Last updated: 2026-06-11 (branch `fable-rebuild` + playback worktree branch).
+
+## Where we left off (session of 2026-06-11, playback)
+
+- **Notation playback shipped (spec §6.9, a deliberate post-v1 scope
+  addition).** New `src/lib/audio/` module: `pitch.ts` (Beat → MIDI via the
+  §6.4 convention, reusing encode.ts key math), `schedule.ts` (ParsedTag →
+  column-aligned note timeline; pure, tested), `synth.ts` (dependency-free
+  piano-ish Web Audio voice), `player.svelte.ts` (runes singleton; one tag
+  at a time, solo or full mix, rAF-driven playhead).
+- UI: tag detail gets a **Play/Stop** button beside the layout toggle; the
+  renderer's **voice labels are solo play buttons** (glyphs revealed on
+  staff hover; always faintly visible under `hover: none`); the sounding
+  column gets an ink-wash **follow-along highlight** (one row when solo).
+  Leaving the page stops audio.
+- Decisions locked with Eileen: include highlight in v1; solo + all only
+  (no part-predominant yet); fixed ~90 BPM; piano-like accuracy-over-beauty
+  timbre. Later niceties listed at the end of §6.9.
+- Gotchas encountered (worth remembering): Svelte 5 deep-proxy breaks
+  `===` identity on `$state` objects — the player uses `$state.raw`; a
+  suspended AudioContext (no user activation) is handled by bailing out of
+  `play()` after a 500 ms resume race. `vite.config.ts` now honors `PORT`
+  for preview harnesses. Dev console handle: `window.__player`.
+- 211 vitest green (18 new audio tests), svelte-check clean.
 
 ## Where we left off (session of 2026-06-10/11)
 
@@ -61,4 +84,5 @@ Last updated: 2026-06-11 (branch `fable-rebuild`).
 - First-contribution CC0 affirmation as a real gate (currently static text).
 - Evaluate homr accuracy on real barbershoptags GIFs; confirm homr +
   weights licensing (§14).
-- Audio playback / learning tracks remain non-goals for v1 (§1).
+- Learning-track MP3s remain a non-goal; **notation playback is now in**
+  (§6.9 — see the playback session notes above).

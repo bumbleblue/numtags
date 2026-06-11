@@ -15,9 +15,11 @@
 	import { parse } from '$lib/notation/parse';
 	import {
 		VOICE_ABBREV,
+		VOICE_NAMES,
 		type Beat,
 		type ParsedTag,
 	} from '$lib/notation/types';
+	import type { Playhead } from '$lib/audio/player.svelte';
 	import BeatCell from './BeatCell.svelte';
 
 	interface Props {
@@ -39,6 +41,16 @@
 		editableLyrics?: boolean;
 		lyricCells?: string[][][];
 		onlyricinput?: (staff: number, row: number, flat: number, value: string) => void;
+		/**
+		 * Playback (spec §6.9): `onplayvoice` turns the voice labels into
+		 * play/stop buttons (revealed on staff hover; always faintly visible on
+		 * touch). `playhead` washes the sounding column — all voices for the
+		 * full mix, one row when `playhead.voice` is set. `playingVoice` marks
+		 * which solo voice is sounding so its label shows stop.
+		 */
+		playhead?: Playhead | null;
+		playingVoice?: number | null;
+		onplayvoice?: (voice: number) => void;
 	}
 
 	let {
@@ -50,6 +62,9 @@
 		editableLyrics = false,
 		lyricCells,
 		onlyricinput,
+		playhead = null,
+		playingVoice = null,
+		onplayvoice,
 	}: Props = $props();
 
 	const tag: ParsedTag = $derived(parsed ?? parse(body ?? ''));
@@ -59,7 +74,8 @@
 	// Edit mode widens beat columns so syllables fit their inputs (inputs
 	// can't overhang the way rendered spans do); wrapping refits automatically.
 	const BEAT_PX = $derived(Math.round((editableLyrics ? 56 : 38) * fontScale));
-	const LABEL_PX = $derived(Math.round(26 * fontScale)); // voice-label column
+	// Voice-label column; wider when labels double as play buttons.
+	const LABEL_PX = $derived(Math.round((onplayvoice ? 42 : 26) * fontScale));
 	const MEASURE_EXTRA = 8; // measure block inline padding + border
 	const MEASURE_GAP = 2; // column-gap between blocks in a system
 	const FRAME_PAD = 16; // staff frame inline padding + border
@@ -181,9 +197,15 @@
 		class:pickup={isPickup}
 		style="--cols: {measure[0]?.length ?? 1}"
 	>
-		{#each measure as voiceBeats}
-			{#each voiceBeats as beat}
-				<BeatCell {beat} />
+		{#each measure as voiceBeats, vi}
+			{#each voiceBeats as beat, ci}
+				<BeatCell
+					{beat}
+					active={playhead !== null &&
+						playhead.staff === si &&
+						playhead.col === flatOffset + ci &&
+						(playhead.voice === null || playhead.voice === vi)}
+				/>
 			{/each}
 		{/each}
 		{#each lyricSlices as row, li}
@@ -214,7 +236,24 @@
 {#snippet labelCol(voiceCount: number, lyricRowCount: number, sticky: boolean)}
 	<div class="labels" class:sticky>
 		{#each { length: voiceCount } as _, vi}
-			<div class="label-cell"><span class="label-text">{VOICE_ABBREV[vi] ?? '·'}</span></div>
+			{#if onplayvoice && vi < VOICE_NAMES.length}
+				<button
+					class="label-cell play-btn"
+					onclick={() => onplayvoice(vi)}
+					aria-label="{playingVoice === vi ? 'Stop' : 'Play'} {VOICE_NAMES[vi]}"
+					aria-pressed={playingVoice === vi}
+				>
+					<span class="label-text">{VOICE_ABBREV[vi] ?? '·'}</span>
+					<span
+						class="play-glyph"
+						class:stop={playingVoice === vi}
+						class:on={playingVoice === vi}
+						aria-hidden="true"
+					></span>
+				</button>
+			{:else}
+				<div class="label-cell"><span class="label-text">{VOICE_ABBREV[vi] ?? '·'}</span></div>
+			{/if}
 		{/each}
 		{#each { length: lyricRowCount } as _, li}
 			<div class="label-cell lyric-row" class:lyric-sep={li === 0}></div>
@@ -375,6 +414,57 @@
 
 	.label-cell.lyric-row {
 		height: var(--lyric-h);
+	}
+
+	/* ── Voice play buttons (labels double as play/stop) ──────────────────
+	   Desktop: glyphs appear when hovering the staff. Touch (no hover):
+	   always faintly visible. The playing voice's stop glyph always shows. */
+	button.play-btn {
+		background: none;
+		border: none;
+		font: inherit;
+		color: inherit;
+		cursor: pointer;
+		gap: 0.3em;
+		padding-left: 0.2em;
+	}
+
+	.play-btn:hover .label-text,
+	.play-btn[aria-pressed='true'] .label-text {
+		color: var(--ink);
+	}
+
+	.play-glyph {
+		flex-shrink: 0;
+		width: 0;
+		height: 0;
+		border-left: 0.42em solid var(--ink-muted);
+		border-top: 0.3em solid transparent;
+		border-bottom: 0.3em solid transparent;
+		opacity: 0;
+		transition: opacity 120ms;
+	}
+
+	.play-glyph.stop {
+		width: 0.55em;
+		height: 0.55em;
+		border: none;
+		background: var(--ink);
+	}
+
+	.staff-frame:hover .play-glyph,
+	.play-btn:focus-visible .play-glyph,
+	.play-glyph.on {
+		opacity: 1;
+	}
+
+	@media (hover: none) {
+		.play-glyph {
+			opacity: 0.45;
+		}
+		.play-glyph.on {
+			opacity: 1;
+		}
 	}
 
 	/* ── Measure blocks: beats as grid columns, voices then lyrics as rows ─ */

@@ -18,7 +18,7 @@
 <script lang="ts">
 	import type { Beat } from '$lib/notation/types';
 
-	let { beat }: { beat: Beat } = $props();
+	let { beat, active = false }: { beat: Beat; active?: boolean } = $props();
 
 	const octave = $derived(beat.octave ?? 0);
 	const upDots = $derived(octave > 0 ? octave : 0);
@@ -27,7 +27,7 @@
 </script>
 
 {#if beat.kind === 'note'}
-	<div class="cell note" class:oct-up={upDots > 0} class:oct-down={downDots > 0}>
+	<div class="cell note" class:playhead={active} class:oct-up={upDots > 0} class:oct-down={downDots > 0}>
 		<span class="glyph">
 			{#if beat.tiedFromPrev}<span class="tie" aria-hidden="true"></span>{/if}
 			{#if beat.accidental}<span class="acc">{beat.accidental === 'sharp' ? '♯' : '♭'}</span>{/if}
@@ -52,17 +52,17 @@
 		</span>
 	</div>
 {:else if beat.kind === 'hold'}
-	<div class="cell hold">-</div>
+	<div class="cell hold" class:playhead={active}>-</div>
 {:else if beat.kind === 'rest'}
-	<div class="cell rest">0</div>
+	<div class="cell rest" class:playhead={active}>0</div>
 {:else if beat.kind === 'posted'}
-	<div class="cell posted">X</div>
+	<div class="cell posted" class:playhead={active}>X</div>
 {:else if beat.kind === 'invalid'}
-	<div class="cell invalid" title="Unparseable token: {beat.raw}">
+	<div class="cell invalid" class:playhead={active} title="Unparseable token: {beat.raw}">
 		<span class="invalid-text">{beat.raw}</span>
 	</div>
 {:else}
-	<div class="cell empty">&nbsp;</div>
+	<div class="cell empty" class:playhead={active}>&nbsp;</div>
 {/if}
 
 <style>
@@ -77,6 +77,12 @@
 		line-height: 1;
 		color: var(--ink); /* home octave */
 		overflow: visible;
+	}
+
+	/* Follow-along playhead: an ink-tint wash on the sounding cell(s) */
+	.playhead {
+		background: color-mix(in srgb, var(--ink) 16%, transparent);
+		border-radius: 2px;
 	}
 
 	.glyph {

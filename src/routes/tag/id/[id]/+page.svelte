@@ -7,6 +7,8 @@
 	import { isLocalId, deleteLocalTag } from '$lib/library/db';
 	import { settings, recallLayout, rememberLayout, type LayoutMode } from '$lib/settings.svelte';
 	import type { Tag } from '$lib/types';
+	import { parse } from '$lib/notation/parse';
+	import { player } from '$lib/audio/player.svelte';
 	import NotationRenderer from '$lib/components/notation/NotationRenderer.svelte';
 	import OriginBadge from '$lib/components/OriginBadge.svelte';
 
@@ -44,6 +46,25 @@
 		layout = mode;
 		rememberLayout(mode);
 	}
+
+	/* ── Playback (§6.9): one parsed model shared by renderer + player ──── */
+	const parsed = $derived(tag ? parse(tag.content) : null);
+	const playingHere = $derived(parsed !== null && player.playing?.token === parsed);
+	const playingAll = $derived(playingHere && player.playing?.mode === 'all');
+	const playingVoice = $derived(
+		playingHere && typeof player.playing?.mode === 'number' ? player.playing.mode : null,
+	);
+
+	function togglePlayAll() {
+		if (parsed) player.toggle(parsed, tag?.metadata.original_key, 'all');
+	}
+
+	function togglePlayVoice(voice: number) {
+		if (parsed) player.toggle(parsed, tag?.metadata.original_key, voice);
+	}
+
+	// Leaving the page stops the audio.
+	$effect(() => () => player.stop());
 
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
@@ -130,8 +151,18 @@
 			</p>
 		</div>
 
-		<!-- Layout toggle (§8.3) -->
-		<div class="flex justify-center mb-4">
+		<!-- Playback (§6.9) + layout toggle (§8.3) -->
+		<div class="flex justify-center items-center gap-3 mb-4">
+			<button
+				onclick={togglePlayAll}
+				class="min-h-[44px] px-5 inline-flex items-center gap-2 rounded border font-medium text-sm transition-colors {playingAll
+					? 'border-nord-4 text-nord-4'
+					: 'border-nord-3 text-nord-5 hover:text-nord-4'}"
+				aria-pressed={playingAll}
+			>
+				<span aria-hidden="true">{playingAll ? '◼' : '▶'}</span>
+				{playingAll ? 'Stop' : 'Play'}
+			</button>
 			<div
 				class="inline-flex rounded border border-nord-3 overflow-hidden"
 				role="group"
@@ -160,7 +191,14 @@
 
 		<!-- Notation -->
 		<div bind:this={notationEl} class="card-bg rounded border p-3 sm:p-5 mb-6">
-			<NotationRenderer body={tag.content} mode={layout} fontScale={settings.fontScale} />
+			<NotationRenderer
+				parsed={parsed ?? undefined}
+				mode={layout}
+				fontScale={settings.fontScale}
+				playhead={playingHere ? player.playhead : null}
+				{playingVoice}
+				onplayvoice={togglePlayVoice}
+			/>
 		</div>
 
 		<!-- Actions -->

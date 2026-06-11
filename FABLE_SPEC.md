@@ -16,7 +16,7 @@ This document is the source of truth for the rebuild. It assumes no prior knowle
 
 ### Non-goals (for v1)
 - User accounts / login, and personal cross-device sync. *(Catalog editing is name-only — no auth; the shared catalog is Git-backed, but your **private** library stays local-only.)*
-- Audio playback (learning-track MP3, MIDI/notation playback). *MIDI as an **import source** is in scope — see §6.2; this non-goal is only about playing audio.*
+- Learning-track MP3 playback. *(Superseded in part: synthesized notation playback was added post-v1 as §6.9 — a pitch reference, not learning tracks. MIDI as an **import source** was always in scope — see §6.2.)*
 - Authoring original music (all tags are CC0 translations of barbershoptags.com sources).
 
 ---
@@ -317,6 +317,15 @@ The public catalog is a shared, editable corpus — not a frozen snapshot. Anyon
 - **Optimistic concurrency.** An edit carries the base file's blob SHA (GitHub's Contents API requires it). If someone committed first, the write is rejected and the app prompts "this tag changed — reload & re-apply." No silent clobber.
 - **Offline = read-only.** Reads come from the cached snapshot; **editing needs connectivity** (a commit). Offline edit-queueing is a later nicety (§14).
 - **Cheap abuse defenses** (the real net is revert): server-side rate-limiting, a **recent-changes feed**, a **report** button, size/parse sanity checks, and a **CC0 + faithful-translation affirmation** on first contribution.
+
+### 6.9 Notation playback (post-v1 scope addition)
+Synthesize the notation itself — a **pitch reference, not a learning track**. No MIDI files, no samples, no network: a hand-rolled Web Audio piano-ish synth (`src/lib/audio/`), so the PWA stays fully offline.
+
+- **Pitch** = the §6.4 mapping run forward: movable-Do degree + accidental + octave marks against `original_key` (tonic homed at octave 4); keyless tags default to C — movable-Do makes any tonic "correct."
+- **Time** = the beat grid, exactly as written (§3.2 crude rhythm is a feature — playback doubles as a proofreading tool). The parser's column alignment is the clock: one column ≈ one beat; subdivided cells shorten their column (fastest voice wins); holds/ties sustain without re-attack; a `~` to a *different* pitch re-articulates; `X` rings the final chord with a long fade. Staffs play back-to-back. Fixed ~90 BPM.
+- **UI:** the voice labels (T/L/B/Bs) double as **solo play/stop buttons** — revealed on staff hover on desktop, always faintly visible on touch (`hover: none`). A **Play** button beside the layout toggle plays the full mix. A **follow-along highlight** washes the sounding column (one row when soloing). One thing plays at a time; navigation stops it.
+- **Caveats:** `AudioContext` starts inside the tap (iOS requirement); if autoplay is blocked anyway, playback bails out rather than wedging. Web Audio respects the iOS ring/silent switch — FAQ note, not a bug.
+- **Later niceties (not now):** part-predominant mix, tempo control, auto-scroll to the playhead, playback in the §6.5 review screen.
 
 ---
 
