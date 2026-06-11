@@ -46,8 +46,8 @@ My _ town, _ my _ town. _`;
 
 <div class="space-y-10">
 	<header class="space-y-1">
-		<h1 class="text-2xl font-bold text-nord-6">Notation renderer — dev</h1>
-		<p class="text-sm text-nord-4">
+		<h1 class="text-2xl font-bold text-ink-bright">Notation renderer — dev</h1>
+		<p class="text-sm text-ink">
 			Torture test + §3.4 worked example. Check: octave-down dots vs subdivision ticks must read
 			as two distinct marks (Tenor <code class="font-mono">3,/</code>, Baritone
 			<code class="font-mono">3,//</code>).
@@ -56,18 +56,18 @@ My _ town, _ my _ town. _`;
 
 	<section class="space-y-3">
 		<div class="flex items-center gap-3">
-			<h2 class="text-lg font-semibold text-nord-6">Torture test</h2>
-			<div class="inline-flex rounded border border-nord-3 overflow-hidden text-sm">
+			<h2 class="text-lg font-semibold text-ink-bright">Torture test</h2>
+			<div class="inline-flex rounded border border-paper-3 overflow-hidden text-sm">
 				<button
-					class="px-3 py-1 {mode === 'wrapped' ? 'bg-nord-8 text-nord-0' : 'bg-nord-1 text-nord-4'}"
+					class="px-3 py-1 {mode === 'wrapped' ? 'bg-accent text-paper-0' : 'bg-paper-1 text-ink'}"
 					onclick={() => (mode = 'wrapped')}
 				>
 					Wrapped
 				</button>
 				<button
 					class="px-3 py-1 {mode === 'continuous'
-						? 'bg-nord-8 text-nord-0'
-						: 'bg-nord-1 text-nord-4'}"
+						? 'bg-accent text-paper-0'
+						: 'bg-paper-1 text-ink'}"
 					onclick={() => (mode = 'continuous')}
 				>
 					Scroll
@@ -76,7 +76,7 @@ My _ town, _ my _ town. _`;
 		</div>
 		<NotationRenderer body={torture} {mode} />
 		{#if warnings.length > 0}
-			<ul class="text-xs text-nord-12 list-disc list-inside">
+			<ul class="text-xs text-warning list-disc list-inside">
 				{#each warnings as w}
 					<li>{w.message}{w.line !== undefined ? ` (line ${w.line})` : ''}</li>
 				{/each}
@@ -85,33 +85,33 @@ My _ town, _ my _ town. _`;
 	</section>
 
 	<section class="space-y-3">
-		<h2 class="text-lg font-semibold text-nord-6">Both modes side by side</h2>
+		<h2 class="text-lg font-semibold text-ink-bright">Both modes side by side</h2>
 		<div class="grid gap-6 lg:grid-cols-2 items-start">
 			<div class="space-y-1 min-w-0">
-				<h3 class="text-sm text-nord-4">wrapped (§8.1)</h3>
+				<h3 class="text-sm text-ink">wrapped (§8.1)</h3>
 				<NotationRenderer body={torture} mode="wrapped" />
 			</div>
 			<div class="space-y-1 min-w-0">
-				<h3 class="text-sm text-nord-4">continuous (§8.2)</h3>
+				<h3 class="text-sm text-ink">continuous (§8.2)</h3>
 				<NotationRenderer body={torture} mode="continuous" />
 			</div>
 		</div>
 	</section>
 
 	<section class="space-y-3">
-		<h2 class="text-lg font-semibold text-nord-6">§3.4 worked example</h2>
+		<h2 class="text-lg font-semibold text-ink-bright">§3.4 worked example</h2>
 		<NotationRenderer body={worked} {mode} />
 	</section>
 
 	<section class="space-y-3">
-		<h2 class="text-lg font-semibold text-nord-6">Card preview (maxMeasures = 2)</h2>
+		<h2 class="text-lg font-semibold text-ink-bright">Card preview (maxMeasures = 2)</h2>
 		<div class="max-w-sm">
 			<NotationRenderer body={torture} mode="wrapped" maxMeasures={2} />
 		</div>
 	</section>
 
 	<section class="space-y-3">
-		<h2 class="text-lg font-semibold text-nord-6">fontScale = 1.3</h2>
+		<h2 class="text-lg font-semibold text-ink-bright">fontScale = 1.3</h2>
 		<NotationRenderer body={worked} mode="wrapped" fontScale={1.3} />
 	</section>
 </div>

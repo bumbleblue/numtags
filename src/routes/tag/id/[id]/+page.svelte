@@ -48,13 +48,13 @@
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
 			case 'Easy':
-				return 'border-nord-14 text-nord-14';
+				return 'border-success text-success';
 			case 'Medium':
-				return 'border-nord-13 text-nord-13';
+				return 'border-note text-note';
 			case 'Hard':
-				return 'border-nord-11 text-nord-11';
+				return 'border-danger text-danger';
 			default:
-				return 'border-nord-3 text-nord-5';
+				return 'border-paper-3 text-ink-muted';
 		}
 	}
 
@@ -65,7 +65,7 @@
 		isSharing = true;
 		try {
 			const dataUrl = await toPng(notationEl, {
-				backgroundColor: '#2e3440', // nord-0 — keep the rendered look
+				backgroundColor: '#2e3440', // paper-0 — keep the rendered look
 				pixelRatio: 2,
 			});
 			const link = document.createElement('a');
@@ -107,13 +107,13 @@
 
 {#if isLoading}
 	<div class="flex flex-col items-center justify-center py-12 gap-3">
-		<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-nord-8"></div>
-		<p class="text-sm text-nord-5">Loading tag…</p>
+		<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+		<p class="text-sm text-ink-muted">Loading tag…</p>
 	</div>
 {:else if !tag}
 	<div class="text-center py-12">
-		<h1 class="text-2xl font-bold text-nord-4 mb-2">This tag doesn't exist or was removed</h1>
-		<p class="text-nord-5 mb-6">It may have been deleted, or the link is wrong.</p>
+		<h1 class="text-2xl font-bold text-ink mb-2">This tag doesn't exist or was removed</h1>
+		<p class="text-ink-muted mb-6">It may have been deleted, or the link is wrong.</p>
 		<a href="/" class="btn-primary inline-flex items-center justify-center min-h-[44px] px-6">
 			Back to Library
 		</a>
@@ -122,10 +122,10 @@
 	<div class="max-w-4xl mx-auto">
 		<!-- Title -->
 		<div class="text-center mb-6">
-			<h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-nord-4 mb-2">
+			<h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-ink mb-2">
 				{tag.metadata.title}
 			</h1>
-			<p class="text-lg text-nord-5">
+			<p class="text-lg text-ink-muted">
 				{local ? 'Your tag' : `Tag #${tag.metadata.tag_id}`}
 			</p>
 		</div>
@@ -133,15 +133,15 @@
 		<!-- Layout toggle (§8.3) -->
 		<div class="flex justify-center mb-4">
 			<div
-				class="inline-flex rounded border border-nord-3 overflow-hidden"
+				class="inline-flex rounded border border-paper-3 overflow-hidden"
 				role="group"
 				aria-label="Notation layout"
 			>
 				<button
 					onclick={() => setLayout('wrapped')}
 					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'wrapped'
-						? 'bg-nord-8 text-nord-0'
-						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
+						? 'bg-accent text-paper-0'
+						: 'bg-transparent text-ink-muted hover:text-ink'}"
 					aria-pressed={layout === 'wrapped'}
 				>
 					Wrapped
@@ -149,8 +149,8 @@
 				<button
 					onclick={() => setLayout('continuous')}
 					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'continuous'
-						? 'bg-nord-8 text-nord-0'
-						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
+						? 'bg-accent text-paper-0'
+						: 'bg-transparent text-ink-muted hover:text-ink'}"
 					aria-pressed={layout === 'continuous'}
 				>
 					Scroll
@@ -178,7 +178,7 @@
 				<button
 					onclick={handleDelete}
 					disabled={isDeleting}
-					class="min-h-[44px] px-5 rounded font-medium border border-nord-11 text-nord-11 hover:bg-nord-11 hover:bg-opacity-10 transition-colors"
+					class="min-h-[44px] px-5 rounded font-medium border border-danger text-danger hover:bg-danger hover:bg-opacity-10 transition-colors"
 				>
 					{isDeleting ? 'Deleting…' : 'Delete'}
 				</button>
@@ -191,7 +191,7 @@
 		<!-- Metadata -->
 		<div class="card-bg rounded border p-6">
 			<div class="flex justify-between items-start mb-6 gap-2">
-				<h2 class="text-2xl font-semibold text-nord-4">Tag Information</h2>
+				<h2 class="text-2xl font-semibold text-ink">Tag Information</h2>
 				<div class="flex flex-col items-end gap-1.5">
 					<span
 						class="inline-flex items-center border rounded px-2 py-0.5 text-sm {getDifficultyColor(
@@ -208,35 +208,35 @@
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
 				<div>
-					<span class="text-sm font-medium text-nord-5">Arranger:</span>
-					<span class="ml-2 text-nord-4">{tag.metadata.arranger}</span>
+					<span class="text-sm font-medium text-ink-muted">Arranger:</span>
+					<span class="ml-2 text-ink">{tag.metadata.arranger}</span>
 				</div>
 				<div>
-					<span class="text-sm font-medium text-nord-5">Date Added:</span>
-					<span class="ml-2 text-nord-4">
+					<span class="text-sm font-medium text-ink-muted">Date Added:</span>
+					<span class="ml-2 text-ink">
 						{new Date(tag.metadata.date_added).toLocaleDateString()}
 					</span>
 				</div>
 				<div>
-					<span class="text-sm font-medium text-nord-5">Parts:</span>
-					<span class="ml-2 text-nord-4">
+					<span class="text-sm font-medium text-ink-muted">Parts:</span>
+					<span class="ml-2 text-ink">
 						{tag.metadata.parts} part{tag.metadata.parts === 1 ? '' : 's'}
 					</span>
 				</div>
 				{#if tag.metadata.original_key}
 					<div>
-						<span class="text-sm font-medium text-nord-5">Original Key:</span>
-						<span class="ml-2 text-nord-4 font-mono">{tag.metadata.original_key}</span>
+						<span class="text-sm font-medium text-ink-muted">Original Key:</span>
+						<span class="ml-2 text-ink font-mono">{tag.metadata.original_key}</span>
 					</div>
 				{/if}
 				{#if tag.metadata.source_url}
 					<div>
-						<span class="text-sm font-medium text-nord-5">Source:</span>
+						<span class="text-sm font-medium text-ink-muted">Source:</span>
 						<a
 							href={tag.metadata.source_url}
 							target="_blank"
 							rel="noopener"
-							class="ml-2 underline underline-offset-2 hover:text-nord-6"
+							class="ml-2 underline underline-offset-2 hover:text-ink-bright"
 						>
 							View Original
 						</a>
@@ -245,16 +245,16 @@
 			</div>
 
 			{#if tag.metadata.lyrics}
-				<div class="border border-nord-2 rounded p-4 mb-4">
-					<h3 class="text-sm font-medium text-nord-5 mb-2">Lyrics</h3>
-					<p class="text-nord-4 italic">“{tag.metadata.lyrics}”</p>
+				<div class="border border-paper-2 rounded p-4 mb-4">
+					<h3 class="text-sm font-medium text-ink-muted mb-2">Lyrics</h3>
+					<p class="text-ink italic">“{tag.metadata.lyrics}”</p>
 				</div>
 			{/if}
 
 			{#if tag.metadata.comments}
-				<div class="border border-nord-2 rounded p-4">
-					<h3 class="text-sm font-medium text-nord-5 mb-2">Notes</h3>
-					<p class="text-nord-4">{tag.metadata.comments}</p>
+				<div class="border border-paper-2 rounded p-4">
+					<h3 class="text-sm font-medium text-ink-muted mb-2">Notes</h3>
+					<p class="text-ink">{tag.metadata.comments}</p>
 				</div>
 			{/if}
 		</div>

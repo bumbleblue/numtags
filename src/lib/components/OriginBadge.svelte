@@ -21,7 +21,7 @@
 
 {#if label && origin !== 'catalog'}
 	<span
-		class="inline-flex items-center border border-nord-3 rounded px-1.5 py-0.5 text-xs text-nord-7 whitespace-nowrap"
+		class="inline-flex items-center border border-paper-3 rounded px-1.5 py-0.5 text-xs text-accent-muted whitespace-nowrap"
 	>
 		{label}
 	</span>

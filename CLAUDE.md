@@ -12,7 +12,7 @@ Barbershop tags (short 4-voice a cappella snippets) in a custom numeric notation
 
 ## Architecture (spec §5)
 
-Everything except OMR is client-side and offline. SvelteKit 2 + **Svelte 5 (runes)** + Tailwind + Cloudflare adapter. Theme: warm "field recordings" dark palette — the `nord-*` Tailwind slots are remapped to it (see tailwind.config.js), and `app.css` exposes it as CSS vars (`--paper-*`, `--ink*`, `--brass`, `--rust`) for the notation components. Page background `#1a1714` (also the PWA theme_color).
+Everything except OMR is client-side and offline. SvelteKit 2 + **Svelte 5 (runes)** + Tailwind + Cloudflare adapter. Theme: **Base16 Default Dark** (the "field recordings" brand, third palette pass). Tailwind colors are named by role, not hue, so hexes can be swapped in one place (`paper-0..3` surfaces, `ink`/`ink-muted`/`ink-bright` text, `accent-*` interactive, `danger`/`warning`/`note`/`success`/`info` status — see tailwind.config.js); `app.css` mirrors them as CSS vars (`--paper-*`, `--ink*`, `--note-up`/`--note-down`, `--lyric`, `--error`) for the notation components. Page background `#151515`. Logo (static/numtag-logo.svg): hollow sharp on the octave-gradient tile; favicon.png is its filled-glyph 32px export.
 
 - `src/lib/notation/` — the canonical notation core:
   - `types.ts` — semantic `Beat` token model (spec §4.4). Octave/subdivision are **integers, not glyphs**.
