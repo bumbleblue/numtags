@@ -3,6 +3,27 @@
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
 Last updated: 2026-06-11 (branch `fable-rebuild` + playback worktree branch).
 
+## Where we left off (session of 2026-06-11, hosting)
+
+- **Frontend hosting wired up (Cloudflare Workers + GitHub Actions).**
+  New `wrangler.jsonc`: Worker `numtags`, static assets served from
+  `.svelte-kit/cloudflare` with the `ASSETS` binding; `static/.assetsignore`
+  keeps `_worker.js`/`_routes.json` out of the public asset upload.
+  `.github/workflows/deploy.yml` replaced (it was a stale GitHub Pages
+  deploy from the pre-Cloudflare era): PRs and pushes to `main` run
+  vitest + svelte-check + build; pushes to `main` additionally deploy via
+  `cloudflare/wrangler-action`. Verified locally with
+  `wrangler deploy --dry-run`.
+- **Needs two GitHub repo secrets before the first deploy works:**
+  `CLOUDFLARE_API_TOKEN` (token with the "Edit Cloudflare Workers"
+  template) and `CLOUDFLARE_ACCOUNT_ID` — Settings → Secrets and
+  variables → Actions. First successful run lands at
+  `numtags.<account>.workers.dev`; custom domain attaches in the
+  Cloudflare dash under the Worker's Domains & Routes.
+- `services/` (OMR + catalog bot) is still undeployed — it's a Python/
+  Docker app and needs a scale-to-zero container host (Fly.io / Cloud Run
+  class), not Workers. `PUBLIC_SERVICE_URL` stays unset until then.
+
 ## Where we left off (session of 2026-06-11, playback)
 
 - **Notation playback shipped (spec §6.9, a deliberate post-v1 scope
