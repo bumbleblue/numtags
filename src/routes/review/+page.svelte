@@ -376,9 +376,9 @@
 
 <div class="max-w-6xl mx-auto space-y-4">
 	<header class="flex items-baseline justify-between gap-3 flex-wrap">
-		<h1 class="text-2xl sm:text-3xl font-bold text-nord-6">Review &amp; edit</h1>
+		<h1 class="text-2xl sm:text-3xl font-bold text-ink-bright">Review &amp; edit</h1>
 		{#if loaded && draft}
-			<p class="text-sm text-nord-5">
+			<p class="text-sm text-ink-muted">
 				{#if isCatalogEdit}
 					editing catalog tag #{draft.editing?.id}
 				{:else if draft.editing?.kind === 'local'}
@@ -391,18 +391,18 @@
 	</header>
 
 	{#if !loaded}
-		<p class="text-nord-5 py-8 text-center">Loading draft…</p>
+		<p class="text-ink-muted py-8 text-center">Loading draft…</p>
 	{:else if notFound}
 		<div class="text-center py-12 space-y-3">
-			<p class="text-nord-4">That tag doesn't exist or was removed.</p>
+			<p class="text-ink">That tag doesn't exist or was removed.</p>
 			<a href="/import" class="btn-primary inline-block">Start an import</a>
 		</div>
 	{:else if draft}
 		<!-- import-warning banner (§6.5) -->
 		{#if draft.warnings?.length}
-			<div class="border border-nord-13 rounded p-3 bg-nord-1 text-sm space-y-1">
-				<p class="font-medium text-nord-13">Import notes</p>
-				<ul class="list-disc ml-5 text-nord-4">
+			<div class="border border-note rounded p-3 bg-paper-1 text-sm space-y-1">
+				<p class="font-medium text-note">Import notes</p>
+				<ul class="list-disc ml-5 text-ink">
 					{#each draft.warnings as w}<li>{w}</li>{/each}
 				</ul>
 			</div>
@@ -410,8 +410,8 @@
 
 		<!-- image-import confidence banner + compare-to-original (§6.3/§6.5) -->
 		{#if isImageImport}
-			<div class="border border-nord-12 rounded p-3 bg-nord-1 text-sm space-y-2">
-				<p class="font-medium text-nord-12">
+			<div class="border border-warning rounded p-3 bg-paper-1 text-sm space-y-2">
+				<p class="font-medium text-warning">
 					Converted from an image — check carefully.
 					{#if confidence !== undefined}
 						Confidence: {Math.round(confidence * 100)}%.
@@ -420,13 +420,13 @@
 				</p>
 				{#if draft.sourceImage}
 					<details>
-						<summary class="cursor-pointer text-nord-8 min-h-[44px] flex items-center">
+						<summary class="cursor-pointer text-accent min-h-[44px] flex items-center">
 							Compare to original
 						</summary>
 						<img
 							src={draft.sourceImage}
 							alt="Original sheet music"
-							class="mt-2 max-w-full rounded border border-nord-3 bg-white"
+							class="mt-2 max-w-full rounded border border-paper-3 bg-white"
 						/>
 					</details>
 				{/if}
@@ -434,21 +434,21 @@
 		{/if}
 
 		<!-- mobile: the input and the preview toggle (desktop shows both) -->
-		<div class="lg:hidden inline-flex rounded border border-nord-3 overflow-hidden" role="tablist" aria-label="Editor view">
+		<div class="lg:hidden inline-flex rounded border border-paper-3 overflow-hidden" role="tablist" aria-label="Editor view">
 			<button
 				role="tab"
 				aria-selected={view === 'edit'}
 				class="px-4 min-h-[44px] text-sm {view === 'edit'
-					? 'bg-nord-8 text-nord-0 font-medium'
-					: 'bg-nord-1 text-nord-4'}"
+					? 'bg-accent text-paper-0 font-medium'
+					: 'bg-paper-1 text-ink'}"
 				onclick={() => (view = 'edit')}>Input</button
 			>
 			<button
 				role="tab"
 				aria-selected={view === 'preview'}
 				class="px-4 min-h-[44px] text-sm {view === 'preview'
-					? 'bg-nord-8 text-nord-0 font-medium'
-					: 'bg-nord-1 text-nord-4'}"
+					? 'bg-accent text-paper-0 font-medium'
+					: 'bg-paper-1 text-ink'}"
 				onclick={() => (view = 'preview')}>Preview</button
 			>
 		</div>
@@ -457,21 +457,21 @@
 		<div class="lg:grid lg:grid-cols-2 lg:gap-4 lg:items-start space-y-4 lg:space-y-0">
 			<!-- input pane: source ⟷ metadata tabs, errors live here -->
 			<div class="space-y-3 {view === 'preview' ? 'hidden lg:block' : ''}">
-				<div class="inline-flex rounded border border-nord-3 overflow-hidden" role="tablist">
+				<div class="inline-flex rounded border border-paper-3 overflow-hidden" role="tablist">
 					<button
 						role="tab"
 						aria-selected={tab === 'source'}
 						class="px-4 min-h-[44px] text-sm {tab === 'source'
-							? 'bg-nord-8 text-nord-0 font-medium'
-							: 'bg-nord-1 text-nord-4'}"
+							? 'bg-accent text-paper-0 font-medium'
+							: 'bg-paper-1 text-ink'}"
 						onclick={() => (tab = 'source')}>Notation source</button
 					>
 					<button
 						role="tab"
 						aria-selected={tab === 'details'}
 						class="px-4 min-h-[44px] text-sm {tab === 'details'
-							? 'bg-nord-8 text-nord-0 font-medium'
-							: 'bg-nord-1 text-nord-4'}"
+							? 'bg-accent text-paper-0 font-medium'
+							: 'bg-paper-1 text-ink'}"
 						onclick={() => (tab = 'details')}>Details</button
 					>
 				</div>
@@ -484,7 +484,7 @@
 						oninput={touch}
 						onnormalize={normalizeBody}
 					/>
-					<p class="text-xs text-nord-5">
+					<p class="text-xs text-ink-muted">
 						Notes and measures only — voices top-to-bottom: Tenor, Lead, Baritone, Bass.
 						Whitespace is cosmetic; <code class="font-mono">|</code> marks measures. Lyrics are
 						typed under the notes in the preview (pasting a full tag with lyric lines
@@ -492,15 +492,15 @@
 					</p>
 				{:else}
 					<section class="card-bg border rounded p-4 grid gap-4 sm:grid-cols-2">
-						<label class="block text-sm text-nord-4">
+						<label class="block text-sm text-ink">
 							Title
 							<input type="text" class="search-input !py-2 mt-1" bind:value={meta.title} oninput={touch} placeholder="Untitled" />
 						</label>
-						<label class="block text-sm text-nord-4">
+						<label class="block text-sm text-ink">
 							Arranger
 							<input type="text" class="search-input !py-2 mt-1" bind:value={meta.arranger} oninput={touch} placeholder="unknown" />
 						</label>
-						<label class="block text-sm text-nord-4">
+						<label class="block text-sm text-ink">
 							Difficulty
 							<select class="search-input !py-2 mt-1" bind:value={meta.difficulty} onchange={touch}>
 								<option>Easy</option>
@@ -508,15 +508,15 @@
 								<option>Hard</option>
 							</select>
 						</label>
-						<label class="block text-sm text-nord-4">
+						<label class="block text-sm text-ink">
 							Source URL
 							<input type="url" class="search-input !py-2 mt-1" bind:value={meta.source_url} oninput={touch} placeholder="https://www.barbershoptags.com/…" />
 						</label>
-						<label class="block text-sm text-nord-4 sm:col-span-2">
+						<label class="block text-sm text-ink sm:col-span-2">
 							Lyrics
 							<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.lyrics} oninput={touch}></textarea>
 						</label>
-						<label class="block text-sm text-nord-4 sm:col-span-2">
+						<label class="block text-sm text-ink sm:col-span-2">
 							Comments
 							<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.comments} oninput={touch}></textarea>
 						</label>
@@ -536,15 +536,15 @@
 						onlyricinput={onLyricInput}
 					/>
 					<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-						<p class="text-xs text-nord-5">
+						<p class="text-xs text-ink-muted">
 							Type lyrics under the notes — <kbd class="font-mono">Tab</kbd> continues a word
 							(adds the hyphen), <kbd class="font-mono">Space</kbd> starts the next word.
 						</p>
-						<button class="text-xs text-nord-8 underline min-h-[44px]" onclick={addLyricRow}>
+						<button class="text-xs text-accent underline min-h-[44px]" onclick={addLyricRow}>
 							+ alternate lyric row
 						</button>
 						{#if hasExtraRows}
-							<button class="text-xs text-nord-5 underline min-h-[44px]" onclick={removeEmptyLyricRows}>
+							<button class="text-xs text-ink-muted underline min-h-[44px]" onclick={removeEmptyLyricRows}>
 								remove empty rows
 							</button>
 						{/if}
@@ -556,7 +556,7 @@
 		<!-- §6.5 controls: key (re-encodes when a score exists) + voice octaves -->
 		<section class="card-bg border rounded p-3 sm:p-4 space-y-3">
 			<div class="flex flex-wrap items-center gap-3">
-				<label class="flex items-center gap-2 text-sm text-nord-4">
+				<label class="flex items-center gap-2 text-sm text-ink">
 					Key
 					<select
 						class="search-input !w-auto !py-2 text-sm"
@@ -575,7 +575,7 @@
 						</optgroup>
 					</select>
 				</label>
-				<span class="text-xs text-nord-5">
+				<span class="text-xs text-ink-muted">
 					{draft.score
 						? 'changing the key re-encodes the notation from the imported score'
 						: 'sets the original key (metadata only)'}
@@ -583,7 +583,7 @@
 			</div>
 			<div class="flex flex-wrap gap-x-4 gap-y-2">
 				{#each VOICE_NAMES as name, vi}
-					<div class="flex items-center gap-1 text-sm text-nord-4">
+					<div class="flex items-center gap-1 text-sm text-ink">
 						<span class="w-16">{name}</span>
 						<button
 							class="btn-secondary !px-3 min-h-[44px] min-w-[44px]"
@@ -601,8 +601,8 @@
 		</section>
 
 		<!-- actions (§6.5) -->
-		{#if saveError}<p class="text-sm text-nord-11" role="alert">{saveError}</p>{/if}
-		{#if publishError}<p class="text-sm text-nord-11" role="alert">{publishError}</p>{/if}
+		{#if saveError}<p class="text-sm text-danger" role="alert">{saveError}</p>{/if}
+		{#if publishError}<p class="text-sm text-danger" role="alert">{publishError}</p>{/if}
 
 		<section class="card-bg border rounded p-4 space-y-3">
 			<div class="flex flex-wrap gap-2 items-center">
@@ -622,15 +622,15 @@
 					{/if}
 				</button>
 				{#if !canPublish}
-					<span class="text-xs text-nord-5">{publishUnavailableReason}.</span>
+					<span class="text-xs text-ink-muted">{publishUnavailableReason}.</span>
 				{/if}
 			</div>
 			{#if canPublish}
-				<label class="block text-sm text-nord-4 max-w-xs">
+				<label class="block text-sm text-ink max-w-xs">
 					Your name (for the catalog commit)
 					<input type="text" class="search-input !py-2 mt-1" bind:value={editorName} placeholder="anonymous" />
 				</label>
-				<p class="text-xs text-nord-5">
+				<p class="text-xs text-ink-muted">
 					Catalog tags are CC0; publishing affirms this is a faithful translation. Your work is
 					also kept in your private library before anything is sent.
 				</p>

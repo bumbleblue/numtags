@@ -435,7 +435,7 @@
 
 	.lyric-input:focus {
 		outline: none;
-		border-bottom: 1px solid var(--amber);
-		background: color-mix(in srgb, var(--amber) 10%, transparent);
+		border-bottom: 1px solid var(--lyric);
+		background: color-mix(in srgb, var(--lyric) 10%, transparent);
 	}
 </style>

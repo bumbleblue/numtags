@@ -158,7 +158,7 @@
 	</div>
 
 	<div
-		class="editor-shell relative rounded border border-nord-3 bg-nord-1 focus-within:ring-2 focus-within:ring-nord-8"
+		class="editor-shell relative rounded border border-paper-3 bg-paper-1 focus-within:ring-2 focus-within:ring-accent"
 	>
 		<!-- mirror layer: transparent text, visible squiggles -->
 		<div bind:this={backdropEl} class="backdrop font-mono text-sm leading-relaxed p-3" aria-hidden="true">
@@ -177,7 +177,7 @@
 			spellcheck="false"
 			autocapitalize="off"
 			autocomplete="off"
-			class="relative block w-full font-mono text-sm leading-relaxed p-3 bg-transparent text-nord-4 border-none focus:outline-none focus:ring-0 whitespace-pre overflow-x-auto resize-none"
+			class="relative block w-full font-mono text-sm leading-relaxed p-3 bg-transparent text-ink border-none focus:outline-none focus:ring-0 whitespace-pre overflow-x-auto resize-none"
 			aria-label="Notation source — voice lines only (ASCII shorthand)"
 		></textarea>
 	</div>
@@ -188,26 +188,26 @@
 				<li>
 					<button
 						type="button"
-						class="err-item w-full text-left text-sm text-nord-4 rounded px-2 py-1.5 flex gap-2 items-baseline"
+						class="err-item w-full text-left text-sm text-ink rounded px-2 py-1.5 flex gap-2 items-baseline"
 						onclick={() => jumpTo(w)}
 						title="Click to select the token in the source"
 					>
 						{#if w.line !== undefined}
-							<span class="shrink-0 font-mono text-xs text-nord-5">line {w.line}</span>
+							<span class="shrink-0 font-mono text-xs text-ink-muted">line {w.line}</span>
 						{/if}
 						<span>{w.message}</span>
 					</button>
 				</li>
 			{/each}
 			{#each extraWarnings as msg}
-				<li class="text-sm text-nord-4 px-2 py-1.5 flex gap-2 items-baseline">
-					<span class="shrink-0 font-mono text-xs text-nord-5">rhythm</span>
+				<li class="text-sm text-ink px-2 py-1.5 flex gap-2 items-baseline">
+					<span class="shrink-0 font-mono text-xs text-ink-muted">rhythm</span>
 					<span>{msg}</span>
 				</li>
 			{/each}
 		</ul>
 	{:else if value.trim()}
-		<p class="text-xs text-nord-5 px-2" aria-live="polite">No syntax errors.</p>
+		<p class="text-xs text-ink-muted px-2" aria-live="polite">No syntax errors.</p>
 	{/if}
 </div>
 

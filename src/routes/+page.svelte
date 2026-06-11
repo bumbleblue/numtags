@@ -87,10 +87,10 @@
 <div class="space-y-6">
 	<!-- Hero -->
 	<div class="text-center">
-		<h1 class="text-3xl sm:text-4xl font-bold text-nord-4 mb-3">
+		<h1 class="text-3xl sm:text-4xl font-bold text-ink mb-3">
 			Barbershop Tags in Numeric Notation
 		</h1>
-		<p class="text-lg text-nord-5 max-w-2xl mx-auto mb-5">
+		<p class="text-lg text-ink-muted max-w-2xl mx-auto mb-5">
 			A growing collection of barbershop tags in numeric notation, perfect for learning and
 			teaching tags.
 		</p>
@@ -118,14 +118,14 @@
 	</div>
 
 	{#if libraryError}
-		<p class="text-sm text-nord-13 text-center">
+		<p class="text-sm text-note text-center">
 			Couldn't read your local library — showing the catalog only.
 		</p>
 	{/if}
 
 	<!-- Your tags (local imports & drafts) -->
-	<section class="space-y-4 border-t border-nord-2 pt-6">
-		<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">Your tags</h2>
+	<section class="space-y-4 border-t border-paper-2 pt-6">
+		<h2 class="text-xl sm:text-2xl font-semibold text-ink">Your tags</h2>
 		{#if localResults.length > 0}
 			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{#each localResults as result (result.item.metadata.tag_id)}
@@ -133,10 +133,10 @@
 				{/each}
 			</div>
 		{:else if anyLocalAtAll}
-			<p class="text-sm text-nord-5">None of your tags match the current search.</p>
+			<p class="text-sm text-ink-muted">None of your tags match the current search.</p>
 		{:else}
-			<div class="card-bg rounded border border-dashed border-nord-3 p-6 text-center">
-				<p class="text-nord-5 mb-3">
+			<div class="card-bg rounded border border-dashed border-paper-3 p-6 text-center">
+				<p class="text-ink-muted mb-3">
 					Nothing of your own yet — import a file or write a tag from scratch. It stays private on
 					this device.
 				</p>
@@ -151,11 +151,11 @@
 	</section>
 
 	<!-- Catalog -->
-	<section class="space-y-4 border-t border-nord-2 pt-6">
+	<section class="space-y-4 border-t border-paper-2 pt-6">
 		<div class="flex justify-between items-center">
-			<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">
+			<h2 class="text-xl sm:text-2xl font-semibold text-ink">
 				Catalog
-				<span class="text-base font-normal text-nord-5 ml-1">
+				<span class="text-base font-normal text-ink-muted ml-1">
 					{catalogResults.length} tag{catalogResults.length === 1 ? '' : 's'}
 				</span>
 			</h2>
@@ -169,12 +169,12 @@
 			</div>
 		{:else if hasFilters}
 			<div class="text-center py-12">
-				<h3 class="text-xl font-medium text-nord-4 mb-2">No tags match</h3>
-				<p class="text-nord-5 mb-4">Try different search terms, or start over.</p>
+				<h3 class="text-xl font-medium text-ink mb-2">No tags match</h3>
+				<p class="text-ink-muted mb-4">Try different search terms, or start over.</p>
 				<button onclick={clearAll} class="btn-secondary min-h-[44px] px-5">Clear filters</button>
 			</div>
 		{:else}
-			<p class="text-nord-5 text-center py-8">The catalog is empty.</p>
+			<p class="text-ink-muted text-center py-8">The catalog is empty.</p>
 		{/if}
 	</section>
 </div>

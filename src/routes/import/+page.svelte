@@ -255,18 +255,18 @@
 
 <div class="max-w-2xl mx-auto space-y-6">
 	<header>
-		<h1 class="text-2xl sm:text-3xl font-bold text-nord-6">Add a tag</h1>
-		<p class="text-nord-4 mt-1">
-			Every path lands in <span class="text-nord-8">review</span> first — nothing is saved until you
+		<h1 class="text-2xl sm:text-3xl font-bold text-ink-bright">Add a tag</h1>
+		<p class="text-ink mt-1">
+			Every path lands in <span class="text-accent">review</span> first — nothing is saved until you
 			say so.
 		</p>
 	</header>
 
 	<!-- barbershoptags.com autofill (§6.7) -->
 	<section class="card-bg border rounded p-4 space-y-2">
-		<h2 class="font-semibold text-nord-6">Coming from barbershoptags.com?</h2>
+		<h2 class="font-semibold text-ink-bright">Coming from barbershoptags.com?</h2>
 		{#if serviceUrl}
-			<p class="text-sm text-nord-5">
+			<p class="text-sm text-ink-muted">
 				Paste a tag URL or id to prefill title, arranger, key and lyrics.
 			</p>
 			<div class="flex gap-2">
@@ -286,15 +286,15 @@
 				</button>
 			</div>
 			{#if bbsStatus === 'ok' && autofill}
-				<p class="text-sm text-nord-14">
+				<p class="text-sm text-success">
 					Autofilled: “{autofill.title}”{autofill.arranger ? ` — arr. ${autofill.arranger}` : ''}.
 					It will prefill whichever path you pick below.
 				</p>
 			{:else if bbsStatus === 'fail'}
-				<p class="text-sm text-nord-5">Couldn't autofill — you can type the details in review.</p>
+				<p class="text-sm text-ink-muted">Couldn't autofill — you can type the details in review.</p>
 			{/if}
 		{:else}
-			<p class="text-sm text-nord-5">
+			<p class="text-sm text-ink-muted">
 				Autofill needs the conversion service (not configured) — you can type the details in
 				review.
 			</p>
@@ -302,12 +302,12 @@
 	</section>
 
 	{#if importError}
-		<div class="border border-nord-11 rounded p-4 bg-nord-1 space-y-2" role="alert">
-			<p class="text-nord-11 font-medium">{importError.message}</p>
+		<div class="border border-danger rounded p-4 bg-paper-1 space-y-2" role="alert">
+			<p class="text-danger font-medium">{importError.message}</p>
 			{#if importError.offerManual}
-				<p class="text-sm text-nord-4">
+				<p class="text-sm text-ink">
 					You can pick another file, or
-					<button class="text-nord-8 underline min-h-[44px]" onclick={writeItYourself}>
+					<button class="text-accent underline min-h-[44px]" onclick={writeItYourself}>
 						write it yourself
 					</button>
 					instead.
@@ -319,54 +319,54 @@
 	<!-- tiered entry, cheapest-and-best first (§6.1) -->
 	<section class="space-y-3">
 		<button
-			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-nord-8 transition-colors"
+			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-accent transition-colors"
 			onclick={writeItYourself}
 		>
-			<span class="block font-semibold text-nord-6">Write it yourself</span>
-			<span class="block text-sm text-nord-5 mt-0.5">
+			<span class="block font-semibold text-ink-bright">Write it yourself</span>
+			<span class="block text-sm text-ink-muted mt-0.5">
 				Type the notation directly — fully offline, what you type is what's stored.
 			</span>
 		</button>
 
 		<button
-			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-nord-8 transition-colors disabled:opacity-60"
+			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-accent transition-colors disabled:opacity-60"
 			onclick={() => musicxmlInput?.click()}
 			disabled={busy !== null}
 		>
-			<span class="block font-semibold text-nord-6">
+			<span class="block font-semibold text-ink-bright">
 				MusicXML file
-				{#if busy === 'musicxml'}<span class="text-nord-5 font-normal"> · reading…</span>{/if}
+				{#if busy === 'musicxml'}<span class="text-ink-muted font-normal"> · reading…</span>{/if}
 			</span>
-			<span class="block text-sm text-nord-5 mt-0.5">
+			<span class="block text-sm text-ink-muted mt-0.5">
 				.xml · .musicxml · .mxl — e.g. a MuseScore export. Perfect pitch, spelling and lyrics.
 			</span>
 		</button>
 
 		<button
-			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-nord-8 transition-colors disabled:opacity-60"
+			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-accent transition-colors disabled:opacity-60"
 			onclick={() => midiInput?.click()}
 			disabled={busy !== null}
 		>
-			<span class="block font-semibold text-nord-6">
+			<span class="block font-semibold text-ink-bright">
 				MIDI file
-				{#if busy === 'midi'}<span class="text-nord-5 font-normal"> · reading…</span>{/if}
+				{#if busy === 'midi'}<span class="text-ink-muted font-normal"> · reading…</span>{/if}
 			</span>
-			<span class="block text-sm text-nord-5 mt-0.5">
+			<span class="block text-sm text-ink-muted mt-0.5">
 				.mid · .midi — reliable pitch and rhythm; you may need to set the key in review.
 			</span>
 		</button>
 
 		<div
 			class="w-full card-bg border rounded p-4 {omrAvailable ? '' : 'opacity-60'}"
-			class:border-nord-8={omrState === 'pending'}
+			class:border-accent={omrState === 'pending'}
 		>
 			<button
 				class="w-full text-left min-h-[44px] disabled:cursor-not-allowed"
 				onclick={() => imageInput?.click()}
 				disabled={!omrAvailable || omrState === 'pending'}
 			>
-				<span class="block font-semibold text-nord-6">Image (photo / GIF / PDF)</span>
-				<span class="block text-sm text-nord-5 mt-0.5">
+				<span class="block font-semibold text-ink-bright">Image (photo / GIF / PDF)</span>
+				<span class="block text-sm text-ink-muted mt-0.5">
 					{#if omrAvailable}
 						Snap a photo or upload sheet music — best-effort conversion, always check the result.
 					{:else}
@@ -376,10 +376,10 @@
 				</span>
 			</button>
 			{#if omrState === 'pending'}
-				<p class="text-sm text-nord-8 mt-2 animate-pulse">warming up · reading the music…</p>
+				<p class="text-sm text-accent mt-2 animate-pulse">warming up · reading the music…</p>
 			{:else if omrState === 'error'}
 				<div class="mt-2 space-y-2">
-					<p class="text-sm text-nord-11">{omrError}</p>
+					<p class="text-sm text-danger">{omrError}</p>
 					<div class="flex flex-wrap gap-2">
 						<!-- never discard the picked file (§7.1) -->
 						<button class="btn-primary min-h-[44px]" onclick={runOmr}>
@@ -397,15 +397,15 @@
 		</div>
 
 		<button
-			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-nord-8 transition-colors disabled:opacity-60"
+			class="w-full text-left card-bg border rounded p-4 min-h-[44px] hover:border-accent transition-colors disabled:opacity-60"
 			onclick={() => tagfileInput?.click()}
 			disabled={busy !== null}
 		>
-			<span class="block font-semibold text-nord-6">
+			<span class="block font-semibold text-ink-bright">
 				numtags file
-				{#if busy === 'tagfile'}<span class="text-nord-5 font-normal"> · reading…</span>{/if}
+				{#if busy === 'tagfile'}<span class="text-ink-muted font-normal"> · reading…</span>{/if}
 			</span>
-			<span class="block text-sm text-nord-5 mt-0.5">
+			<span class="block text-sm text-ink-muted mt-0.5">
 				A .md tag file (YAML frontmatter + notation) — for power users and round-trips.
 			</span>
 		</button>

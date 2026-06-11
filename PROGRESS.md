@@ -43,6 +43,15 @@ Last updated: 2026-06-11 (branch `fable-rebuild`).
   Tag Information. The Settings page is gone (nav entry, route, sw shell
   — cache bumped to v3); view settings live where they're used. Measures
   no longer alternate backgrounds — uniform block + gap marks the bar.
+- **Round 4 (same session):** merged `fable-rebuild` (Base16 Default Dark
+  palette, octave-direction colors, Quattro ss02) and adopted the semantic
+  Tailwind tokens across every component (`paper-*`/`ink*`/`accent-*`/
+  status names — the main checkout's in-progress rename pass, ported here
+  and applied to the new screens too). Fixed two strays the palette swap
+  exposed: the lyric-input focus color (`--amber` no longer exists →
+  `--lyric`) and share-as-image's hardcoded `#2e3440` background (now
+  read live from `--paper-0`). The main checkout's uncommitted rename
+  pass is superseded by this branch and can be discarded after merging.
 
 ## Where we left off (session of 2026-06-10/11)
 
