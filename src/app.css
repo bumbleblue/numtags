@@ -2,16 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Notation font: Cutive Mono (single 400 weight; bold is synthesized) */
-@font-face {
-  font-family: "Cutive Mono";
-  src: url("/fonts/CutiveMono-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* UI font: iA Writer Quattro */
+/* The one font: iA Writer Quattro. Near-monospaced with uniform
+   digit widths, which is all the notation grid needs. */
 @font-face {
   font-family: "iA Writer Quattro";
   src: url("/fonts/iAWriterQuattroS-Regular.woff2") format("woff2");
@@ -45,21 +37,20 @@
 }
 
 @layer base {
-  /* "Field recordings" theme tokens — mirror the nord-* slots in
-     tailwind.config.js; components that can't use utility classes
-     (NotationRenderer, BeatCell) read these. */
+  /* "Field recordings" theme tokens — warm-ish monochrome. Mirror the
+     nord-* slots in tailwind.config.js; components that can't use
+     utility classes (NotationRenderer, BeatCell) read these. */
   :root {
-    --paper-0: #1a1714; /* page background */
-    --paper-1: #221e19; /* cards / measure blocks */
-    --paper-2: #2e2823; /* raised / alternate measures */
-    --paper-3: #3d352c; /* lightest structure, borders */
-    --ink: #e8e0d1; /* primary text */
-    --ink-bright: #f5efe4; /* emphasis */
-    --ink-muted: #b9ab96; /* secondary text */
-    --brass: #c8a96d; /* muted accent (octave-shifted notes) */
-    --amber: #e3a84e; /* primary accent */
-    --gold: #ebcb8b; /* lyrics */
-    --rust: #d4665a; /* errors */
+    --paper-0: #121110; /* page background */
+    --paper-1: #181716; /* cards / measure blocks */
+    --paper-2: #21201e; /* raised / alternate measures */
+    --paper-3: #34322e; /* box borders, structure */
+    --ink: #e5e3de; /* primary text */
+    --ink-bright: #f2f1ed; /* emphasis */
+    --ink-muted: #93908a; /* secondary text */
+    --note-alt: #b1aea7; /* octave-shifted notes */
+    --lyric: #b1aea7; /* lyric line */
+    --error: #c46a5e; /* errors */
   }
 
   html {
@@ -73,7 +64,7 @@
 
 @layer components {
   .search-input {
-    @apply w-full px-4 py-3 border border-nord-5 rounded focus:ring-2 focus:ring-nord-8 focus:border-transparent bg-nord-1 text-nord-4 placeholder-nord-5;
+    @apply w-full px-4 py-3 border border-nord-3 rounded focus:outline-none focus:border-nord-5 focus:ring-0 bg-transparent text-nord-4 placeholder-nord-5;
   }
 
   /* Image generation styling - force black text */
@@ -87,12 +78,13 @@
   }
 
   .btn-secondary {
-    @apply bg-nord-2 hover:bg-nord-3 text-nord-4 font-medium py-2 px-4 rounded transition-colors duration-200;
+    @apply bg-transparent border border-nord-3 hover:border-nord-5 text-nord-4 font-medium py-2 px-4 rounded transition-colors duration-200;
   }
 
-  /* Card backgrounds */
+  /* JD-style boxes: transparent fill, the 1px border does the work
+     (pair with the `border` utility in markup). */
   .card-bg {
-    @apply bg-nord-1 border-nord-2;
+    @apply bg-transparent border-nord-3;
   }
 
   /* Text colors - all using Snow Storm for better readability */
@@ -116,7 +108,7 @@
     appearance: none;
 
     /* Add custom arrow */
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23b9ab96' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2393908a' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.75rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;

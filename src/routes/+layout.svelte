@@ -67,7 +67,7 @@
 
 <div class="min-h-screen bg-nord-0 flex flex-col">
 	<!-- Header -->
-	<header class="card-bg shadow-sm border-b">
+	<header class="border-b border-nord-2">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			<div class="flex flex-wrap justify-between items-center gap-x-4 py-2 sm:h-16 sm:py-0">
 				<a href="/" class="flex items-center space-x-2 min-h-[44px]">
@@ -76,7 +76,7 @@
 				</a>
 
 				<nav
-					class="flex items-center gap-x-1 overflow-x-auto whitespace-nowrap max-w-full -mx-1 px-1"
+					class="flex items-center gap-x-1 overflow-x-auto whitespace-nowrap max-w-full -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
 					aria-label="Main navigation"
 				>
 					{#each NAV as item (item.href)}
@@ -86,7 +86,7 @@
 								item.href,
 								$page.url.pathname,
 							)
-								? 'text-nord-8'
+								? 'text-nord-6 underline underline-offset-8 decoration-1'
 								: 'text-nord-5 hover:text-nord-4'}"
 							aria-current={isActive(item.href, $page.url.pathname) ? 'page' : undefined}
 						>
@@ -109,16 +109,21 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="card-bg border-t mt-auto">
+	<footer class="border-t border-nord-2 mt-auto">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<div class="text-center text-nord-5 text-sm">
 				<p>numtags - Learn and share barbershop tags</p>
 				<div class="mt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
-					<a href="https://github.com/bumbleblue/numtags" class="text-nord-8 hover:text-nord-9">
+					<a
+						href="https://github.com/bumbleblue/numtags"
+						class="underline underline-offset-2 hover:text-nord-4"
+					>
 						Open Source on GitHub
 					</a>
-					<span class="text-nord-4">•</span>
-					<a href="/impressum" class="text-nord-8 hover:text-nord-9"> Impressum </a>
+					<span class="text-nord-10">·</span>
+					<a href="/impressum" class="underline underline-offset-2 hover:text-nord-4">
+						Impressum
+					</a>
 				</div>
 			</div>
 		</div>

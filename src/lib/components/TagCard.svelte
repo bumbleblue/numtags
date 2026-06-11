@@ -15,34 +15,32 @@
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
 			case 'Easy':
-				return 'bg-nord-14 bg-opacity-20 text-nord-14';
+				return 'border-nord-14 text-nord-14';
 			case 'Medium':
-				return 'bg-nord-13 bg-opacity-20 text-nord-13';
+				return 'border-nord-13 text-nord-13';
 			case 'Hard':
-				return 'bg-nord-11 bg-opacity-20 text-nord-11';
+				return 'border-nord-11 text-nord-11';
 			default:
-				return 'bg-nord-2 text-nord-4';
+				return 'border-nord-3 text-nord-5';
 		}
 	}
 </script>
 
-<div class="card-bg rounded shadow-sm border p-6 hover:shadow-md transition-shadow duration-200">
+<div class="card-bg rounded border p-4 sm:p-6 hover:border-nord-5 transition-colors duration-200">
 	<div class="space-y-4">
-		<!-- Header -->
-		<div class="flex justify-between items-start gap-2">
-			<div class="flex-1 min-w-0">
-				<h3 class="text-lg font-semibold text-nord-4 mb-1">
-					<a href="/tag/id/{tag.metadata.tag_id}" class="hover:text-nord-8 transition-colors">
-						{tag.metadata.title}
-					</a>
-				</h3>
-				<p class="text-sm text-nord-5">
-					{local ? 'Your tag' : `Tag #${tag.metadata.tag_id}`}
-				</p>
-			</div>
-			<div class="flex flex-col items-end gap-1.5">
+		<!-- Header: the number is the identity, JD-style -->
+		<div>
+			<h3 class="text-lg font-semibold text-nord-4 mb-1.5">
+				<a href="/tag/id/{tag.metadata.tag_id}" class="hover:underline underline-offset-4">
+					{tag.metadata.title}
+				</a>
+			</h3>
+			<div class="flex flex-wrap items-center gap-1.5">
+				<span class="inline-flex items-center border border-nord-3 rounded px-1.5 py-0.5 text-xs text-nord-5">
+					{local ? 'yours' : `#${tag.metadata.tag_id}`}
+				</span>
 				<span
-					class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getDifficultyColor(
+					class="inline-flex items-center border rounded px-1.5 py-0.5 text-xs {getDifficultyColor(
 						tag.metadata.difficulty,
 					)}"
 				>
@@ -91,9 +89,9 @@
 		<div class="flex">
 			<a
 				href="/tag/id/{tag.metadata.tag_id}"
-				class="btn-primary text-sm flex-1 text-center min-h-[44px] flex items-center justify-center"
+				class="btn-secondary text-sm flex-1 text-center min-h-[44px] flex items-center justify-center"
 			>
-				View Tag
+				View tag
 			</a>
 		</div>
 	</div>

@@ -107,7 +107,7 @@
 		color: var(--ink-bright);
 	}
 	.oct-down {
-		color: var(--brass);
+		color: var(--note-alt);
 	}
 
 	/* ── CSS-drawn marks, centred on the digit ─────────────────────────── */
@@ -148,7 +148,7 @@
 		background: var(--ink-bright);
 	}
 	.odot.down {
-		background: var(--brass);
+		background: var(--note-alt);
 	}
 
 	.tick {
@@ -189,14 +189,14 @@
 	}
 
 	.invalid {
-		background: color-mix(in srgb, var(--rust) 12%, transparent);
+		background: color-mix(in srgb, var(--error) 12%, transparent);
 		border-radius: 2px;
 		justify-content: center;
 		cursor: help;
 	}
 	.invalid-text {
 		font-size: 0.85em;
-		text-decoration: underline wavy var(--rust);
+		text-decoration: underline wavy var(--error);
 		text-decoration-thickness: 0.08em;
 		text-underline-offset: 0.2em;
 	}

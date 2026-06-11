@@ -310,7 +310,7 @@
 	.staff-frame {
 		background: var(--paper-0); /* darker than the measure blocks */
 		border: 1px solid var(--paper-3);
-		border-radius: 4px;
+		border-radius: 2px;
 		padding: 0.35rem;
 	}
 

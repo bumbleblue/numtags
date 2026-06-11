@@ -48,13 +48,13 @@
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
 			case 'Easy':
-				return 'bg-nord-14 bg-opacity-20 text-nord-14';
+				return 'border-nord-14 text-nord-14';
 			case 'Medium':
-				return 'bg-nord-13 bg-opacity-20 text-nord-13';
+				return 'border-nord-13 text-nord-13';
 			case 'Hard':
-				return 'bg-nord-11 bg-opacity-20 text-nord-11';
+				return 'border-nord-11 text-nord-11';
 			default:
-				return 'bg-nord-2 text-nord-4';
+				return 'border-nord-3 text-nord-5';
 		}
 	}
 
@@ -141,7 +141,7 @@
 					onclick={() => setLayout('wrapped')}
 					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'wrapped'
 						? 'bg-nord-8 text-nord-0'
-						: 'bg-nord-1 text-nord-5 hover:text-nord-4'}"
+						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
 					aria-pressed={layout === 'wrapped'}
 				>
 					Wrapped
@@ -150,7 +150,7 @@
 					onclick={() => setLayout('continuous')}
 					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'continuous'
 						? 'bg-nord-8 text-nord-0'
-						: 'bg-nord-1 text-nord-5 hover:text-nord-4'}"
+						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
 					aria-pressed={layout === 'continuous'}
 				>
 					Scroll
@@ -159,7 +159,7 @@
 		</div>
 
 		<!-- Notation -->
-		<div bind:this={notationEl} class="card-bg rounded shadow-sm border p-3 sm:p-5 mb-6">
+		<div bind:this={notationEl} class="card-bg rounded border p-3 sm:p-5 mb-6">
 			<NotationRenderer body={tag.content} mode={layout} fontScale={settings.fontScale} />
 		</div>
 
@@ -178,7 +178,7 @@
 				<button
 					onclick={handleDelete}
 					disabled={isDeleting}
-					class="min-h-[44px] px-5 rounded font-medium bg-nord-11 bg-opacity-20 text-nord-11 hover:bg-opacity-30 transition-colors"
+					class="min-h-[44px] px-5 rounded font-medium border border-nord-11 text-nord-11 hover:bg-nord-11 hover:bg-opacity-10 transition-colors"
 				>
 					{isDeleting ? 'Deleting…' : 'Delete'}
 				</button>
@@ -189,12 +189,12 @@
 		</div>
 
 		<!-- Metadata -->
-		<div class="card-bg rounded shadow-sm border p-6">
+		<div class="card-bg rounded border p-6">
 			<div class="flex justify-between items-start mb-6 gap-2">
 				<h2 class="text-2xl font-semibold text-nord-4">Tag Information</h2>
 				<div class="flex flex-col items-end gap-1.5">
 					<span
-						class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {getDifficultyColor(
+						class="inline-flex items-center border rounded px-2 py-0.5 text-sm {getDifficultyColor(
 							tag.metadata.difficulty,
 						)}"
 					>
@@ -236,7 +236,7 @@
 							href={tag.metadata.source_url}
 							target="_blank"
 							rel="noopener"
-							class="ml-2 text-nord-8 hover:text-nord-9"
+							class="ml-2 underline underline-offset-2 hover:text-nord-6"
 						>
 							View Original
 						</a>
@@ -245,14 +245,14 @@
 			</div>
 
 			{#if tag.metadata.lyrics}
-				<div class="bg-nord-2 rounded p-4 mb-4">
+				<div class="border border-nord-2 rounded p-4 mb-4">
 					<h3 class="text-sm font-medium text-nord-5 mb-2">Lyrics</h3>
 					<p class="text-nord-4 italic">“{tag.metadata.lyrics}”</p>
 				</div>
 			{/if}
 
 			{#if tag.metadata.comments}
-				<div class="bg-nord-2 rounded p-4">
+				<div class="border border-nord-2 rounded p-4">
 					<h3 class="text-sm font-medium text-nord-5 mb-2">Notes</h3>
 					<p class="text-nord-4">{tag.metadata.comments}</p>
 				</div>

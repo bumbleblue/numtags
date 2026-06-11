@@ -4,8 +4,8 @@
   "description": "Barbershop tags in numeric notation \u2014 browse, import, and write your own",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1714",
-  "theme_color": "#1a1714",
+  "background_color": "#161412",
+  "theme_color": "#161412",
   "orientation": "portrait-primary",
   "icons": [
     {

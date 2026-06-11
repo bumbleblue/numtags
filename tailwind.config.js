@@ -4,35 +4,43 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      borderRadius: {
+        // JD-style near-square boxes: `rounded` is a hair off square.
+        DEFAULT: '2px'
+      },
       fontFamily: {
-        'mono': ['Cutive Mono', 'monospace'],
+        // One typeface for everything: Quattro is near-monospaced and
+        // its digits share a width, which is all the notation needs.
+        'mono': ['iA Writer Quattro', 'monospace'],
         'sans': ['iA Writer Quattro', 'system-ui', 'sans-serif']
       },
       colors: {
-        // "Field recordings" warm-dark palette. Keeps the nord-* slot
-        // numbering (0-3 dark surfaces, 4-6 light text, 7-10 accent,
-        // 11-15 semantic) so existing classes keep their meaning.
+        // "Field recordings" warm-ish monochrome palette. Keeps the
+        // nord-* slot numbering (0-3 dark surfaces, 4-6 light text,
+        // 7-10 accent, 11-15 semantic) so existing classes keep their
+        // meaning. Accent slots are monochrome creams: emphasis comes
+        // from contrast, not hue.
         nord: {
-          // Surfaces: warm near-blacks
-          0: '#1a1714',   // page background
-          1: '#221e19',   // cards
-          2: '#2e2823',   // raised / borders
-          3: '#3d352c',   // lightest structure
-          // Text: creams
-          4: '#e8e0d1',  // primary text
-          5: '#b9ab96',  // muted text
-          6: '#f5efe4',  // brightest (headings)
-          // Accent: lamplight amber (was frost blue)
-          7: '#c8a96d',  // muted brass
-          8: '#e3a84e',  // primary accent
-          9: '#c98f33',  // accent hover
-          10: '#a87830', // deep amber
-          // Semantic: warmed aurora
-          11: '#d4665a', // red
-          12: '#d08770', // orange
-          13: '#ebcb8b', // yellow
-          14: '#a9b665', // green
-          15: '#b48ead'  // purple
+          // Surfaces: near-neutral darks, a whisper of warmth
+          0: '#121110',   // page background
+          1: '#181716',   // cards
+          2: '#21201e',   // raised / subtle rules
+          3: '#34322e',   // box borders, structure
+          // Text: warm-neutral whites
+          4: '#e5e3de',  // primary text
+          5: '#93908a',  // muted text
+          6: '#f2f1ed',  // brightest (headings)
+          // Accent: monochrome
+          7: '#b1aea7',  // muted
+          8: '#efede8',  // primary accent (buttons, active nav)
+          9: '#d6d3cd',  // accent hover
+          10: '#7b7872', // recessed
+          // Semantic: desaturated
+          11: '#c46a5e', // red
+          12: '#c08568', // orange
+          13: '#cdb380', // yellow
+          14: '#97a173', // green
+          15: '#a58a9d'  // purple
         },
         primary: {
           50: '#f0f4ff',

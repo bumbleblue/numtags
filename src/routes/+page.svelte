@@ -95,7 +95,7 @@
 	</div>
 
 	<!-- Search + filters -->
-	<div class="card-bg rounded shadow-sm border p-4 sm:p-6">
+	<div class="card-bg rounded border p-4 sm:p-6">
 		<div class="space-y-4">
 			<input
 				type="search"
@@ -115,7 +115,7 @@
 	{/if}
 
 	<!-- Your tags (local imports & drafts) -->
-	<section class="space-y-4">
+	<section class="space-y-4 border-t border-nord-2 pt-6">
 		<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">Your tags</h2>
 		{#if localResults.length > 0}
 			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -142,7 +142,7 @@
 	</section>
 
 	<!-- Catalog -->
-	<section class="space-y-4">
+	<section class="space-y-4 border-t border-nord-2 pt-6">
 		<div class="flex justify-between items-center">
 			<h2 class="text-xl sm:text-2xl font-semibold text-nord-4">
 				Catalog

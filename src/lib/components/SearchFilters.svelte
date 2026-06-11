@@ -56,7 +56,7 @@
 				bind:value={arranger}
 				oninput={() => onchange?.()}
 				placeholder="Type arranger name..."
-				class="w-full px-3 py-2.5 min-h-[44px] border border-nord-5 rounded focus:ring-2 focus:ring-nord-8 focus:border-transparent bg-nord-1 text-nord-4 placeholder-nord-5"
+				class="w-full px-3 py-2.5 min-h-[44px] border border-nord-3 rounded focus:outline-none focus:border-nord-5 focus:ring-0 bg-transparent text-nord-4 placeholder-nord-5"
 			/>
 		</div>
 
@@ -69,7 +69,7 @@
 				id="difficulty"
 				bind:value={difficulty}
 				onchange={() => onchange?.()}
-				class="w-full pl-3 pr-12 py-2.5 min-h-[44px] border border-nord-5 rounded focus:ring-2 focus:ring-nord-8 focus:border-transparent bg-nord-1 text-nord-4"
+				class="w-full pl-3 pr-12 py-2.5 min-h-[44px] border border-nord-3 rounded focus:outline-none focus:border-nord-5 focus:ring-0 bg-transparent text-nord-4"
 				style="padding-right: 3rem;"
 			>
 				<option value="">All difficulties</option>
@@ -89,7 +89,7 @@
 							type="checkbox"
 							checked={selectedParts.includes(part)}
 							onchange={() => togglePart(part)}
-							class="h-4 w-4 text-nord-8 focus:ring-nord-8 border-nord-5 rounded bg-nord-1"
+							class="h-4 w-4 text-nord-8 focus:ring-nord-8 border-nord-3 rounded bg-transparent"
 						/>
 						<span class="ml-2 text-sm text-nord-5">{part} part{part === 1 ? '' : 's'}</span>
 					</label>
