@@ -10,11 +10,12 @@ export type LayoutMode = 'wrapped' | 'continuous';
 export interface Settings {
 	defaultLayout: LayoutMode;
 	fontScale: number; // 1 = default
+	sharpsOnly: boolean; // display every accidental as a sharp (UI only, §3 data unchanged)
 }
 
 const KEY = 'numtags-settings';
 
-const DEFAULTS: Settings = { defaultLayout: 'wrapped', fontScale: 1 };
+const DEFAULTS: Settings = { defaultLayout: 'wrapped', fontScale: 1, sharpsOnly: false };
 
 function load(): Settings {
 	if (!browser) return { ...DEFAULTS };
@@ -41,6 +42,14 @@ class SettingsStore {
 	}
 	set fontScale(v: number) {
 		this.#state.fontScale = v;
+		this.#persist();
+	}
+
+	get sharpsOnly() {
+		return this.#state.sharpsOnly;
+	}
+	set sharpsOnly(v: boolean) {
+		this.#state.sharpsOnly = v;
 		this.#persist();
 	}
 

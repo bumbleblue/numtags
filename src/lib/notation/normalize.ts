@@ -86,6 +86,7 @@ function normalizeCell(cell: string): string {
 	return pieces
 		.map((piece) => {
 			if (piece === MIDDLE_DOT) return '0'; // legacy standalone middle dot = rest
+			if (/^[xX]+$/.test(piece)) return piece.toUpperCase(); // posted: typed x, stored X
 			return normalizeNoteToken(piece) ?? piece;
 		})
 		.join(' ');

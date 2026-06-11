@@ -8,12 +8,13 @@
 	let deferredPrompt: Event | null = $state(null);
 	let showInstallButton = $state(false);
 
+	// View settings (layout, size, sharps-only) live on the tag page rail,
+	// so there is no Settings entry here.
 	const NAV = [
 		{ href: '/', label: 'Library' },
 		{ href: '/import', label: 'Import' },
 		{ href: '/notation', label: 'Guide' },
 		{ href: '/about', label: 'About' },
-		{ href: '/settings', label: 'Settings' },
 	];
 
 	function isActive(href: string, pathname: string): boolean {
@@ -65,14 +66,14 @@
 	<title>numtags - Barbershop Tags</title>
 </svelte:head>
 
-<div class="min-h-screen bg-nord-0 flex flex-col">
+<div class="min-h-screen bg-paper-0 flex flex-col">
 	<!-- Header -->
-	<header class="border-b border-nord-2">
+	<header class="border-b border-paper-2">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 			<div class="flex flex-wrap justify-between items-center gap-x-4 py-2 sm:h-16 sm:py-0">
 				<a href="/" class="flex items-center space-x-2 min-h-[44px]">
 					<img src="/numtag-logo.svg" alt="numtags logo" class="w-8 h-8" />
-					<span class="text-xl font-bold text-nord-4">numtags</span>
+					<span class="text-2xl font-bold text-ink-bright tracking-[-0.045em]">numtags</span>
 				</a>
 
 				<nav
@@ -86,8 +87,8 @@
 								item.href,
 								$page.url.pathname,
 							)
-								? 'text-nord-6 underline underline-offset-8 decoration-1'
-								: 'text-nord-5 hover:text-nord-4'}"
+								? 'text-ink-bright underline underline-offset-8 decoration-1'
+								: 'text-ink-muted hover:text-ink'}"
 							aria-current={isActive(item.href, $page.url.pathname) ? 'page' : undefined}
 						>
 							{item.label}
@@ -109,19 +110,19 @@
 	</main>
 
 	<!-- Footer -->
-	<footer class="border-t border-nord-2 mt-auto">
+	<footer class="border-t border-paper-2 mt-auto">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-			<div class="text-center text-nord-5 text-sm">
+			<div class="text-center text-ink-muted text-sm">
 				<p>numtags - Learn and share barbershop tags</p>
 				<div class="mt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
 					<a
 						href="https://github.com/bumbleblue/numtags"
-						class="underline underline-offset-2 hover:text-nord-4"
+						class="underline underline-offset-2 hover:text-ink"
 					>
 						Open Source on GitHub
 					</a>
-					<span class="text-nord-10">·</span>
-					<a href="/impressum" class="underline underline-offset-2 hover:text-nord-4">
+					<span class="text-accent-recessed">·</span>
+					<a href="/impressum" class="underline underline-offset-2 hover:text-ink">
 						Impressum
 					</a>
 				</div>

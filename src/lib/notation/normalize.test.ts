@@ -64,6 +64,12 @@ describe('normalize — legacy glyph mappings', () => {
 		expect(normalize('| 6 - · |')).toBe('| 6 - 0 |');
 	});
 
+	it('uppercases typed x to the canonical posted X', () => {
+		expect(normalize('| 1 x |')).toBe('| 1 X |');
+		expect(normalize('| 1 xx |')).toBe('| 1 XX |');
+		expect(normalize('| 1 X |')).toBe('| 1 X |');
+	});
+
 	it('converts a middle dot attached after a digit (legacy dotted) to a period', () => {
 		expect(normalize('| 1· |')).toBe('| 1. |');
 		expect(normalize('| 3̇· 7̲ |')).toBe("| 3'. 7/ |");

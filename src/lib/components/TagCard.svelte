@@ -15,28 +15,28 @@
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
 			case 'Easy':
-				return 'border-nord-14 text-nord-14';
+				return 'border-success text-success';
 			case 'Medium':
-				return 'border-nord-13 text-nord-13';
+				return 'border-note text-note';
 			case 'Hard':
-				return 'border-nord-11 text-nord-11';
+				return 'border-danger text-danger';
 			default:
-				return 'border-nord-3 text-nord-5';
+				return 'border-paper-3 text-ink-muted';
 		}
 	}
 </script>
 
-<div class="card-bg rounded border p-4 sm:p-6 hover:border-nord-5 transition-colors duration-200">
+<div class="card-bg rounded border p-4 sm:p-6 hover:border-ink-muted transition-colors duration-200">
 	<div class="space-y-4">
 		<!-- Header: the number is the identity, JD-style -->
 		<div>
-			<h3 class="text-lg font-semibold text-nord-4 mb-1.5">
+			<h3 class="text-lg font-semibold text-ink mb-1.5">
 				<a href="/tag/id/{tag.metadata.tag_id}" class="hover:underline underline-offset-4">
 					{tag.metadata.title}
 				</a>
 			</h3>
 			<div class="flex flex-wrap items-center gap-1.5">
-				<span class="inline-flex items-center border border-nord-3 rounded px-1.5 py-0.5 text-xs text-nord-5">
+				<span class="inline-flex items-center border border-paper-3 rounded px-1.5 py-0.5 text-xs text-ink-muted">
 					{local ? 'yours' : `#${tag.metadata.tag_id}`}
 				</span>
 				<span
@@ -54,12 +54,12 @@
 
 		<!-- Metadata -->
 		<div class="space-y-1.5">
-			<div class="flex items-center text-sm text-nord-5">
+			<div class="flex items-center text-sm text-ink-muted">
 				<span class="font-medium">Arranger:</span>
 				<span class="ml-1">{tag.metadata.arranger}</span>
 			</div>
 
-			<div class="flex items-center text-sm text-nord-5">
+			<div class="flex items-center text-sm text-ink-muted">
 				<span class="font-medium">Parts:</span>
 				<span class="ml-1">{tag.metadata.parts} part{tag.metadata.parts === 1 ? '' : 's'}</span>
 				{#if tag.metadata.original_key}
@@ -69,7 +69,7 @@
 			</div>
 
 			{#if tag.metadata.lyrics}
-				<div class="text-sm text-nord-5 truncate">
+				<div class="text-sm text-ink-muted truncate">
 					<span class="italic">“{tag.metadata.lyrics}”</span>
 				</div>
 			{/if}

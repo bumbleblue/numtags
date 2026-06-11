@@ -13,8 +13,9 @@
  *     first `|` = pickup (right-aligned into the beat(s) before measure 1).
  *   - Token: optional `~` tie, optional `#`/`b` accidental, digit 1–7, octave
  *     `'`/`,` suffixes, subdivision `/` (1=eighth, 2=sixteenth), dotted `.`.
- *     Other tokens: `-` hold, `0` rest, `X`+ posted. Anything else parses as
- *     kind 'invalid' with `raw` set plus a ParseWarning — never throws (§7.1).
+ *     Other tokens: `-` hold, `0` rest, `x`/`X`+ posted (stored canonical `X`,
+ *     lowercase accepted as input). Anything else parses as kind 'invalid'
+ *     with `raw` set plus a ParseWarning — never throws (§7.1).
  *
  * Lyric lines: a single space advances to the next beat cell; `_` (or a
  * standalone `-`) = a held/rest beat (null); a hyphen inside a word splits
@@ -22,6 +23,7 @@
  * 2+ spaces is honored as one held beat between syllables (legacy).
  */
 
+import { diagnoseToken } from './diagnose';
 import type {
 	Beat,
 	LyricRow,
@@ -44,7 +46,7 @@ const EMPTY_BEAT: Beat = { kind: 'empty' };
 function parseToken(token: string): Beat {
 	if (token === '-') return { kind: 'hold' };
 	if (token === '0') return { kind: 'rest' };
-	if (/^X+$/.test(token)) return { kind: 'posted' };
+	if (/^[xX]+$/.test(token)) return { kind: 'posted' }; // typed x or X; drawn as X
 
 	const m = NOTE_RE.exec(token);
 	if (!m) return { kind: 'invalid', raw: token };
@@ -73,20 +75,24 @@ interface VoiceLine {
 }
 
 function parseVoiceLine(text: string, lineNo: number): VoiceLine {
-	const unlabeled = text.replace(VOICE_LABEL_RE, '');
-	const segments = unlabeled.split('|');
+	const label = VOICE_LABEL_RE.exec(text)?.[0] ?? '';
+	const unlabeled = text.slice(label.length);
 
-	const tokensOf = (segment: string): Beat[] =>
-		segment
-			.split(/\s+/)
-			.filter((t) => t.length > 0)
-			.map(parseToken);
+	// Tokenize in place (rather than split) so each token keeps its source
+	// column — invalid tokens carry it for inline error markers (§7.1).
+	const segments: Beat[][] = [[]];
+	for (const m of unlabeled.matchAll(/\||[^\s|]+/g)) {
+		if (m[0] === '|') {
+			segments.push([]);
+			continue;
+		}
+		const beat = parseToken(m[0]);
+		if (beat.kind === 'invalid') beat.col = label.length + m.index;
+		segments[segments.length - 1].push(beat);
+	}
 
-	const pickup = tokensOf(segments[0]);
-	const measures = segments
-		.slice(1)
-		.map(tokensOf)
-		.filter((m) => m.length > 0);
+	const pickup = segments[0];
+	const measures = segments.slice(1).filter((m) => m.length > 0);
 
 	return { lineNo, pickup, measures };
 }
@@ -220,14 +226,18 @@ export function parse(body: string): ParsedTag {
 			});
 		}
 
-		// Collect warnings for invalid tokens (the beats themselves stay in place).
+		// Collect warnings for invalid tokens (the beats themselves stay in
+		// place). The message explains what to type instead (§6.6).
 		for (const v of voices) {
 			for (const beat of [...v.pickup, ...v.measures.flat()]) {
-				if (beat.kind === 'invalid') {
+				if (beat.kind === 'invalid' && beat.raw !== undefined) {
 					warnings.push({
-						message: `Unparseable token "${beat.raw}"`,
+						message: `"${beat.raw}" isn't a token I know — ${diagnoseToken(beat.raw)}`,
 						staffIndex,
 						line: v.lineNo,
+						col: beat.col,
+						length: beat.raw.length,
+						token: beat.raw,
 					});
 				}
 			}
