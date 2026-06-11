@@ -50,28 +50,30 @@ Last updated: 2026-06-11 (branch `fable-rebuild`).
   and applied to the new screens too). Fixed two strays the palette swap
   exposed: the lyric-input focus color (`--amber` no longer exists →
   `--lyric`) and share-as-image's hardcoded `#2e3440` background (now
-  read live from `--paper-0`). The main checkout's uncommitted rename
-  pass is superseded by this branch and can be discarded after merging.
+  read live from `--paper-0`). The rename pass was meanwhile committed
+  upstream as `4fb188e`; the merge below reconciles the two copies.
 
-## Where we left off (session of 2026-06-10/11)
+## Where we left off (session of 2026-06-11, brand pass)
 
-- Branch `fable-rebuild`, 14 commits ahead of the `9edb17e` baseline; latest
-  is `d5edb0e` (beat-anchored lyric editor). **Not yet merged to `main`.**
-- 193 vitest green, svelte-check clean, production build passing at the last
-  commit. Run `npm test && npm run build` after finishing the theme pass.
-- **Uncommitted in the working tree (in-progress theme iteration, second
-  round):** `app.css`, `app.html`, `tailwind.config.js`, `BeatCell.svelte`,
-  `TagCard.svelte`, `OriginBadge.svelte`, `+layout.svelte`, `+page.svelte`,
-  `manifest.json`, `static/fonts/` changes (CutiveMono-Regular.woff2 deleted
-  — if the notation font changes, update the `@font-face` + the preload in
-  `app.html`, which currently points at CutiveMono).
-- The **review screen lyric editor** is new (`d5edb0e`): source textarea =
+- Branch `fable-rebuild`; latest is the brand-consistency commit on top of
+  `1a70b1b` (Base16 Default Dark palette + octave-direction colors +
+  Quattro ss02). **Not yet merged to `main`.**
+- The theme pass is **done and committed**: Base16 Default Dark under
+  role-named Tailwind tokens (`paper-*`/`ink*`/`accent-*`/status — swap
+  hexes in tailwind.config.js + app.css only, components reference roles),
+  iA Writer Quattro as the only typeface, JD box layout. Logo is the
+  user-designed "v1" hollow sharp on the octave-gradient squircle
+  (static/numtag-logo.svg, stroke 10); favicon.png is its filled 32px
+  export. Header wordmark: text-2xl ink-bright, tracking -0.045em.
+- svelte-check clean and production build passing after the token rename;
+  `npm test && npm run build` re-run at commit time.
+- The **review screen lyric editor** is recent (`d5edb0e`): source textarea =
   voice lines only; lyrics are per-beat inputs in the preview (Tab =
   hyphenate + advance, Space = next word). Helpers in
   `src/lib/notation/lyrics.ts`; renderer edit mode in `NotationRenderer`.
-- Next candidates: finish/commit the theme; merge to `main`; then the M5
-  items below (deploy `services/`, History screen). A `/dev/notation`
-  torture-test route exists for renderer work.
+- Next candidates: merge to `main`; then the M5 items below (deploy
+  `services/`, History screen). A `/dev/notation` torture-test route exists
+  for renderer work.
 
 ## Done
 

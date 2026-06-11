@@ -201,7 +201,7 @@ numtags is a Progressive Web App with the following features:
 ## Tech Stack
 
 - **Framework**: SvelteKit (Svelte 5)
-- **Styling**: TailwindCSS (warm “field recordings” dark palette)
+- **Styling**: TailwindCSS (Base16 Default Dark palette, role-named color tokens)
 - **Search**: Fuse.js
 - **Imports**: DOMParser (MusicXML), @tonejs/midi, fflate (.mxl), homr (OMR, self-hosted)
 - **Storage**: IndexedDB (idb) + Git-backed catalog

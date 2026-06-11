@@ -1,15 +1,19 @@
 <svg width="460" height="460" viewBox="0 0 460 460" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- "Field recordings" palette (tailwind.config.js / app.css):
-       tile #181716 (card) on #121110 page, border #34322e, ink #efede8.
-       The "5" is the iA Writer Quattro Bold glyph outline (baked in so the
-       SVG needs no font at render time); flat + octave dot are drawn marks. -->
-  <rect x="10" y="10" width="440" height="440" rx="26" fill="#181716" stroke="#34322e" stroke-width="8"/>
-  <!-- flat symbol -->
-  <path fill-rule="evenodd" clip-rule="evenodd" fill="#efede8" d="M103 91 L129 91 L129 213 Q147 197 162 197 Q184 197 184 231 Q184 257 166 277 Q150 295 129 307 L103 307 Z M129 228 Q138 219 148 219 Q161 219 161 234 Q161 249 150 263 Q141 274.5 129 283 Z"/>
-  <!-- digit 5: iA Writer Quattro Bold, 1000 upm, baseline at y=307.4 -->
-  <g transform="translate(186.4 307.4) scale(0.3 -0.3)">
-    <path fill="#efede8" d="M525 567H202L186 346H195Q219 399 256.0 427.5Q293 456 354 456Q412 456 460.5 429.5Q509 403 538.0 352.5Q567 302 567 234Q567 163 535.0 107.0Q503 51 441.5 19.5Q380 -12 295 -12Q124 -12 42 122L151 208Q178 162 211.5 136.0Q245 110 296 110Q351 110 380.0 140.0Q409 170 409 222V230Q409 279 379.5 307.0Q350 335 300 335Q233 335 189 286L66 303L92 698H525Z"/>
+  <!-- numtags mark v1: hollow sharp cut out of a gradient tile.
+       Colors are theme tokens (app.css / tailwind.config.js):
+       gradient = note-up green to note-down magenta (octave directions),
+       stroke = paper-0 so the glyph reads as the page showing through. -->
+  <g clip-path="url(#tile-clip)">
+    <path d="M0 163.556C0 106.306 0 77.6808 11.1416 55.8143C20.9419 36.58 36.58 20.9419 55.8143 11.1416C77.6808 0 106.306 0 163.556 0H296.444C353.694 0 382.319 0 404.186 11.1416C423.42 20.9419 439.058 36.58 448.858 55.8143C460 77.6808 460 106.306 460 163.556V296.444C460 353.694 460 382.319 448.858 404.186C439.058 423.42 423.42 439.058 404.186 448.858C382.319 460 353.694 460 296.444 460H163.556C106.306 460 77.6808 460 55.8143 448.858C36.58 439.058 20.9419 423.42 11.1416 404.186C0 382.319 0 353.694 0 296.444V163.556Z" fill="url(#octave-gradient)"/>
+    <path d="M237.113 86.5L236.232 89.6699L212.855 173.767H278.408L302.158 88.3301L302.667 86.5H354.38L353.5 89.6689L330.161 173.767H413.5V205.432H321.139L307.834 254.568H390.557V286.233H298.82L275.109 371.669L274.602 373.5H222.887L223.768 370.33L247.145 286.233H181.592L157.842 371.67L157.333 373.5H105.62L106.499 370.331L129.839 286.233H46.5V254.568H138.861L152.166 205.432H69.4434V173.767H161.18L184.891 88.3311L185.398 86.5H237.113ZM190.394 254.568H255.947L269.606 205.432H204.053L190.394 254.568Z" stroke="#151515" stroke-width="10"/>
   </g>
-  <!-- octave-down dot -->
-  <circle cx="278" cy="351" r="18" fill="#efede8"/>
+  <defs>
+    <linearGradient id="octave-gradient" x1="230" y1="0" x2="230" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#b0bf8f"/>
+      <stop offset="1" stop-color="#c0a0b9"/>
+    </linearGradient>
+    <clipPath id="tile-clip">
+      <rect width="460" height="460" fill="white"/>
+    </clipPath>
+  </defs>
 </svg>

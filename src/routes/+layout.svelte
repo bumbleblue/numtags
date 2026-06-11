@@ -73,7 +73,7 @@
 			<div class="flex flex-wrap justify-between items-center gap-x-4 py-2 sm:h-16 sm:py-0">
 				<a href="/" class="flex items-center space-x-2 min-h-[44px]">
 					<img src="/numtag-logo.svg" alt="numtags logo" class="w-8 h-8" />
-					<span class="text-xl font-bold text-ink">numtags</span>
+					<span class="text-2xl font-bold text-ink-bright tracking-[-0.045em]">numtags</span>
 				</a>
 
 				<nav

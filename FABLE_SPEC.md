@@ -424,13 +424,13 @@ One unbroken 4-voice line; swipe left/right. Preserves a single staff but you ca
 ## 9. Visual design
 - **Notation marks are CSS-drawn, not font glyphs.** Octave dots (above/below) and the subdivision mark are positioned by the renderer from semantic tokens (§4.4), so numtags does **not** depend on a font's combining-mark behavior. Any clean monospace renders the digits; only ordinary characters (`♯ ♭ ⁀`, digits) need to exist in the font, and those are universal. *(This removes the old Everson-Mono / Firefox combining-mark fragility — and the licensing risk.)*
 - **Disambiguate octave-down dots from the subdivision mark.** Both sit under the digit, so render them in clearly separate vertical bands and distinct shapes (e.g. round octave dots placed lower; a short straight subdivision tick hugging the digit). A digit that is *both* subdivided and octave-down must read cleanly, never as one smudge.
-- Carry the **Nord dark palette** (afterglow-friendly). Octave color cues (brighter up, steel-blue down) are a nice-to-keep, secondary to the marks.
+- Carry a **dark palette** (afterglow-friendly). Octave color cues are a nice-to-keep, secondary to the marks. *(Shipped 2026-06: Nord was replaced by **Base16 Default Dark** with role-named tokens; octave cues are muted green up / muted magenta down.)*
 - Mobile-first spacing; tap targets ≥44px.
 
 ---
 
 ## 10. Tech recommendations
-- **Keep the proven web stack** (SvelteKit + Tailwind, Cloudflare adapter) — Nord theme and catalog reuse as-is. The notation **parser and renderer get a token-model update** (ASCII → semantic tokens, CSS-drawn marks; §4.4, §11); the new work is the *import pipeline + layout modes + local library*.
+- **Keep the proven web stack** (SvelteKit + Tailwind, Cloudflare adapter) — theme tokens and catalog reuse as-is *(palette since re-skinned to Base16 Default Dark)*. The notation **parser and renderer get a token-model update** (ASCII → semantic tokens, CSS-drawn marks; §4.4, §11); the new work is the *import pipeline + layout modes + local library*.
 - PWA: service worker for offline catalog + app shell; manifest for install.
 - IndexedDB via a thin wrapper (e.g. `idb`).
 - MusicXML parsing client-side (DOMParser is enough; `.mxl` is zipped MusicXML — unzip first).
@@ -447,7 +447,7 @@ One unbroken 4-voice line; swipe left/right. Preserves a single staff but you ca
 | Tag data + format | `data/tags/*.md`, `src/lib/types.ts` | Keep the markdown+YAML format; add `origin`. |
 | Build step | `scripts/generate-tags.js` | Compiles markdown → bundled JSON. |
 | Notation guide content | `src/routes/notation/+page.svelte` | Port the prose/glossary. |
-| Theme + font | `tailwind.config.js` (Nord), fonts | Keep Nord. Font is now **cosmetic** — marks are CSS-drawn (§9), so any libre monospace works and the Everson Mono licensing question is no longer blocking. |
+| Theme + font | `tailwind.config.js`, fonts | Keep the token structure *(shipped: Base16 Default Dark under role names, was Nord)*. Font is now **cosmetic** — marks are CSS-drawn (§9), so any libre face works *(shipped: iA Writer Quattro everywhere)*; the Everson Mono licensing question is no longer blocking. |
 | The 5 hand-transcribed tags | `data/tags/` | Double as the **golden test set** (§13). |
 
 ---
