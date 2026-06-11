@@ -8,12 +8,13 @@
 	let deferredPrompt: Event | null = $state(null);
 	let showInstallButton = $state(false);
 
+	// View settings (layout, size, sharps-only) live on the tag page rail,
+	// so there is no Settings entry here.
 	const NAV = [
 		{ href: '/', label: 'Library' },
 		{ href: '/import', label: 'Import' },
 		{ href: '/notation', label: 'Guide' },
 		{ href: '/about', label: 'About' },
-		{ href: '/settings', label: 'Settings' },
 	];
 
 	function isActive(href: string, pathname: string): boolean {

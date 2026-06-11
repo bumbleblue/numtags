@@ -45,6 +45,13 @@
 		rememberLayout(mode);
 	}
 
+	// Three notation sizes for the view-settings rail (persisted app-wide).
+	const FONT_SIZES = [
+		{ value: 0.85, label: 'Small', glyph: '0.7rem' },
+		{ value: 1, label: 'Default', glyph: '0.9rem' },
+		{ value: 1.15, label: 'Large', glyph: '1.15rem' },
+	];
+
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
 			case 'Easy':
@@ -99,7 +106,49 @@
 			isDeleting = false;
 		}
 	}
+
+	// "Search library" at the bottom doubles as the way back to the library.
+	let searchInput = $state('');
+
+	function searchLibrary(e: SubmitEvent) {
+		e.preventDefault();
+		const q = searchInput.trim();
+		goto(q ? `/?q=${encodeURIComponent(q)}` : '/');
+	}
 </script>
+
+{#snippet iconWrapped()}
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<line x1="3" y1="6" x2="21" y2="6" />
+		<path d="M3 12h15a3 3 0 1 1 0 6h-4" />
+		<polyline points="16 16 14 18 16 20" />
+		<line x1="3" y1="18" x2="10" y2="18" />
+	</svg>
+{/snippet}
+
+{#snippet iconScroll()}
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<polyline points="18 8 22 12 18 16" />
+		<polyline points="6 8 2 12 6 16" />
+		<line x1="2" y1="12" x2="22" y2="12" />
+	</svg>
+{/snippet}
+
+{#snippet iconImage()}
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<rect x="3" y="3" width="18" height="18" rx="2" />
+		<circle cx="9" cy="9" r="2" />
+		<path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+	</svg>
+{/snippet}
+
+{#snippet iconLink()}
+	<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+		<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+	</svg>
+{/snippet}
+
 
 <svelte:head>
 	<title>{tag?.metadata.title || 'Tag'} - numtags</title>
@@ -130,62 +179,84 @@
 			</p>
 		</div>
 
-		<!-- Layout toggle (§8.3) -->
-		<div class="flex justify-center mb-4">
-			<div
-				class="inline-flex rounded border border-nord-3 overflow-hidden"
-				role="group"
-				aria-label="Notation layout"
-			>
-				<button
-					onclick={() => setLayout('wrapped')}
-					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'wrapped'
-						? 'bg-nord-8 text-nord-0'
-						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
-					aria-pressed={layout === 'wrapped'}
-				>
-					Wrapped
-				</button>
-				<button
-					onclick={() => setLayout('continuous')}
-					class="px-5 min-h-[44px] text-sm font-medium transition-colors {layout === 'continuous'
-						? 'bg-nord-8 text-nord-0'
-						: 'bg-transparent text-nord-5 hover:text-nord-4'}"
-					aria-pressed={layout === 'continuous'}
-				>
-					Scroll
-				</button>
+		<!-- Notation with the action rail beside it (icons; below on mobile) -->
+		<div class="flex flex-col sm:flex-row sm:items-start gap-3 mb-6">
+			<div bind:this={notationEl} class="card-bg rounded border p-3 sm:p-5 flex-1 min-w-0">
+				<NotationRenderer body={tag.content} mode={layout} fontScale={settings.fontScale} />
 			</div>
-		</div>
 
-		<!-- Notation -->
-		<div bind:this={notationEl} class="card-bg rounded border p-3 sm:p-5 mb-6">
-			<NotationRenderer body={tag.content} mode={layout} fontScale={settings.fontScale} />
-		</div>
-
-		<!-- Actions -->
-		<div class="flex flex-wrap justify-center gap-3 mb-8">
-			<a href={editHref} class="btn-primary min-h-[44px] inline-flex items-center px-5"> Edit </a>
-			<button
-				onclick={shareAsImage}
-				disabled={isSharing}
-				class="btn-secondary min-h-[44px] px-5"
-			>
-				{isSharing ? 'Generating…' : 'Share as Image'}
-			</button>
-			<button onclick={shareUrl} class="btn-secondary min-h-[44px] px-5"> Share URL </button>
-			{#if local}
+			<div class="flex sm:flex-col gap-2 justify-center" role="toolbar" aria-label="Tag actions">
+				<!-- sharing first: the most used actions sit at the top -->
 				<button
-					onclick={handleDelete}
-					disabled={isDeleting}
-					class="min-h-[44px] px-5 rounded font-medium border border-nord-11 text-nord-11 hover:bg-nord-11 hover:bg-opacity-10 transition-colors"
+					onclick={shareAsImage}
+					disabled={isSharing}
+					class="icon-btn {isSharing ? 'animate-pulse' : ''}"
+					title="Share as image"
+					aria-label="Download the notation as an image"
 				>
-					{isDeleting ? 'Deleting…' : 'Delete'}
+					{@render iconImage()}
 				</button>
-			{/if}
-			<a href="/" class="btn-secondary min-h-[44px] inline-flex items-center px-5">
-				← Back to Library
-			</a>
+				<button
+					onclick={shareUrl}
+					class="icon-btn"
+					title="Share link"
+					aria-label="Share or copy the link to this tag"
+				>
+					{@render iconLink()}
+				</button>
+
+				<!-- view settings: layout (§8.3) · size · sharps-only -->
+				<div
+					class="flex sm:flex-col rounded border border-nord-3 overflow-hidden"
+					role="group"
+					aria-label="View settings"
+				>
+					<button
+						onclick={() => setLayout('wrapped')}
+						class="icon-btn !border-0 !rounded-none"
+						aria-pressed={layout === 'wrapped'}
+						title="Wrapped systems"
+						aria-label="Wrapped layout"
+					>
+						{@render iconWrapped()}
+					</button>
+					<button
+						onclick={() => setLayout('continuous')}
+						class="icon-btn !border-0 !rounded-none"
+						aria-pressed={layout === 'continuous'}
+						title="Horizontal scroll"
+						aria-label="Scrolling layout"
+					>
+						{@render iconScroll()}
+					</button>
+
+					<div class="rail-divider" aria-hidden="true"></div>
+
+					{#each FONT_SIZES as size (size.value)}
+						<button
+							onclick={() => (settings.fontScale = size.value)}
+							class="icon-btn !border-0 !rounded-none"
+							aria-pressed={settings.fontScale === size.value}
+							title="{size.label} notation"
+							aria-label="{size.label} notation size"
+						>
+							<span class="font-bold" style="font-size: {size.glyph}">A</span>
+						</button>
+					{/each}
+
+					<div class="rail-divider" aria-hidden="true"></div>
+
+					<button
+						onclick={() => (settings.sharpsOnly = !settings.sharpsOnly)}
+						class="icon-btn !border-0 !rounded-none font-mono text-lg"
+						aria-pressed={settings.sharpsOnly}
+						title="Sharps only — show every accidental as a sharp (#4 instead of b5)"
+						aria-label="Show every accidental as a sharp"
+					>
+						#
+					</button>
+				</div>
+			</div>
 		</div>
 
 		<!-- Metadata -->
@@ -258,5 +329,70 @@
 				</div>
 			{/if}
 		</div>
+
+		<!-- Rarer actions live below the tag information -->
+		<div class="flex justify-end gap-3 mt-4">
+			{#if local}
+				<button
+					onclick={handleDelete}
+					disabled={isDeleting}
+					class="min-h-[44px] px-5 rounded font-medium border border-nord-11 text-nord-11 hover:bg-nord-11 hover:bg-opacity-10 transition-colors"
+				>
+					{isDeleting ? 'Deleting…' : 'Delete'}
+				</button>
+			{/if}
+			<a href={editHref} class="btn-secondary min-h-[44px] inline-flex items-center px-5">Edit</a>
+		</div>
+
+		<!-- On to the next tag — the way back to the library is a search -->
+		<form class="max-w-md mx-auto mt-8" onsubmit={searchLibrary}>
+			<input
+				type="search"
+				bind:value={searchInput}
+				placeholder="Search library…"
+				aria-label="Search library"
+				class="search-input min-h-[44px]"
+			/>
+		</form>
 	</div>
 {/if}
+
+<style>
+	.icon-btn {
+		width: 2.75rem; /* 44px touch target */
+		height: 2.75rem;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		border: 1px solid var(--paper-3);
+		border-radius: 2px;
+		color: var(--ink-muted);
+		transition:
+			color 0.15s,
+			background-color 0.15s;
+	}
+
+	.icon-btn:hover {
+		color: var(--ink);
+		background: var(--paper-1);
+	}
+
+	.icon-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.icon-btn[aria-pressed='true'] {
+		background: var(--ink);
+		color: var(--paper-0);
+	}
+
+	/* 1px separator inside the view-settings group; works in both the
+	   vertical (sm+) and horizontal (mobile) rail orientations. */
+	.rail-divider {
+		flex: 0 0 1px;
+		align-self: stretch;
+		background: var(--paper-3);
+	}
+</style>

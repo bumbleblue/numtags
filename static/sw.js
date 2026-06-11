@@ -2,8 +2,8 @@
 // Navigations are network-first (fresh app when online, cached shell offline);
 // same-origin assets are stale-while-revalidate. The catalog snapshot is bundled
 // into the JS, so cached assets = offline catalog.
-const CACHE_NAME = 'numtags-v2';
-const SHELL = ['/', '/import', '/notation', '/about', '/settings', '/manifest.json'];
+const CACHE_NAME = 'numtags-v3'; // bumped: /settings removed from the shell
+const SHELL = ['/', '/import', '/notation', '/about', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

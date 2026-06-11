@@ -3,6 +3,47 @@
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
 Last updated: 2026-06-11 (branch `fable-rebuild`).
 
+## Where we left off (session of 2026-06-11, editor UX)
+
+- Branch `claude/clever-meitner-af7559` (fast-forwarded onto `fable-rebuild`).
+- **Review & edit restructured (§6.5):** input and live preview are side by
+  side on desktop (≥ lg); below that an Input ⟷ Preview toggle switches
+  panes on mobile. The Notation source ⟷ Details tabs live in the input
+  pane, so metadata can be edited with the preview in view.
+- **Syntax errors moved to the input:** new
+  `src/lib/components/notation/SourceEditor.svelte` draws red wavy
+  underlines under invalid tokens inside the textarea (mirror-backdrop
+  technique) and lists each error below it — clicking an error selects the
+  offending token. `BeatCell` now renders invalid tokens muted (dotted
+  underline + tooltip), no longer alarmed — the preview shows what it can,
+  the input owns the errors.
+- **Error messages teach the notation:** `src/lib/notation/diagnose.ts`
+  turns "Unparseable token" into what-to-type-instead hints (accidental
+  after the digit, octave mark before it, letter note names, degree 8/9,
+  legacy Unicode, wrong mark order, …). The parser now records
+  line/col/length for invalid tokens (`ParseWarning.col/length/token`,
+  `Beat.col`). 206 vitest green, svelte-check clean.
+- **Round 2 (same session):** lowercase `x` is valid posted input (parser
+  accepts `[xX]+`; normalize uppercases on blur; the renderer always draws
+  X). Glyph toolbar grouped semantically — notes (`# b ' ,`), rhythm
+  (`- . / 0 |`), holds (`~ x _`) — with per-glyph tooltips. Tag detail
+  page: text buttons replaced by an icon rail beside the notation
+  (wrapped/scroll toggle, edit, share-image, share-link, delete), and
+  "Back to Library" replaced by a bottom "Search library…" bar that lands
+  on `/?q=…` (the library page now reads `?q=`). `.claude/launch.json`
+  gained a `dev-alt` config on port 5180 (5173 is often taken by the main
+  checkout's dev server).
+- **Round 3 (same session):** tag-page rail regrouped — sharing on top,
+  then a bordered view-settings cluster: wrapped/scroll, three notation
+  sizes (A buttons; `settings.fontScale` 0.85/1/1.15), and a `#`
+  "sharps only" toggle (`settings.sharpsOnly`, persisted). Sharps-only is
+  **display-only**: `flatAsSharp()` in `src/lib/notation/transform.ts`
+  maps b5→#4 (b1→#7 an octave down) at render time in NotationRenderer;
+  stored text never changes. Edit/Delete moved out of the rail to below
+  Tag Information. The Settings page is gone (nav entry, route, sw shell
+  — cache bumped to v3); view settings live where they're used. Measures
+  no longer alternate backgrounds — uniform block + gap marks the bar.
+
 ## Where we left off (session of 2026-06-10/11)
 
 - Branch `fable-rebuild`, 14 commits ahead of the `9edb17e` baseline; latest

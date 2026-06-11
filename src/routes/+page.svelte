@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import {
 		searchTags,
 		getUniqueDifficulties,
@@ -14,6 +15,14 @@
 
 	let searchQuery = $state('');
 	let arranger = $state('');
+
+	// Arriving with ?q= (e.g. the tag page's "Search library" bar) lands with
+	// the query already applied.
+	$effect(() => {
+		if (!browser) return;
+		const q = page.url.searchParams.get('q');
+		if (q !== null) searchQuery = q;
+	});
 	let difficulty = $state('');
 	let selectedParts = $state<number[]>([]);
 

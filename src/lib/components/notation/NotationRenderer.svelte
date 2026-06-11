@@ -13,11 +13,13 @@
 -->
 <script lang="ts">
 	import { parse } from '$lib/notation/parse';
+	import { flatAsSharp } from '$lib/notation/transform';
 	import {
 		VOICE_ABBREV,
 		type Beat,
 		type ParsedTag,
 	} from '$lib/notation/types';
+	import { settings } from '$lib/settings.svelte';
 	import BeatCell from './BeatCell.svelte';
 
 	interface Props {
@@ -170,20 +172,15 @@
 {#snippet measureBlock(
 	measure: Beat[][],
 	lyricSlices: (string | null)[][],
-	alt: boolean,
 	isPickup: boolean,
 	si: number,
 	flatOffset: number,
 )}
-	<div
-		class="measure"
-		class:alt
-		class:pickup={isPickup}
-		style="--cols: {measure[0]?.length ?? 1}"
-	>
+	<div class="measure" class:pickup={isPickup} style="--cols: {measure[0]?.length ?? 1}">
 		{#each measure as voiceBeats}
 			{#each voiceBeats as beat}
-				<BeatCell {beat} />
+				<!-- "sharps only" is a view setting: flats display enharmonically (§3 data unchanged) -->
+				<BeatCell beat={settings.sharpsOnly ? flatAsSharp(beat) : beat} />
 			{/each}
 		{/each}
 		{#each lyricSlices as row, li}
@@ -248,7 +245,7 @@
 						<div class="system">
 							{@render labelCol(voiceCount, rowCount, false)}
 							{#if sysIdx === 0 && pickupLen > 0}
-								{@render measureBlock(staff.pickup, pickupSlices, false, true, si, 0)}
+								{@render measureBlock(staff.pickup, pickupSlices, true, si, 0)}
 							{/if}
 							{#each system as mi}
 								{@render measureBlock(
@@ -256,7 +253,6 @@
 									editRows
 										? editRows.map((r) => sliceFlat(r, offsets[mi], beatCounts[mi]))
 										: lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
-									mi % 2 === 1,
 									false,
 									si,
 									offsets[mi],
@@ -270,7 +266,7 @@
 					<div class="strip">
 						{@render labelCol(voiceCount, rowCount, true)}
 						{#if pickupLen > 0}
-							{@render measureBlock(staff.pickup, pickupSlices, false, true, si, 0)}
+							{@render measureBlock(staff.pickup, pickupSlices, true, si, 0)}
 						{/if}
 						{#each measures as measure, mi}
 							{@render measureBlock(
@@ -278,7 +274,6 @@
 								editRows
 									? editRows.map((r) => sliceFlat(r, offsets[mi], beatCounts[mi]))
 									: lyricRows.map((r) => padCells(r.measures[mi], beatCounts[mi])),
-								mi % 2 === 1,
 								false,
 								si,
 								offsets[mi],
@@ -386,10 +381,6 @@
 		padding: 0.15rem 3px; /* inline padding ≈ MEASURE_EXTRA */
 		overflow: visible;
 		flex-shrink: 0;
-	}
-
-	.measure.alt {
-		background: var(--paper-2);
 	}
 
 	/* Pickup floats on the frame background; its right border is barline 1 */

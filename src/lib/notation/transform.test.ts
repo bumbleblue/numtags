@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from './parse';
-import { beatMismatchWarnings, blankTemplateBody, shiftVoiceOctave } from './transform';
+import { beatMismatchWarnings, blankTemplateBody, flatAsSharp, shiftVoiceOctave } from './transform';
 
 describe('shiftVoiceOctave', () => {
 	it('shifts plain notes up: no marks → one apostrophe', () => {
@@ -95,5 +95,59 @@ describe('beatMismatchWarnings', () => {
 		const warnings = beatMismatchWarnings(parsed);
 		expect(warnings).toHaveLength(1);
 		expect(warnings[0]).toContain('Staff 2');
+	});
+});
+
+describe('flatAsSharp — display-only enharmonic simplification', () => {
+	it('turns a flat into the sharp of the degree below', () => {
+		expect(flatAsSharp({ kind: 'note', degree: 5, accidental: 'flat' })).toEqual({
+			kind: 'note',
+			degree: 4,
+			accidental: 'sharp',
+		});
+		expect(flatAsSharp({ kind: 'note', degree: 3, accidental: 'flat', octave: 1 })).toEqual({
+			kind: 'note',
+			degree: 2,
+			accidental: 'sharp',
+			octave: 1,
+		});
+	});
+
+	it('wraps b1 to #7 an octave down (same pitch)', () => {
+		expect(flatAsSharp({ kind: 'note', degree: 1, accidental: 'flat' })).toEqual({
+			kind: 'note',
+			degree: 7,
+			accidental: 'sharp',
+			octave: -1,
+		});
+	});
+
+	it('leaves sharps, naturals and non-notes untouched', () => {
+		const sharp = { kind: 'note', degree: 4, accidental: 'sharp' } as const;
+		expect(flatAsSharp(sharp)).toBe(sharp);
+		const natural = { kind: 'note', degree: 2 } as const;
+		expect(flatAsSharp(natural)).toBe(natural);
+		const hold = { kind: 'hold' } as const;
+		expect(flatAsSharp(hold)).toBe(hold);
+	});
+
+	it('preserves rhythm and tie marks on the converted beat', () => {
+		expect(
+			flatAsSharp({
+				kind: 'note',
+				degree: 7,
+				accidental: 'flat',
+				subdivision: 1,
+				dotted: true,
+				tiedFromPrev: true,
+			}),
+		).toEqual({
+			kind: 'note',
+			degree: 6,
+			accidental: 'sharp',
+			subdivision: 1,
+			dotted: true,
+			tiedFromPrev: true,
+		});
 	});
 });

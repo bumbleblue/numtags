@@ -12,7 +12,7 @@
  * validation warnings computed from a parse() result (§7.1).
  */
 
-import type { ParsedTag } from './types';
+import type { Beat, ParsedTag } from './types';
 
 /** Same voice-label prefix parse.ts strips, kept verbatim here. */
 const VOICE_LABEL_RE = /^(\s*(?:tenor|lead|baritone|bass|t|l|b|bs)\s*:\s*)/i;
@@ -76,6 +76,25 @@ function shiftToken(token: string, delta: number): string {
 	const next = current + delta;
 	const marks = next > 0 ? "'".repeat(next) : next < 0 ? ','.repeat(-next) : '';
 	return tie + accidental + digit + marks + slashes + dot;
+}
+
+/**
+ * Display-only enharmonic simplification for the "sharps only" view setting:
+ * a flat becomes the sharp of the degree below (b5 → #4, b3 → #2),
+ * deliberately ignoring spelling conventions — # reads better than b at
+ * small sizes. Never touches stored text; the data model keeps both (§3).
+ * b1 wraps to #7 an octave down (same pitch).
+ */
+export function flatAsSharp(beat: Beat): Beat {
+	if (beat.kind !== 'note' || beat.accidental !== 'flat' || beat.degree === undefined) return beat;
+	const wraps = beat.degree === 1;
+	const out: Beat = {
+		...beat,
+		accidental: 'sharp',
+		degree: (wraps ? 7 : beat.degree - 1) as NonNullable<Beat['degree']>,
+	};
+	if (wraps) out.octave = (beat.octave ?? 0) - 1;
+	return out;
 }
 
 /**
