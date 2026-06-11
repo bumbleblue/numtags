@@ -33,6 +33,11 @@ Canonical storage is **ASCII shorthand**: `#2` sharp, `b3` flat, `5'`/`5,` octav
 
 Rhythm is a deliberately crude beat grid (§3.2) — cells need not sum to the time signature. Don't "fix" that.
 
+## Working conventions (sessions & git)
+
+- **Start Claude sessions in this repo** — not a sibling project. Only then do this file, the PROGRESS.md handoff, and the numtags project memory auto-load (a 2026-06 rebuild session accidentally ran from tonk-site; its context has been repatriated).
+- **Use worktrees for feature work**: `git worktree add ../numtags-wt/<branch> -b <branch>` (clean up with `git worktree remove`), or Claude's worktree isolation. Keep this main checkout on the primary branch; the human iterates on theme/design here directly, so uncommitted changes in this checkout are normal — **never `git add -A`**; always commit explicit paths.
+
 ## Conventions
 
 - Tags are CC0; code is MIT. Keep source links to barbershoptags.com.
