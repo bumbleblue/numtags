@@ -8,6 +8,9 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"vars": {
+		"PUBLIC_SERVICE_URL": "https://api.numtags.app"
+	},
 	"observability": {
 		"enabled": true
 	}

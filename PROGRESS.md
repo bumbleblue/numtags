@@ -20,9 +20,31 @@ Last updated: 2026-06-11 (branch `fable-rebuild` + playback worktree branch).
   variables → Actions. First successful run lands at
   `numtags.<account>.workers.dev`; custom domain attaches in the
   Cloudflare dash under the Worker's Domains & Routes.
-- `services/` (OMR + catalog bot) is still undeployed — it's a Python/
-  Docker app and needs a scale-to-zero container host (Fly.io / Cloud Run
-  class), not Workers. `PUBLIC_SERVICE_URL` stays unset until then.
+- **Catalog service deploys to Cloudflare Containers** (Eileen's host
+  pick; site is `numtags.app`, service is `api.numtags.app`). New
+  `services/worker.mjs` (Container DO shim, `@cloudflare/containers`,
+  scale-to-zero via `sleepAfter: 10m`) + `services/wrangler.jsonc`
+  (basic instance, custom domain route, vars) + `services/.dockerignore`.
+  **Catalog + proxy only:** `HOMR_CMD=homr-not-installed` keeps
+  `POST /omr` at its clean 503 until homr licensing is cleared (§14).
+  `deploy-services` job added to the workflow — the GitHub runner builds
+  the Docker image (no local Docker on this Mac; `wrangler deploy
+  --dry-run` needs Docker too, so config was validated by bundle-only).
+  Main Worker now ships `PUBLIC_SERVICE_URL=https://api.numtags.app` as
+  a runtime var (`$env/dynamic/public` reads Worker vars — no rebuild).
+- **Before the first service deploy works:** Workers Paid plan active
+  (Containers requirement); the Actions `CLOUDFLARE_API_TOKEN` may need
+  Account → Containers:Edit added; create the bot's fine-grained PAT
+  (Contents RW on bumbleblue/numtags only, per services/README §security)
+  and `cd services && npx wrangler secret put GITHUB_TOKEN`; numtags.app
+  DNS didn't resolve from here yet — custom domain `api.numtags.app`
+  is created by the deploy once the zone is active.
+- Note: catalog publishes commit to `main` → every publish triggers CI →
+  site redeploys with the new catalog snapshot (generated-tags.ts).
+  That's the intended §6.8 "live on next sync" loop.
+- npm-version gotcha (hit twice now): the lock must stay npm-10-valid
+  (Node 22 bundles npm 10; Cloudflare + Actions use it). After changing
+  deps: `npx npm@10.9.2 install` and don't let npm 11 rewrite the lock.
 
 ## Where we left off (session of 2026-06-11, playback)
 

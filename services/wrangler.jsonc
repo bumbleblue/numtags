@@ -1,0 +1,43 @@
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "numtags-services",
+	"main": "worker.mjs",
+	"compatibility_date": "2026-06-01",
+	"containers": [
+		{
+			"class_name": "CatalogService",
+			"image": "./Dockerfile",
+			"max_instances": 1,
+			"instance_type": "basic"
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "CATALOG_SERVICE",
+				"class_name": "CatalogService"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["CatalogService"]
+		}
+	],
+	"routes": [
+		{
+			"pattern": "api.numtags.app",
+			"custom_domain": true
+		}
+	],
+	"vars": {
+		"GITHUB_REPO": "bumbleblue/numtags",
+		"CATALOG_BRANCH": "main",
+		"ALLOWED_ORIGINS": "https://numtags.app,http://localhost:5173,http://localhost:5180",
+		"HOMR_CMD": "homr-not-installed"
+	},
+	"observability": {
+		"enabled": true
+	}
+}
