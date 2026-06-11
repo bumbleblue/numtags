@@ -15,45 +15,34 @@ export default {
         'sans': ['iA Writer Quattro', 'system-ui', 'sans-serif']
       },
       colors: {
-        // "Field recordings" warm-ish monochrome palette. Keeps the
-        // nord-* slot numbering (0-3 dark surfaces, 4-6 light text,
-        // 7-10 accent, 11-15 semantic) so existing classes keep their
-        // meaning. Accent slots are monochrome creams: emphasis comes
-        // from contrast, not hue.
-        nord: {
-          // Surfaces: near-neutral darks, a whisper of warmth
-          0: '#121110',   // page background
-          1: '#181716',   // cards
-          2: '#21201e',   // raised / subtle rules
-          3: '#34322e',   // box borders, structure
-          // Text: warm-neutral whites
-          4: '#e5e3de',  // primary text
-          5: '#93908a',  // muted text
-          6: '#f2f1ed',  // brightest (headings)
-          // Accent: monochrome
-          7: '#b1aea7',  // muted
-          8: '#efede8',  // primary accent (buttons, active nav)
-          9: '#d6d3cd',  // accent hover
-          10: '#7b7872', // recessed
-          // Semantic: desaturated
-          11: '#c46a5e', // red
-          12: '#c08568', // orange
-          13: '#cdb380', // yellow
-          14: '#97a173', // green
-          15: '#a58a9d'  // purple
+        // Base16 Default Dark (Chris Kempson), named by role so the
+        // hexes can be swapped without touching components.
+        // paper-* and ink* mirror the CSS vars in app.css.
+        paper: {
+          // Surfaces by elevation: the base16 neutral ramp
+          0: '#151515', // page background (base00)
+          1: '#202020', // cards (base01)
+          2: '#303030', // raised / subtle rules (base02)
+          3: '#505050'  // box borders, structure (base03)
         },
-        primary: {
-          50: '#f0f4ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#0A3BFF',
-          600: '#0831d9',
-          700: '#0625a3',
-          800: '#051d73',
-          900: '#031447'
-        }
+        ink: {
+          DEFAULT: '#e0e0e0', // primary text (base06)
+          muted: '#b0b0b0',   // secondary text (base04)
+          bright: '#f5f5f5'   // headings, emphasis (base07)
+        },
+        accent: {
+          // base0D blue carries interactive emphasis
+          DEFAULT: '#6a9fb5',  // buttons, active nav (base0D)
+          hover: '#75b5aa',    // hover shift (base0C)
+          muted: '#b0b0b0',    // (base04)
+          recessed: '#505050'  // (base03)
+        },
+        // Status colors: the base16 accent row
+        danger: '#ac4142',  // base08
+        warning: '#d28445', // base09
+        note: '#f4bf75',    // base0A — hints, import notes, medium difficulty
+        success: '#90a959', // base0B
+        info: '#aa759f'     // base0E — reserved, currently unused
       }
     }
   },

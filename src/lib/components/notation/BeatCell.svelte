@@ -9,8 +9,8 @@
 	have distinct shapes —
 	  · subdivision ticks: short straight horizontal LINES (0.55em × 0.1em),
 	    hugging the digit at top: calc(100% + 0.1em);
-	  · octave-down dots: small round DOTS (0.2em ø, steel blue nord-9) in a
-	    lower band at top: calc(100% + 0.5em) — below even a double tick
+	  · octave-down dots: small round DOTS (0.2em ø, muted purple --note-down)
+	    in a lower band at top: calc(100% + 0.5em) — below even a double tick
 	    (which ends at ≈0.4em).
 	A digit that is both subdivided and octave-down shows tick(s) first, then
 	dots clearly beneath, never one smudge.
@@ -102,12 +102,13 @@
 		left: calc(100% + 0.08em);
 	}
 
-	/* Octave colour cues (§9, secondary to the marks) */
+	/* Octave colour cues (§9, secondary to the marks): muted green up,
+	   muted purple down — the lighter hue rises, the heavier one sinks. */
 	.oct-up {
-		color: var(--ink-bright);
+		color: var(--note-up);
 	}
 	.oct-down {
-		color: var(--note-alt);
+		color: var(--note-down);
 	}
 
 	/* ── CSS-drawn marks, centred on the digit ─────────────────────────── */
@@ -145,10 +146,10 @@
 		border-radius: 9999px;
 	}
 	.odot.up {
-		background: var(--ink-bright);
+		background: var(--note-up);
 	}
 	.odot.down {
-		background: var(--note-alt);
+		background: var(--note-down);
 	}
 
 	.tick {
