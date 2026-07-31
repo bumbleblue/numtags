@@ -271,6 +271,10 @@ class CreateRequest(BaseModel):
 class RevertRequest(BaseModel):
     to_sha: str = Field(min_length=7)
     editor_name: str
+    # Blob sha of HEAD as the client saw it when it rendered the revert diff.
+    # Same optimistic-concurrency contract as edits (§6.8): if HEAD moved, 409
+    # rather than silently clobbering an edit the user's diff never showed.
+    base_sha: str | None = None
 
 
 # --------------------------------------------------------------------------- #
@@ -285,15 +289,26 @@ async def list_tags(
     return [e for e in await gh.list_dir(settings.catalog_path) if e["name"].endswith(".md")]
 
 
+_REF_RE = re.compile(r"^[0-9a-f]{7,40}$")
+
+
 @router.get("/tags/{tag_id}", dependencies=[Depends(read_rate_limit)])
 async def get_tag(
     tag_id: int,
+    ref: str | None = None,
     gh: GitHubAPI = Depends(get_github),
     settings: Settings = Depends(get_settings),
 ) -> dict[str, Any]:
+    """Current document, or (with ?ref=<commit sha>) a historical version.
+
+    With a ref the returned `sha` is that version's blob sha — fine for
+    display, never valid as a `base_sha` for edits (only HEAD's sha is).
+    """
+    if ref is not None and not _REF_RE.match(ref):
+        raise HTTPException(status_code=422, detail="ref must be a commit sha (7-40 hex chars).")
     path = await resolve_tag_path(gh, settings, tag_id)
-    text, sha = await gh.get_file(path)
-    return {"tag_id": tag_id, "path": path, "sha": sha, "content": text}
+    text, sha = await gh.get_file(path, ref=ref)
+    return {"tag_id": tag_id, "path": path, "sha": sha, "content": text, "ref": ref}
 
 
 @router.put("/tags/{tag_id}", dependencies=[Depends(write_rate_limit)])
@@ -362,6 +377,38 @@ async def create_tag(
 
 
 _BY_RE = re.compile(r"\(by (.+)\)\s*$")
+# The bot's own commit-message formats (edit_tag / create_tag / revert_tag);
+# commits made outside the service (e.g. the initial catalog import) won't
+# match and simply carry no tag_id in the feed.
+_TAG_ID_RE = re.compile(r"^(?:Add|Edit|Revert) tag (\d+)\b")
+
+
+def _commit_entry(c: dict[str, Any]) -> dict[str, Any]:
+    m = _BY_RE.search(c["message"])
+    return {
+        "sha": c["sha"],
+        "date": c["date"],
+        "message": c["message"],
+        "editor": m.group(1) if m else c["author"],
+    }
+
+
+@router.get("/recent", dependencies=[Depends(read_rate_limit)])
+async def recent_changes(
+    gh: GitHubAPI = Depends(get_github),
+    settings: Settings = Depends(get_settings),
+) -> list[dict[str, Any]]:
+    """The catalog-wide recent-changes feed (spec §6.8): commits touching the
+    catalog directory, newest first, with the editor and tag_id parsed out of
+    the bot's commit-message format where possible."""
+    commits = await gh.list_commits(settings.catalog_path)
+    out = []
+    for c in commits:
+        entry = _commit_entry(c)
+        tid = _TAG_ID_RE.match(c["message"])
+        entry["tag_id"] = int(tid.group(1)) if tid else None
+        out.append(entry)
+    return out
 
 
 @router.get("/tags/{tag_id}/history", dependencies=[Depends(read_rate_limit)])
@@ -372,16 +419,7 @@ async def tag_history(
 ) -> list[dict[str, str]]:
     path = await resolve_tag_path(gh, settings, tag_id)
     commits = await gh.list_commits(path)
-    out = []
-    for c in commits:
-        m = _BY_RE.search(c["message"])
-        out.append({
-            "sha": c["sha"],
-            "date": c["date"],
-            "message": c["message"],
-            "editor": m.group(1) if m else c["author"],
-        })
-    return out
+    return [_commit_entry(c) for c in commits]
 
 
 @router.post("/tags/{tag_id}/revert", dependencies=[Depends(write_rate_limit)])
@@ -396,6 +434,11 @@ async def revert_tag(
     old_text, _ = await gh.get_file(path, ref=req.to_sha)
     validate_tag_document(old_text)  # never commit something that fails sanity, even via revert
     _, current_sha = await gh.get_file(path)
+    if req.base_sha is not None and current_sha != req.base_sha:
+        raise HTTPException(
+            status_code=409,
+            detail="This tag changed since you loaded its history — reload and review the diff again.",
+        )
     message = f"Revert tag {tag_id} to {req.to_sha[:7]} (by {editor})"
     try:
         result = await gh.put_file(path, message, old_text, sha=current_sha)

@@ -3,8 +3,10 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { toPng } from 'html-to-image';
+	import { fetchTagFile, serviceUrl } from '$lib/catalog';
 	import { getTagByIdAsync } from '$lib/data';
 	import { isLocalId, deleteLocalTag } from '$lib/library/db';
+	import { parseTagFile } from '$lib/tagfile';
 	import { settings, recallLayout, rememberLayout, type LayoutMode } from '$lib/settings.svelte';
 	import type { Tag } from '$lib/types';
 	import { parse } from '$lib/notation/parse';
@@ -17,6 +19,9 @@
 
 	let tag = $state<Tag | undefined>(undefined);
 	let isLoading = $state(true);
+	// True when the tag came live from the catalog service rather than the
+	// bundled snapshot — i.e. published after this deploy's sync (§6.8).
+	let liveFromCatalog = $state(false);
 	let layout = $state<LayoutMode>('wrapped');
 	let isSharing = $state(false);
 	let isDeleting = $state(false);
@@ -25,17 +30,36 @@
 	// Load the tag: catalog ids resolve instantly; local ids read IndexedDB.
 	// $effect only runs in the browser, so SSR shows the loading state and
 	// never touches IndexedDB (§7.1: brief loading, never a blank screen).
+	// A catalog id missing from the bundled snapshot may be a freshly
+	// published tag (the /changes feed links it right away) — try the
+	// catalog service before declaring it gone.
 	$effect(() => {
-		if (isNaN(id)) {
+		const wanted = id;
+		if (isNaN(wanted)) {
 			tag = undefined;
 			isLoading = false;
 			return;
 		}
 		isLoading = true;
-		getTagByIdAsync(id).then((t) => {
-			tag = t;
-			isLoading = false;
-		});
+		liveFromCatalog = false;
+		getTagByIdAsync(wanted)
+			.then(async (t) => {
+				if (t || isLocalId(wanted) || !serviceUrl()) return t;
+				const file = await fetchTagFile(wanted).catch(() => undefined);
+				if (!file) return undefined;
+				try {
+					const fresh = parseTagFile(file.content);
+					liveFromCatalog = true;
+					return fresh;
+				} catch {
+					return undefined; // unparseable document — treat as not found
+				}
+			})
+			.then((t) => {
+				if (wanted !== id) return; // navigated on while fetching
+				tag = t;
+				isLoading = false;
+			});
 	});
 
 	$effect(() => {
@@ -213,6 +237,12 @@
 			<p class="text-lg text-ink-muted">
 				{local ? 'Your tag' : `Tag #${tag.metadata.tag_id}`}
 			</p>
+			{#if liveFromCatalog}
+				<p class="text-sm text-ink-muted mt-1">
+					Freshly published — live from the catalog; it joins the app's offline bundle on the
+					next sync.
+				</p>
+			{/if}
 		</div>
 
 		<!-- Notation with the action rail beside it (icons; below on mobile) -->
@@ -392,6 +422,14 @@
 				>
 					{isDeleting ? 'Deleting…' : 'Delete'}
 				</button>
+			{/if}
+			{#if !local}
+				<a
+					href="/tag/id/{id}/history"
+					class="btn-secondary min-h-[44px] inline-flex items-center px-5"
+				>
+					History
+				</a>
 			{/if}
 			<a href={editHref} class="btn-secondary min-h-[44px] inline-flex items-center px-5">Edit</a>
 		</div>

@@ -199,3 +199,57 @@ def test_revert_flow(client: TestClient, gh: FakeGitHub) -> None:
     assert commit["message"] == "Revert tag 7 to abc1234 (by Casey)"
     assert commit["content"] == old_version
     assert gh.files["data/tags/sleepy-time.md"][0] == old_version
+
+
+# --------------------------------------------------------------------------- #
+# Versions (?ref=) + recent changes                                            #
+# --------------------------------------------------------------------------- #
+
+def test_get_tag_at_ref(client: TestClient, gh: FakeGitHub) -> None:
+    old_version = TAG_DOC.replace("3  5  4", "9  9  9")
+    gh.at_ref[("data/tags/sleepy-time.md", "abc1234def")] = old_version
+
+    resp = client.get("/catalog/tags/7", params={"ref": "abc1234def"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "9  9  9" in body["content"]
+    assert body["ref"] == "abc1234def"
+    assert body["sha"] != "base-sha-1"  # a historical blob sha, not HEAD's
+
+
+def test_get_tag_with_malformed_ref_is_422(client: TestClient) -> None:
+    assert client.get("/catalog/tags/7", params={"ref": "main"}).status_code == 422
+    assert client.get("/catalog/tags/7", params={"ref": "x" * 41}).status_code == 422
+
+
+def test_recent_changes_parses_editor_and_tag_id(client: TestClient, gh: FakeGitHub) -> None:
+    gh.history["data/tags"] = [
+        {"sha": "ccc", "date": "2026-06-03T10:00:00Z",
+         "message": "Revert tag 7 to abc1234 (by Robin)", "author": "numtags-bot"},
+        {"sha": "bbb", "date": "2026-06-02T10:00:00Z",
+         "message": "Add tag 8: New Tag (by Casey)", "author": "numtags-bot"},
+        {"sha": "aaa", "date": "2026-05-01T10:00:00Z",
+         "message": "import catalog", "author": "Eileen"},
+    ]
+    resp = client.get("/catalog/recent")
+    assert resp.status_code == 200
+    entries = resp.json()
+    assert [e["tag_id"] for e in entries] == [7, 8, None]
+    assert [e["editor"] for e in entries] == ["Robin", "Casey", "Eileen"]
+
+
+def test_revert_with_stale_base_sha_is_409(client: TestClient, gh: FakeGitHub) -> None:
+    gh.at_ref[("data/tags/sleepy-time.md", "abc1234def")] = TAG_DOC.replace("3  5  4", "9  9  9")
+
+    resp = client.post("/catalog/tags/7/revert", json={
+        "to_sha": "abc1234def", "editor_name": "Casey", "base_sha": "STALE",
+    })
+    assert resp.status_code == 409
+    assert gh.commits == []  # nothing was committed
+
+    # With the matching base sha the same revert goes through.
+    resp = client.post("/catalog/tags/7/revert", json={
+        "to_sha": "abc1234def", "editor_name": "Casey", "base_sha": "base-sha-1",
+    })
+    assert resp.status_code == 200
+    assert len(gh.commits) == 1

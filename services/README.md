@@ -74,11 +74,13 @@ See [.env.example](.env.example) — `GITHUB_TOKEN`, `GITHUB_REPO`, `CATALOG_BRA
 |---|---|---|
 | `POST /omr` (multipart `file`: png/jpg/gif/pdf) | — | MusicXML (`application/vnd.recordare.musicxml+xml`), `X-Confidence` header when homr reports one, `X-Pdf-Pages` for PDFs (first page only is processed). `503` if homr missing. |
 | `GET /catalog/tags` | — | `[{name, path, sha}]` |
-| `GET /catalog/tags/{tag_id}` | — | `{tag_id, path, sha, content}` — `sha` is the `base_sha` for edits |
+| `GET /catalog/tags/{tag_id}` | — | `{tag_id, path, sha, content, ref}` — without `?ref=`, `sha` is the `base_sha` for edits |
+| `GET /catalog/tags/{tag_id}?ref={commit_sha}` | — | the version at that commit; its `sha` is a historical blob sha, **not** a valid `base_sha` · `422` malformed ref |
 | `PUT /catalog/tags/{tag_id}` | `{content, base_sha, editor_name}` | `{tag_id, path, commit_sha, content_sha}` · `409` stale sha · `422` sanity check |
 | `POST /catalog/tags` | `{content, editor_name, proposed_tag_id?}` | `201 {tag_id, path, commit_sha, content_sha}` |
 | `GET /catalog/tags/{tag_id}/history` | — | `[{sha, date, message, editor}]` |
-| `POST /catalog/tags/{tag_id}/revert` | `{to_sha, editor_name}` | `{tag_id, path, commit_sha, content_sha}` |
+| `POST /catalog/tags/{tag_id}/revert` | `{to_sha, editor_name, base_sha?}` | `{tag_id, path, commit_sha, content_sha}` · `409` when `base_sha` (HEAD's blob sha as the client saw it) is stale — same no-silent-clobber contract as edits |
+| `GET /catalog/recent` | — | `[{sha, date, message, editor, tag_id}]` — catalog-wide feed, newest first; `tag_id` is `null` for commits not made by the bot |
 | `GET /proxy/bbstags?…` | — | barbershoptags API XML (params passed through) |
 | `GET /proxy/media?url=…` | — | streamed GIF/MIDI/MP3 (barbershoptags.com hosts only) |
 

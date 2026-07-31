@@ -25,7 +25,7 @@ Everything except OMR is client-side and offline. SvelteKit 2 + **Svelte 5 (rune
 - `src/lib/library/` — IndexedDB local library (private imports/drafts, id namespace ≥ 1_000_000).
 - `src/lib/components/` — UI. `NotationRenderer` draws octave dots + subdivision marks **via CSS from semantic tokens** — never font combining marks.
 - `data/tags/*.md` — the catalog (YAML frontmatter + ASCII notation body). The 5 hand-transcribed tags are the **golden test set**: any encoder/parser change that alters them must be deliberate.
-- `services/` — backend scaffolds (homr OMR + catalog Git bot). Not deployed; run locally/Docker.
+- `services/` — backend (homr OMR + catalog Git bot), deployed to Cloudflare Containers at `api.numtags.app` via CI. Catalog routes 503 until `GITHUB_TOKEN`/`GITHUB_REPO` are configured; `POST /omr` 503s deliberately pending homr licensing (§14).
 
 ## Notation canon (spec §3 — the short version)
 

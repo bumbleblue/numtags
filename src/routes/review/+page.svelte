@@ -28,7 +28,8 @@
 	import { VOICE_NAMES, type ParsedTag } from '$lib/notation/types';
 	import { encode, LETTER_PC, parseKeyName } from '$lib/score/encode';
 	import { settings } from '$lib/settings.svelte';
-	import { serializeTag } from '$lib/tagfile';
+	import { fetchTagFile } from '$lib/catalog';
+	import { parseTagFile, serializeTag } from '$lib/tagfile';
 	import type { Tag } from '$lib/types';
 
 	const serviceUrl = (env.PUBLIC_SERVICE_URL ?? '').replace(/\/+$/, '');
@@ -68,6 +69,54 @@
 	// Mobile (< lg): the input and the preview toggle; desktop shows both.
 	let view = $state<'edit' | 'preview'>('edit');
 
+	// First-contribution gate (§6.8, §7.1): a modal, not an error. Affirmed
+	// once per browser; after that the small print under Publish suffices.
+	const CC0_KEY = 'numtags-cc0-affirmed';
+	let showAffirm = $state(false);
+	let affirmDialog = $state<HTMLElement | undefined>();
+	let cancelButton = $state<HTMLButtonElement | undefined>();
+	let restoreFocusTo: HTMLElement | null = null;
+
+	// Initial focus goes to Cancel — a held Enter on the Publish button must
+	// not key-repeat its way through a one-time legal affirmation.
+	$effect(() => {
+		if (showAffirm) cancelButton?.focus();
+	});
+
+	function openAffirm() {
+		restoreFocusTo = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		showAffirm = true;
+	}
+
+	function closeAffirm() {
+		showAffirm = false;
+		restoreFocusTo?.focus();
+	}
+
+	/** Keep Tab inside the dialog — the page behind stays visually present but
+	 *  must not be keyboard-reachable while aria-modal says it isn't there. */
+	function trapAffirmFocus(e: KeyboardEvent) {
+		if (e.key !== 'Tab' || !affirmDialog) return;
+		const focusables = affirmDialog.querySelectorAll<HTMLElement>('a[href], button');
+		if (focusables.length === 0) return;
+		const first = focusables[0];
+		const last = focusables[focusables.length - 1];
+		const active = document.activeElement;
+		if (e.shiftKey && (active === first || !affirmDialog.contains(active))) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && (active === last || !affirmDialog.contains(active))) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
+	function affirmAndPublish() {
+		localStorage.setItem(CC0_KEY, new Date().toISOString());
+		showAffirm = false;
+		publish();
+	}
+
 	const isCatalogEdit = $derived(draft?.editing?.kind === 'catalog');
 	const isImageImport = $derived(draft?.tag.metadata.origin === 'imported-image');
 	const confidence = $derived(draft?.confidence ?? draft?.score?.confidence);
@@ -106,7 +155,15 @@
 			if (session?.editing?.kind === 'catalog' && session.editing.id === id) {
 				draft = session;
 			} else {
-				const tag = allTags.find((t) => t.metadata.tag_id === id);
+				let tag = allTags.find((t) => t.metadata.tag_id === id);
+				if (!tag && serviceUrl) {
+					// Freshly published — not in the bundled snapshot yet (§6.8).
+					try {
+						tag = parseTagFile((await fetchTagFile(id)).content);
+					} catch {
+						/* fall through to not-found */
+					}
+				}
 				if (!tag) {
 					notFound = true;
 					loaded = true;
@@ -307,6 +364,10 @@
 	 */
 	async function publish() {
 		if (!draft || !canPublish || publishing) return;
+		if (!localStorage.getItem(CC0_KEY)) {
+			openAffirm(); // affirm first; the modal re-enters publish()
+			return;
+		}
 		publishError = '';
 		publishing = true;
 		let safetyId: number | null = null;
@@ -372,7 +433,15 @@
 	<title>Review &amp; edit - numtags</title>
 </svelte:head>
 
-<svelte:window ononline={() => (online = true)} onoffline={() => (online = false)} />
+<svelte:window
+	ononline={() => (online = true)}
+	onoffline={() => (online = false)}
+	onkeydown={(e) => {
+		if (!showAffirm) return;
+		if (e.key === 'Escape') closeAffirm();
+		else trapAffirmFocus(e);
+	}}
+/>
 
 <div class="max-w-6xl mx-auto space-y-4">
 	<header class="flex items-baseline justify-between gap-3 flex-wrap">
@@ -628,7 +697,7 @@
 			{#if canPublish}
 				<label class="block text-sm text-ink max-w-xs">
 					Your name (for the catalog commit)
-					<input type="text" class="search-input !py-2 mt-1" bind:value={editorName} placeholder="anonymous" />
+					<input type="text" maxlength="80" class="search-input !py-2 mt-1" bind:value={editorName} placeholder="anonymous" />
 				</label>
 				<p class="text-xs text-ink-muted">
 					Catalog tags are CC0; publishing affirms this is a faithful translation. Your work is
@@ -636,5 +705,56 @@
 				</p>
 			{/if}
 		</section>
+	{/if}
+
+	<!-- first-contribution affirmation (§7.1: a modal, not an error) -->
+	{#if showAffirm}
+		<div
+			class="fixed inset-0 z-50 bg-paper-0/80 flex items-center justify-center p-4"
+			role="presentation"
+			onclick={(e) => {
+				if (e.target === e.currentTarget) closeAffirm();
+			}}
+		>
+			<div
+				bind:this={affirmDialog}
+				class="card-bg border rounded p-5 sm:p-6 max-w-md w-full space-y-4 shadow-lg"
+				role="dialog"
+				aria-modal="true"
+				aria-labelledby="cc0-title"
+			>
+				<h2 id="cc0-title" class="text-lg font-semibold text-ink-bright">
+					Before your first contribution
+				</h2>
+				<div class="text-sm text-ink space-y-2">
+					<p>
+						Everything in the public catalog is
+						<a
+							href="https://creativecommons.org/publicdomain/zero/1.0/"
+							target="_blank"
+							rel="noopener"
+							class="underline underline-offset-2 hover:text-ink-bright">CC0</a
+						> — free for anyone to use, share, and change, no credit required.
+					</p>
+					<p>
+						By publishing you affirm that this is a <strong>faithful translation</strong> of an
+						existing tag into numeric notation (not someone's restricted arrangement passed off
+						as free), and you dedicate your contribution to the public domain.
+					</p>
+					<p class="text-ink-muted">
+						You'll only be asked once. Edits are public, attributed to the name you enter, and
+						always revertable.
+					</p>
+				</div>
+				<div class="flex flex-wrap justify-end gap-2">
+					<button bind:this={cancelButton} class="btn-secondary min-h-[44px]" onclick={closeAffirm}>
+						Cancel
+					</button>
+					<button class="btn-primary min-h-[44px]" onclick={affirmAndPublish}>
+						I affirm — publish
+					</button>
+				</div>
+			</div>
+		</div>
 	{/if}
 </div>

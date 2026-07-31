@@ -1,7 +1,52 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-06-11 (branch `fable-rebuild` + playback worktree branch).
+Last updated: 2026-07-30 (branch `m5-history`).
+
+## Where we left off (session of 2026-07-30, M5 history)
+
+- **M5 shipped (worktree branch `m5-history`): History screen, recent-changes
+  feed, CC0 gate.** Service additions in `services/app/catalog.py`:
+  `GET /catalog/tags/{id}` gained `?ref=<commit sha>` (hex-validated; returns
+  that version — its `sha` is a blob sha, never a `base_sha`), and
+  `GET /catalog/recent` serves the catalog-wide feed (editor + `tag_id`
+  parsed from the bot's commit-message format; `tag_id: null` for foreign
+  commits like the initial import). 20 pytest green.
+- **Frontend:** `/tag/id/[id]/history` (version list with a `current` badge;
+  expand → rendered preview + "what changes if you revert" line diff vs HEAD;
+  revert with editor name + confirm; §7.1 states: private-tag guard,
+  no-service, offline, retry, "No edits yet", "Identical to the current
+  version"), `/changes` (global feed, titles resolved from the bundled
+  snapshot, in the main nav), a History button on catalog tag pages, and the
+  **CC0 first-publish affirmation as a real modal** in review
+  (`localStorage numtags-cc0-affirmed`; Escape/cancel abort, affirm re-enters
+  `publish()`). New `src/lib/catalog.ts` (service client) and `src/lib/diff.ts`
+  (LCS line diff, tested). 232 vitest, svelte-check, build all green; flows
+  browser-verified against a local stub of the service.
+- **Production reality check:** `api.numtags.app` is live but answers `503 —
+  set GITHUB_TOKEN and GITHUB_REPO` on every catalog route: the bot's
+  fine-grained PAT was never configured. Eileen: create the PAT (Contents RW
+  on bumbleblue/numtags only, per services/README §security), then
+  `cd services && npx wrangler secret put GITHUB_TOKEN` and set `GITHUB_REPO`;
+  the new endpoints deploy with the next push to `main` (CI does both jobs).
+- **Adversarial review pass** (multi-agent, 7 findings confirmed & fixed):
+  revert now carries `base_sha` end to end — HEAD's blob sha as the client
+  rendered the diff; the service 409s if the tag moved (no-silent-clobber,
+  matching edits); the history page reloads keyed on the route `id` (a reused
+  component across two tags' history pages previously kept the old tag's
+  versions — revert-the-wrong-tag risk); freshly published tags now resolve
+  **live from the service** on the tag page and in review's `?catalog=` branch
+  (the /changes feed links them immediately; previously a 404 until the next
+  deploy) with a "freshly published" note; the CC0 dialog got real modal
+  behavior (initial focus on Cancel so a held Enter can't affirm, Tab trap,
+  focus restore on close); abandoned version-expansion fetches no longer
+  collapse the newly opened row; network-level fetch failures read as
+  "couldn't reach the catalog service" instead of raw "Failed to fetch"
+  (`CatalogError` carries the status so 409 is distinguishable); editor names
+  capped (maxlength=80) and truncated in feed/history rows.
+- Dev harness note: the tonk-site session's `.claude/launch.json` gained a
+  `numtags-m5` config (port 5180 — allowed by the service's CORS list; 5173
+  is usually the human's dev server).
 
 ## Where we left off (session of 2026-06-11, hosting)
 
@@ -166,18 +211,24 @@ Last updated: 2026-06-11 (branch `fable-rebuild` + playback worktree branch).
 - **Backend scaffolds** (`services/`): FastAPI app with `POST /omr` (homr)
   and the Git-backed catalog endpoints (bot commits with editor name,
   optimistic concurrency, history, revert, barbershoptags proxy; §6.8).
-  Tested offline (pytest), **not deployed**.
+  Deployed on Cloudflare Containers (`api.numtags.app`) — catalog routes
+  answer 503 until the bot token is configured (see Remaining).
 
-## Remaining (M5 and deployment)
+- **M5 — Collaborative catalog surfaces.** History screen (versions, preview,
+  diff, revert), `/changes` recent-changes feed, CC0 first-publish gate as a
+  modal; service `?ref=` + `/recent` endpoints. See the 2026-07-30 session
+  notes above.
 
-- Deploy the `services/` backend (scale-to-zero host + GitHub bot token),
-  set `PUBLIC_SERVICE_URL` — this switches on image import, barbershoptags
-  autofill, and Publish/Update catalog (the UI already degrades gracefully
-  without it).
-- History screen (per-tag versions + revert, recent-changes feed) — §6.8;
-  needs the live service.
-- First-contribution CC0 affirmation as a real gate (currently static text).
+## Remaining (operations and evaluation)
+
+- **Configure the catalog bot** (user action): fine-grained PAT + `wrangler
+  secret put GITHUB_TOKEN` + `GITHUB_REPO` var — until then every
+  `/catalog/*` route on api.numtags.app answers 503 and the UI stays in its
+  degraded no-service states. Then push `main` so CI deploys the new
+  endpoints.
+- A "report" button (§6.8's last cheap defense) — trivially a mailto/issue
+  link once there's a place to point it at.
 - Evaluate homr accuracy on real barbershoptags GIFs; confirm homr +
-  weights licensing (§14).
+  weights licensing (§14) — `POST /omr` stays a clean 503 until cleared.
 - Learning-track MP3s remain a non-goal; **notation playback is now in**
   (§6.9 — see the playback session notes above).

@@ -14,6 +14,7 @@
 		{ href: '/', label: 'Library' },
 		{ href: '/import', label: 'Import' },
 		{ href: '/notation', label: 'Guide' },
+		{ href: '/changes', label: 'Changes' },
 		{ href: '/about', label: 'About' },
 	];
 
