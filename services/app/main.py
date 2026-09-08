@@ -38,8 +38,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(proxy.router)
 
     @app.get("/healthz")
-    def healthz() -> dict[str, str]:
-        return {"status": "ok"}
+    def healthz() -> dict[str, str | bool]:
+        # catalog_configured shows the *container's* view of its env — the
+        # Worker can hold a secret the running instance never received
+        # (env vars are applied only at container start).
+        return {
+            "status": "ok",
+            "catalog_configured": bool(settings.github_token and settings.github_repo),
+        }
 
     return app
 
