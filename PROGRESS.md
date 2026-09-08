@@ -1,7 +1,30 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-07-30 (branch `m5-history`).
+Last updated: 2026-09-08 (branch `main`).
+
+## Where we left off (session of 2026-09-08, catalog service live)
+
+- **The catalog service is fully live**: `api.numtags.app` serves reads,
+  history, and (untested but token-ready) writes; `/healthz` now reports
+  `catalog_configured: true` from the container's own env. The July
+  "production reality check" is resolved — GITHUB_TOKEN is set as a
+  secret on the `numtags-services` Worker (via dashboard; wrangler OAuth
+  login fails on this machine with a dash CSRF-cookie error).
+- **Deployment gotcha that cost a day:** Cloudflare Containers pass env
+  vars **only at container start**. A running instance survives Worker
+  deploys (secret adds included) and can outlive its `sleepAfter` idle
+  window for hours, so a new/changed secret does NOT reach the app until
+  the instance is replaced. Reliable lever: change the image (any app/
+  Dockerfile edit) and push — the CI `deploy-services` job rebuilds and
+  rolls the instance. Check `/healthz.catalog_configured` after.
+- The one `deploy-services` CI failure in this saga was transient
+  (re-run succeeded). The temporary `/debug/env` Worker route used for
+  diagnosis has been removed again.
+- **Next:** a real Publish write-test through the UI (exercises the CC0
+  modal + bot commit + the publish→CI→site-rebuild loop), then the
+  remaining M5 tail: homr accuracy/licensing evaluation before enabling
+  OMR (§14; `HOMR_CMD` still deliberately disabled).
 
 ## Where we left off (session of 2026-07-30, M5 history)
 

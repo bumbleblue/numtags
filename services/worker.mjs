@@ -25,16 +25,6 @@ export class CatalogService extends Container {
 
 export default {
 	async fetch(request, env) {
-		// Temporary deploy diagnostics (names/booleans only, never values):
-		// answers "does the Worker see the secret?" without dash access.
-		if (new URL(request.url).pathname === '/debug/env') {
-			return Response.json({
-				workerSeesToken: Boolean(env.GITHUB_TOKEN),
-				repo: env.GITHUB_REPO ?? null,
-				branch: env.CATALOG_BRANCH ?? null,
-				envKeys: Object.keys(env).filter((k) => k !== 'CATALOG_SERVICE'),
-			});
-		}
 		return getContainer(env.CATALOG_SERVICE).fetch(request);
 	},
 };
