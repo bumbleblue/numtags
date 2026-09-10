@@ -85,3 +85,6 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# bbstags-to-numeric.ts output (drafts, never the catalog)
+out/

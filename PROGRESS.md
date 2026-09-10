@@ -1,7 +1,33 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-09-08 (branch `main`).
+Last updated: 2026-09-10 (branch `main`).
+
+## Where we left off (session of 2026-09-10, bulk conversion script)
+
+- **`scripts/bbstags-to-numeric.ts`** (`npm run bbstags -- <ids|urls>` or
+  `--search "…"`): barbershoptags.com API record → best machine-readable
+  source → the app's own importers (`src/lib/score/*`) → catalog-format
+  `.md` drafts in `out/bbstags/` (gitignored; never `data/tags`, §6.1) +
+  `report.json` with per-tag warnings. Sources in priority order: MusicXML
+  `<Notation type="xml">`, MIDI (`AllParts`/`Notation`, or four part files
+  merged by role), then sheet-music image/PDF via `--omr <service>`;
+  otherwise a metadata-only skeleton. Runs under **vite-node, not tsx**
+  (`@tonejs/midi` is a UMD bundle Node's ESM loader can't see through);
+  happy-dom stands in for `DOMParser`.
+- **Reality check from a 400-tag API sample:** ~99% of tags offer only
+  images + MP3s (MIDI ≈1%, MusicXML 1 tag, 25 MuseScore `.mscz` we can't
+  read). Bulk conversion is therefore an OMR job — the homr evaluation
+  (§14) is now the gating item, and this script is the harness for it
+  (`--omr http://localhost:8000` against a local service with homr).
+- **Octave convention, settled empirically:** the catalog notates written
+  pitch (treble 8vb: tag 24 has lead `1`, bass `1,` in B); MIDI is
+  sounding pitch, one octave lower. The script shifts the whole score by
+  whole octaves so the lead's median lands nearest the octave-4 tonic
+  ("home the lead", `--no-octave-shift` to disable). Worth porting into
+  `midi.ts`/the review screen so in-app MIDI imports match too.
+- Verified end to end on #7561 (MIDI, "Get Low"), #4074 (MusicXML) and
+  image-only tags (skeleton); same-title tags get id-suffixed filenames.
 
 ## Where we left off (session of 2026-09-08, catalog service live)
 
