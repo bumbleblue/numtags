@@ -356,8 +356,8 @@
 					</span>
 					{#if local}
 						<OriginBadge origin={tag.metadata.origin ?? 'authored'} />
-						<StatusBadge status={tag.metadata.status} />
 					{/if}
+					<StatusBadge status={tag.metadata.status} />
 				</div>
 			</div>
 
