@@ -51,6 +51,24 @@ export function diatonicAlterForLetter(letter: Step, fifths: number): number {
 	return alter;
 }
 
+/**
+ * Enharmonic respelling with at most one accidental relative to the key:
+ * diatonic letters first, then a single sharp, then a single flat. Returns
+ * the written octave for the chosen letter (so B# → C lands an octave up).
+ */
+function respellSingle(step: Step, alter: number, octave: number, fifths: number) {
+	const chromatic = (octave + 1) * 12 + LETTER_PC[step] + alter;
+	const pc = ((chromatic % 12) + 12) % 12;
+	for (const rel of [0, 1, -1]) {
+		for (const letter of LETTERS) {
+			const spelled = diatonicAlterForLetter(letter, fifths) + rel;
+			if ((((LETTER_PC[letter] + spelled) % 12) + 12) % 12 !== pc) continue;
+			return { step: letter, alter: spelled, octave: (chromatic - LETTER_PC[letter] - spelled) / 12 - 1, rel };
+		}
+	}
+	return { step, alter, octave, rel: alter - diatonicAlterForLetter(step, fifths) };
+}
+
 // ── encoder ─────────────────────────────────────────────────────────────────
 
 const EPS = 1e-6;
@@ -84,12 +102,19 @@ export function encode(score: ScoreModel): string {
 	const pickupUnits = hasPickup ? maxFirst : measureUnits;
 
 	const pitchText = (ev: NoteEvent): string => {
-		const step = ev.step as Step;
+		let step = ev.step as Step;
+		let alter: number = ev.alter ?? 0;
+		let octave = ev.octave ?? 4;
+		let rel = alter - diatonicAlterForLetter(step, fifths);
+		if (Math.abs(rel) >= 2) {
+			// The notation has single accidentals only (§3): a double sharp/flat
+			// relative to the key is respelled on the neighbouring letter.
+			({ step, alter, octave, rel } = respellSingle(step, alter, octave, fifths));
+		}
 		const degree = ((LETTER_INDEX[step] - LETTER_INDEX[tonic.letter]) % 7 + 7) % 7 + 1;
-		const rel = (ev.alter ?? 0) - diatonicAlterForLetter(step, fifths);
 		const acc = rel > 0 ? '#'.repeat(rel) : rel < 0 ? 'b'.repeat(-rel) : '';
 		// Written (letter-based) octave window so B#/Cb land right (§6.4).
-		const notePos = (ev.octave ?? 4) * 7 + LETTER_INDEX[step];
+		const notePos = octave * 7 + LETTER_INDEX[step];
 		const w = Math.floor((notePos - tonicPos) / 7);
 		const oct = w > 0 ? "'".repeat(w) : w < 0 ? ','.repeat(-w) : '';
 		return acc + String(degree) + oct;
@@ -210,6 +235,16 @@ function totalUnits(events: NoteEvent[], unitQuarters: number): number {
  * `_` for held/rest/hold cells, begin/middle syllables joined to the next
  * syllable with `-`. Returns null when the staff carries no lyrics.
  */
+/**
+ * One lyric token per beat cell: the parser splits cells on spaces, so any
+ * whitespace inside a syllable's text (multi-word phrases, stray newlines)
+ * is joined with `_`; an empty text is a held cell.
+ */
+function lyricToken(text: string): string {
+	const t = text.trim().replace(/\s+/g, '_');
+	return t === '' ? '_' : t;
+}
+
 function renderLyricLine(measureCells: Cell[][]): string | null {
 	const cells = measureCells.flat();
 	if (!cells.some((c) => c.lyric)) return null;
@@ -219,7 +254,7 @@ function renderLyricLine(measureCells: Cell[][]): string | null {
 	let out = '';
 	for (let i = 0; i < end; i++) {
 		const cell = cells[i];
-		out += cell.lyric ? cell.lyric.text : '_';
+		out += cell.lyric ? lyricToken(cell.lyric.text) : '_';
 		if (i < end - 1) {
 			const joinHyphen =
 				cell.lyric &&

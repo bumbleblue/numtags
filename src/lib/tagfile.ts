@@ -67,7 +67,9 @@ export function serializeTag(tag: Tag): string {
 	const lines = ['---'];
 	const push = (key: string, val: string | number | undefined) => {
 		if (val === undefined || val === '') return;
-		lines.push(typeof val === 'number' ? `${key}: ${val}` : `${key}: "${val.replace(/"/g, "'")}"`);
+		// One line per key: the reader is line-based, so fold any newlines away.
+		const text = typeof val === 'number' ? String(val) : val.replace(/\s*\r?\n\s*/g, ' ').replace(/"/g, "'");
+		lines.push(typeof val === 'number' ? `${key}: ${text}` : `${key}: "${text}"`);
 	};
 	push('title', m.title);
 	lines.push(`tag_id: ${m.tag_id}`);

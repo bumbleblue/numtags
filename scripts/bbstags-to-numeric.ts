@@ -25,12 +25,14 @@
  *   npm run bbstags -- --search "close your eyes" --limit 10
  *   npm run bbstags -- 24 --omr http://localhost:8000
  *   npm run bbstags -- --catalog 7561 4074      # into data/tags as auto-generated
+ *   npm run bbstags -- --catalog --all           # everything convertible on the site
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Window } from 'happy-dom';
 import { makeDraftTag, parseBbsId, parseBbsTagsXML } from '../src/lib/import-utils.js';
 import type { BbsAutofill } from '../src/lib/import-utils.js';
+import { normalize } from '../src/lib/notation/normalize.js';
 import { blankTemplateBody } from '../src/lib/notation/transform.js';
 import { encode, LETTER_PC, parseKeyName } from '../src/lib/score/encode.js';
 import { parseMIDI } from '../src/lib/score/midi.js';
@@ -77,6 +79,7 @@ const MEDIA_FIELDS = [
 interface Options {
 	ids: number[];
 	search?: string;
+	all: boolean;
 	limit: number;
 	out: string;
 	omr?: string;
@@ -90,6 +93,7 @@ function usage(): never {
 		[
 			'Usage: npm run bbstags -- [ids or URLs…] [options]',
 			'',
+			'  --all             walk the whole site catalog; convert every tag with a usable source',
 			'  --search <text>   full-text search on barbershoptags.com (title/lyrics)',
 			'  --limit <n>       max search hits (default 25)',
 			'  --out <dir>       output directory (default out/bbstags)',
@@ -105,7 +109,7 @@ function usage(): never {
 }
 
 function parseArgs(argv: string[]): Options {
-	const opts: Options = { ids: [], limit: 25, out: 'out/bbstags', force: false, saveSources: true, noOctaveShift: false };
+	const opts: Options = { ids: [], all: false, limit: 25, out: 'out/bbstags', force: false, saveSources: true, noOctaveShift: false };
 	const bad: string[] = [];
 	for (let i = 0; i < argv.length; i++) {
 		const a = argv[i];
@@ -114,7 +118,8 @@ function parseArgs(argv: string[]): Options {
 			if (v === undefined) usage();
 			return v;
 		};
-		if (a === '--search') opts.search = next();
+		if (a === '--all') opts.all = true;
+		else if (a === '--search') opts.search = next();
 		else if (a === '--limit') opts.limit = Math.max(1, Number(next()) || 25);
 		else if (a === '--out') opts.out = next();
 		else if (a === '--catalog') opts.out = 'data/tags';
@@ -133,7 +138,7 @@ function parseArgs(argv: string[]): Options {
 		console.error(`Not a barbershoptags id or URL: ${bad.join(', ')}`);
 		usage();
 	}
-	if (opts.ids.length === 0 && !opts.search) usage();
+	if (opts.ids.length === 0 && !opts.search && !opts.all) usage();
 	return opts;
 }
 
@@ -159,7 +164,10 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchOk(url: string): Promise<Response> {
 	await sleep(POLITE_DELAY_MS);
-	const res = await fetch(url, { headers: { 'User-Agent': 'numtags-importer (+https://numtags.app)' } });
+	const res = await fetch(url, {
+		headers: { 'User-Agent': 'numtags-importer (+https://numtags.app)' },
+		signal: AbortSignal.timeout(60_000)
+	});
 	if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
 	return res;
 }
@@ -200,7 +208,7 @@ function recordFromElement(el: Element): Record_ | null {
 		title: autofill.title,
 		parts: Number.isInteger(parts) && parts > 0 ? parts : undefined,
 		posted: isoDate(textOf(el, 'Posted')),
-		notes: textOf(el, 'Notes'),
+		notes: textOf(el, 'Notes')?.replace(/\s+/g, ' '),
 		media
 	};
 }
@@ -215,6 +223,20 @@ function recordsFromXML(xml: string): Record_[] {
 async function fetchRecord(id: number): Promise<Record_ | null> {
 	const xml = await (await fetchOk(`${API}?id=${id}`)).text();
 	return recordsFromXML(xml)[0] ?? null;
+}
+
+/** Page through the whole site catalog (100 records per request). */
+async function allRecords(): Promise<Record_[]> {
+	const out: Record_[] = [];
+	for (let start = 1; ; start += 100) {
+		const xml = await (await fetchOk(`${API}?n=100&start=${start}`)).text();
+		const total = /<tags available="(\d+)"/.exec(xml)?.[1] ?? '?';
+		const recs = recordsFromXML(xml);
+		out.push(...recs);
+		console.log(`… catalog records ${out.length} of ${total}`);
+		if (recs.length < 100) break;
+	}
+	return out;
 }
 
 async function searchRecords(q: string, limit: number): Promise<Record_[]> {
@@ -255,6 +277,16 @@ interface Converted {
 	confidence?: number;
 }
 
+/**
+ * happy-dom's DOMParser rejects processing instructions such as
+ * `<?PDFtoMusic …?>` that browsers accept; drop them (text XML only — a
+ * compressed .mxl starts with the ZIP magic and is passed through).
+ */
+function stripProcessingInstructions(bytes: Uint8Array): Uint8Array | string {
+	if (bytes.length >= 2 && bytes[0] === 0x50 && bytes[1] === 0x4b) return bytes;
+	return new TextDecoder().decode(bytes).replace(/<\?(?!xml[\s?])[\s\S]*?\?>/g, '');
+}
+
 async function download(m: Media): Promise<Uint8Array> {
 	return new Uint8Array(await (await fetchOk(m.url)).arrayBuffer());
 }
@@ -263,7 +295,7 @@ async function runOMR(omr: string, bytes: Uint8Array, filename: string): Promise
 	const fd = new FormData();
 	fd.append('file', new Blob([bytes.slice().buffer as ArrayBuffer]), filename);
 	await sleep(POLITE_DELAY_MS);
-	const res = await fetch(`${omr}/omr`, { method: 'POST', body: fd });
+	const res = await fetch(`${omr}/omr`, { method: 'POST', body: fd, signal: AbortSignal.timeout(600_000) });
 	if (!res.ok) {
 		let detail = `${res.status} ${res.statusText}`;
 		try {
@@ -371,7 +403,7 @@ async function convert(rec: Record_, source: Source, opts: Options, saveSource: 
 	if (source.kind === 'musicxml') {
 		const bytes = await download(source.media[0]);
 		saveSource(source.media[0], bytes);
-		return parseMusicXMLWithWarnings(bytes);
+		return parseMusicXMLWithWarnings(stripProcessingInstructions(bytes));
 	}
 	if (source.kind === 'midi') {
 		const bytes = await download(source.media[0]);
@@ -387,7 +419,20 @@ async function convert(rec: Record_, source: Source, opts: Options, saveSource: 
 			saveSource(m, bytes);
 			results.push({ role: PART_FIELDS[m.field], parsed: parseMIDI(bytes) });
 		}
-		const conv = mergePartMidis(results);
+		// Learning-track MIDIs are usually full mixes with one part emphasized,
+		// not monophonic parts: merge only when every file carries a single voice.
+		const voicesWithNotes = (score: ScoreModel) =>
+			score.voices.filter((v) => v.measures.flat().some((e) => e.kind === 'note')).length;
+		const monophonic = results.every((r) => voicesWithNotes(r.parsed.score) === 1);
+		const conv: Converted = monophonic
+			? mergePartMidis(results)
+			: { ...(results.find((r) => r.role === 'lead') ?? results[0]).parsed };
+		if (!monophonic) {
+			conv.warnings = [
+				...conv.warnings,
+				'Part files are full mixes (learning tracks), not single voices — used the Lead file as the whole score.'
+			];
+		}
 		applySiteKey(conv, rec);
 		return conv;
 	}
@@ -497,7 +542,7 @@ async function processRecord(
 		try {
 			const conv = await convert(rec, source, opts, saveSource);
 			if (!opts.noOctaveShift) homeTheLead(conv);
-			body = encode(conv.score);
+			body = normalize(encode(conv.score)); // canonical ASCII, always (normalize is a no-op on encoder output)
 			origin = ORIGIN_BY_KIND[source.kind];
 			keyName = conv.score.keyName;
 			entry.status = 'converted';
@@ -511,7 +556,16 @@ async function processRecord(
 	} else {
 		entry.warnings.push('No convertible source on the site (no notation file, no image) — skeleton only.');
 	}
-	if (entry.status === 'skeleton') entry.warnings.push('Body is the blank template: transcribe from the sheet music.');
+	if (entry.status === 'skeleton') {
+		entry.warnings.push('Body is the blank template: transcribe from the sheet music.');
+		if (opts.out === 'data/tags') {
+			entry.status = 'failed';
+			entry.error = 'not written: skeletons stay out of the catalog';
+			console.log(`🚫 #${rec.id} ${rec.title} — ${entry.error}`);
+			for (const w of entry.warnings) console.log(`     ⚠ ${w}`);
+			return;
+		}
+	}
 
 	const tag = makeDraftTag(body, origin, rec.autofill, keyName);
 	tag.metadata.tag_id = rec.id;
@@ -520,6 +574,9 @@ async function processRecord(
 	if (rec.notes) tag.metadata.comments = rec.notes;
 	tag.slug = slug;
 	tag.metadata.status = 'auto-generated';
+	// In the catalog, `origin` is library provenance and must read `catalog`;
+	// the conversion source lives in report.json.
+	if (opts.out === 'data/tags') tag.metadata.origin = 'catalog';
 
 	mkdirSync(opts.out, { recursive: true });
 	writeFileSync(file, serializeTag(tag));
@@ -538,13 +595,30 @@ async function main(): Promise<void> {
 	const report: ReportEntry[] = [];
 
 	const records: Record_[] = [];
+	if (opts.all) {
+		const everything = await allRecords();
+		let imageOnly = 0;
+		let nothing = 0;
+		for (const rec of everything) {
+			const source = pickSource(rec);
+			if (!source) nothing++;
+			else if (source.kind === 'image' && !opts.omr) imageOnly++;
+			else records.push(rec);
+		}
+		console.log(
+			`📚 ${everything.length} tags on the site: ${records.length} with a usable source` +
+				(opts.omr ? '' : `, ${imageOnly} image-only (skipped — pass --omr to convert them)`) +
+				`, ${nothing} with no files at all.`
+		);
+	}
 	if (opts.search) {
 		const hits = await searchRecords(opts.search, opts.limit);
 		console.log(`🔎 "${opts.search}": ${hits.length} hit(s)`);
 		records.push(...hits);
 	}
-	for (const id of opts.ids) {
+	for (const [i, id] of opts.ids.entries()) {
 		if (records.some((r) => r.id === id)) continue;
+		if (opts.ids.length > 20 && i % 20 === 0) console.log(`… fetching records ${i + 1}–${Math.min(i + 20, opts.ids.length)} of ${opts.ids.length}`);
 		const rec = await fetchRecord(id).catch((e: Error) => {
 			console.log(`❌ #${id}: ${e.message}`);
 			report.push({ id, title: '', source: null, status: 'failed', warnings: [], error: e.message });
@@ -560,11 +634,12 @@ async function main(): Promise<void> {
 	const existing = indexExisting(opts.out);
 	for (const rec of records) await processRecord(rec, opts, existing, report);
 
-	mkdirSync(opts.out, { recursive: true });
-	writeFileSync(join(opts.out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+	const reportDir = opts.out === 'data/tags' ? 'out/bbstags' : opts.out;
+	mkdirSync(reportDir, { recursive: true });
+	writeFileSync(join(reportDir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 	const count = (s: ReportEntry['status']) => report.filter((r) => r.status === s).length;
 	console.log(
-		`\n${count('converted')} converted, ${count('skeleton')} skeleton(s), ${count('failed')} failed → ${join(opts.out, 'report.json')}`
+		`\n${count('converted')} converted, ${count('skeleton')} skeleton(s), ${count('failed')} failed/skipped → ${join(reportDir, 'report.json')}`
 	);
 	console.log(
 		opts.out === 'data/tags'

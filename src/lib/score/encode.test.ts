@@ -322,3 +322,23 @@ describe('encode: layout (staffs, barlines, voice order)', () => {
 		expect(encode(s)).toBe(encode(s));
 	});
 });
+
+describe('encode: canonical guarantees for machine-converted scores', () => {
+	it('respells double accidentals to a single-accidental neighbour', () => {
+		// F## = G in C → 5; Bbb = A → 6; B## = C# (an octave up) → #1'
+		expect(firstLine(score([[n('F', 4, 1, { alter: 2 }), n('B', 4, 1, { alter: -2 }), n('B', 4, 1, { alter: 2 }), r(1)]]))).toBe(
+			"5 6 #1' 0 |"
+		);
+	});
+
+	it('prefers the diatonic spelling in the key when respelling', () => {
+		// in F major, G## = A (diatonic) → 3
+		expect(firstLine(score([[n('G', 4, 2, { alter: 2 }), r(2)]], { key: 'F' }))).toBe('3 - 0 0 |');
+	});
+
+	it('keeps a multi-word or line-broken lyric in one beat cell', () => {
+		const line = encode(score([[n('C', 4, 1, { lyric: lyr('(Have a great\r\n day!)') }), n('D', 4, 1, { lyric: lyr('now') }), r(2)]]));
+		const lyricLine = line.split('\n').filter((l) => l && !l.includes('|')).at(-1);
+		expect(lyricLine).toBe('(Have_a_great_day!) now');
+	});
+});

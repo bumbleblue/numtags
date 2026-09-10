@@ -63,3 +63,16 @@ describe('status field', () => {
 		expect(serializeTag(parseTagFile(raw.replace('status: "auto-generated"\n', '')))).not.toContain('status');
 	});
 });
+
+describe('multi-line values', () => {
+	it('folds newlines so every frontmatter key stays on one line', () => {
+		const tag = parseTagFile(
+			'---\ntitle: "T"\ntag_id: 7\narranger: "a"\ndifficulty: "Easy"\ndate_added: "2026-01-01"\nparts: 4\n---\n| 1 - - - |\n',
+			't'
+		);
+		tag.metadata.comments = 'first line\n\nsecond paragraph\r\nthird';
+		const out = serializeTag(tag);
+		expect(out).toContain('comments: "first line second paragraph third"');
+		expect(parseTagFile(out).metadata.comments).toBe('first line second paragraph third');
+	});
+});

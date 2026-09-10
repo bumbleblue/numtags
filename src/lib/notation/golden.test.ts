@@ -9,21 +9,26 @@ import { normalize } from './normalize.js';
 import { parse } from './parse.js';
 
 const dir = join(import.meta.dirname, '..', '..', '..', 'data', 'tags');
-const files = readdirSync(dir).filter((f) => f.endsWith('.md'));
+const allFiles = readdirSync(dir).filter((f) => f.endsWith('.md')).sort();
+
+/** The hand-transcribed set (§13). Auto-generated entries are checked more loosely below. */
+const GOLDEN = ['close-your-eyes.md', 'ireland.md', 'seasons.md', 'sleepy-time.md', 'so-tired.md'];
+const files = GOLDEN;
+
+function raw(file: string): string {
+	return readFileSync(join(dir, file), 'utf8');
+}
 
 function body(file: string): string {
-	return readFileSync(join(dir, file), 'utf8').replace(/^---\n[\s\S]*?\n---\n/, '');
+	return raw(file).replace(/^---\n[\s\S]*?\n---\n/, '');
 }
 
 describe('golden catalog tags', () => {
-	it('has the 5 golden tags', () => {
-		expect(files.sort()).toEqual([
-			'close-your-eyes.md',
-			'ireland.md',
-			'seasons.md',
-			'sleepy-time.md',
-			'so-tired.md',
-		]);
+	it('has the 5 golden tags, none of them auto-generated', () => {
+		for (const file of GOLDEN) {
+			expect(allFiles).toContain(file);
+			expect(raw(file)).not.toMatch(/^status: "auto-generated"$/m);
+		}
 	});
 
 	it.each(files)('%s is canonical ASCII (normalize is a no-op)', (file) => {
@@ -129,5 +134,22 @@ describe('golden catalog tags', () => {
 			  },
 			}
 		`);
+	});
+});
+
+describe('whole catalog (auto-generated entries included)', () => {
+	const rest = allFiles.filter((f) => !GOLDEN.includes(f));
+
+	it('every non-golden entry is flagged auto-generated or checked', () => {
+		for (const file of rest) expect(raw(file)).toMatch(/^status: "(auto-generated|checked)"$/m);
+	});
+
+	it.each(rest)('%s is canonical ASCII and parses with 4 voices and no warnings', (file) => {
+		const b = body(file);
+		expect(normalize(b)).toBe(b);
+		const tag = parse(b);
+		expect(tag.warnings).toEqual([]);
+		expect(tag.staffs.length).toBeGreaterThan(0);
+		expect(tag.staffs.every((s) => s.measures.every((m) => m.length === 4))).toBe(true);
 	});
 });

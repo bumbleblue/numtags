@@ -3,6 +3,44 @@
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
 Last updated: 2026-09-10 (branch `main`).
 
+## Where we left off (session of 2026-09-10, catalog populated)
+
+- **The catalog now has 335 tags: the 5 golden hand-transcriptions plus 330
+  auto-generated entries** — every tag on barbershoptags.com with a
+  MusicXML (68) or MIDI (262) source, walked with
+  `npm run bbstags -- --catalog --all` (7,067 tags on the site; 6,491 are
+  image-only and wait for OMR; 243 have no files). Eileen's call: populate
+  now, flag as `status: auto-generated`, and let humans flip entries to
+  `checked` (review → Details → "Mark as checked" checkbox; badge on cards
+  and tag pages). This deliberately relaxes §6.1 ("every import lands in
+  review") for machine drafts that are labelled as such.
+- **Encoder fixes the population surfaced:** double accidentals relative
+  to the key (`##4`, `bb7`) are now respelled on the neighbouring letter
+  with ≤ 1 accidental (`respellSingle` in encode.ts — the notation only has
+  single accidentals, §3); lyric text is one token per beat (whitespace
+  inside a syllable → `_`, so a CRLF inside a MusicXML lyric can't split
+  the line any more). `serializeTag` folds newlines in values (the site's
+  multi-line Notes went into `comments` raw). Tests: 1229 vitest (the new
+  "whole catalog" suite checks every non-golden file is flagged, canonical
+  ASCII, 4 voices, zero parse warnings), svelte-check clean, build green.
+- Script hardening from the run: `--all` (paged walk, 100/req — the per-id
+  path crawled at ~14 s/record), fetch timeouts, `--catalog` skips ids
+  already present and never writes skeletons into data/tags, report goes
+  to `out/bbstags/report.json`, `origin` stays `catalog` for catalog
+  entries (provenance lives in the report), `<?PDFtoMusic?>` processing
+  instructions stripped (happy-dom rejects them; recovered 4 tags),
+  "four part files" are full-mix learning tracks — the Lead file is used
+  whole rather than merged.
+- **Known limits of the auto-generated set:** `difficulty` is the default
+  "Easy" everywhere (the site has no such field); MIDI voice assignment is
+  by pitch order on 134 tags (crossings will be wrong); 125 tags got the
+  "home the lead" octave shift. Bundle: generated-tags.ts is 331 KB
+  (≈284 KB chunk) — fine at 335 tags, but the snapshot should move out of
+  the JS bundle before OMR adds thousands more.
+- **Next:** the OMR run — homr locally (`--omr http://localhost:8000`)
+  against the 6,491 image-only tags is the only way to grow further; 509
+  MuseScore `.mscz` files could also be converted via the MuseScore CLI.
+
 ## Where we left off (session of 2026-09-10, bulk conversion script)
 
 - **`scripts/bbstags-to-numeric.ts`** (`npm run bbstags -- <ids|urls>` or
