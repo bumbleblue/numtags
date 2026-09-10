@@ -45,3 +45,21 @@ describe('tagfile', () => {
 		expect(() => parseTagFile('just some text')).toThrow(/frontmatter/);
 	});
 });
+
+describe('status field', () => {
+	const raw =
+		'---\ntitle: "T"\ntag_id: 7\narranger: "a"\ndifficulty: "Easy"\ndate_added: "2026-01-01"\nparts: 4\nstatus: "auto-generated"\n---\n| 1 - - - |\n';
+
+	it('round-trips auto-generated / checked', () => {
+		const tag = parseTagFile(raw, 't');
+		expect(tag.metadata.status).toBe('auto-generated');
+		expect(serializeTag(tag)).toContain('status: "auto-generated"');
+		tag.metadata.status = 'checked';
+		expect(parseTagFile(serializeTag(tag)).metadata.status).toBe('checked');
+	});
+
+	it('drops unknown values and stays absent for human-made tags', () => {
+		expect(parseTagFile(raw.replace('auto-generated', 'bogus')).metadata.status).toBeUndefined();
+		expect(serializeTag(parseTagFile(raw.replace('status: "auto-generated"\n', '')))).not.toContain('status');
+	});
+});

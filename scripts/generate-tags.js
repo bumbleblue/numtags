@@ -17,7 +17,8 @@ function parseTagFromMarkdown(content, slug) {
       lyrics: data.lyrics,
       comments: data.comments || "",
       original_key: data.original_key || "",
-      origin: data.origin || "catalog"
+      origin: data.origin || "catalog",
+      ...(data.status ? { status: data.status } : {})
     },
     content: tagContent.trim(),
     slug: slug

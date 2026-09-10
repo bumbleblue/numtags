@@ -3,6 +3,7 @@
 	import { isLocalId } from '$lib/library/db';
 	import NotationRenderer from '$lib/components/notation/NotationRenderer.svelte';
 	import OriginBadge from '$lib/components/OriginBadge.svelte';
+	import StatusBadge from '$lib/components/StatusBadge.svelte';
 
 	interface Props {
 		tag: Tag;
@@ -48,6 +49,7 @@
 				</span>
 				{#if local}
 					<OriginBadge origin={tag.metadata.origin ?? 'authored'} />
+					<StatusBadge status={tag.metadata.status} />
 				{/if}
 			</div>
 		</div>

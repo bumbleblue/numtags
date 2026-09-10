@@ -5,6 +5,9 @@ export type TagOrigin =
   | 'imported-image'
   | 'authored';
 
+/** Review state of a catalog entry: machine-converted until a person checks it (absent = human-made). */
+export type TagStatus = 'auto-generated' | 'checked';
+
 export interface TagMetadata {
   title: string;
   tag_id: number;
@@ -17,6 +20,7 @@ export interface TagMetadata {
   comments?: string;
   original_key?: string;
   origin?: TagOrigin;
+  status?: TagStatus;
 }
 
 /** Local (private library) tag ids live in their own namespace (spec §4.3). */

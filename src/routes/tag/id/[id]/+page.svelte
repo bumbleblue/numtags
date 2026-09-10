@@ -13,6 +13,7 @@
 	import { player } from '$lib/audio/player.svelte';
 	import NotationRenderer from '$lib/components/notation/NotationRenderer.svelte';
 	import OriginBadge from '$lib/components/OriginBadge.svelte';
+	import StatusBadge from '$lib/components/StatusBadge.svelte';
 
 	const id = $derived(parseInt($page.params.id ?? '', 10));
 	const local = $derived(!isNaN(id) && isLocalId(id));
@@ -355,6 +356,7 @@
 					</span>
 					{#if local}
 						<OriginBadge origin={tag.metadata.origin ?? 'authored'} />
+						<StatusBadge status={tag.metadata.status} />
 					{/if}
 				</div>
 			</div>

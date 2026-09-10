@@ -59,6 +59,8 @@
 	});
 
 	let parsed = $state<ParsedTag>({ staffs: [], warnings: [] });
+	/** Auto-generated catalog tags stay flagged until a person opts in here. */
+	let markChecked = $state(false);
 	let dirty = $state(false);
 	let saving = $state(false);
 	let publishing = $state(false);
@@ -283,6 +285,7 @@
 		opt('source_url', meta.source_url);
 		opt('lyrics', meta.lyrics);
 		opt('comments', meta.comments);
+		if (base.metadata.status === 'auto-generated' && markChecked) metadata.status = 'checked';
 		return { ...base, metadata, content: composedBody() };
 	}
 
@@ -589,6 +592,16 @@
 							Comments
 							<textarea class="search-input !py-2 mt-1" rows="2" bind:value={meta.comments} oninput={touch}></textarea>
 						</label>
+						{#if draft?.tag.metadata.status === 'auto-generated'}
+							<label class="flex items-start gap-2 text-sm text-ink sm:col-span-2 border-t border-paper-3 pt-3">
+								<input type="checkbox" class="mt-0.5" bind:checked={markChecked} onchange={touch} />
+								<span>
+									This tag was converted automatically from its source file.
+									<strong class="text-ink-bright">Mark as checked</strong> — I compared it against the
+									source and fixed what was wrong.
+								</span>
+							</label>
+						{/if}
 					</section>
 				{/if}
 			</div>

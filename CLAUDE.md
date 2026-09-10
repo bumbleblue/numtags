@@ -43,4 +43,5 @@ Rhythm is a deliberately crude beat grid (§3.2) — cells need not sum to the t
 - Tags are CC0; code is MIT. Keep source links to barbershoptags.com.
 - Never auto-save conversion output — every import lands in the review screen (§6.1).
 - Never lose work: persist drafts locally before any network call (§7.1).
+- Catalog entries carry an optional `status`: `auto-generated` (machine-converted by `scripts/bbstags-to-numeric.ts --catalog`, shown with a badge) until a person reviews the tag and ticks "Mark as checked" in the review screen's Details tab (→ `checked`). Absent = human-made.
 - New Svelte components use runes (`$state`, `$derived`, `$props`); ported legacy components may keep Svelte 4 syntax until touched.

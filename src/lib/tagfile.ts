@@ -6,7 +6,7 @@
  * client. The build-time script (scripts/generate-tags.js) keeps using
  * gray-matter; both must agree on this flat schema.
  */
-import type { Tag, TagMetadata, TagOrigin } from './types';
+import type { Tag, TagMetadata, TagOrigin, TagStatus } from './types';
 
 const STRING_KEYS = [
 	'title',
@@ -18,6 +18,7 @@ const STRING_KEYS = [
 	'comments',
 	'original_key',
 	'origin',
+	'status',
 ] as const;
 
 export function parseTagFile(raw: string, slug = ''): Tag {
@@ -55,6 +56,8 @@ export function parseTagFile(raw: string, slug = ''): Tag {
 	if (meta.comments) metadata.comments = String(meta.comments);
 	if (meta.original_key) metadata.original_key = String(meta.original_key);
 	if (meta.origin) metadata.origin = String(meta.origin) as TagOrigin;
+	const status = String(meta.status ?? '');
+	if (status === 'auto-generated' || status === 'checked') metadata.status = status as TagStatus;
 
 	return { metadata, content: content.replace(/^\r?\n/, ''), slug };
 }
@@ -77,6 +80,7 @@ export function serializeTag(tag: Tag): string {
 	push('comments', m.comments);
 	push('original_key', m.original_key);
 	push('origin', m.origin);
+	push('status', m.status);
 	lines.push('---', '');
 	let body = tag.content.replace(/^\n+/, '');
 	if (!body.endsWith('\n')) body += '\n';

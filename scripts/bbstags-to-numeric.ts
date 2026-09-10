@@ -14,16 +14,19 @@
  * images + MP3 learning tracks, so bulk conversion is really an OMR job; MIDI
  * and MusicXML sources exist but are rare (≈1–2%).
  *
- * Output goes to --out (default out/bbstags/) as catalog-format .md files —
- * NEVER into data/tags: every conversion is a draft that needs review (§6.1).
+ * Output goes to --out (default out/bbstags/) as catalog-format .md files;
+ * --catalog writes straight into data/tags, where every file carries
+ * `status: auto-generated` until a person reviews it and marks it checked
+ * (the review screen's Details tab). Tags already in the target are skipped.
  * report.json records the source used and every importer warning per tag.
  *
  * Run (vite-node, not tsx: @tonejs/midi is a UMD bundle Node's ESM loader can't see through):
  *   npm run bbstags -- 24 7561 https://www.barbershoptags.com/tag-4074
  *   npm run bbstags -- --search "close your eyes" --limit 10
  *   npm run bbstags -- 24 --omr http://localhost:8000
+ *   npm run bbstags -- --catalog 7561 4074      # into data/tags as auto-generated
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Window } from 'happy-dom';
 import { makeDraftTag, parseBbsId, parseBbsTagsXML } from '../src/lib/import-utils.js';
@@ -90,6 +93,7 @@ function usage(): never {
 			'  --search <text>   full-text search on barbershoptags.com (title/lyrics)',
 			'  --limit <n>       max search hits (default 25)',
 			'  --out <dir>       output directory (default out/bbstags)',
+			'  --catalog         shorthand for --out data/tags (entries land as status: auto-generated)',
 			'  --omr <url>       OMR service base URL for image/PDF-only tags (POST /omr)',
 			'  --force           overwrite existing output files',
 			'  --no-sources      do not keep the downloaded source files',
@@ -113,6 +117,7 @@ function parseArgs(argv: string[]): Options {
 		if (a === '--search') opts.search = next();
 		else if (a === '--limit') opts.limit = Math.max(1, Number(next()) || 25);
 		else if (a === '--out') opts.out = next();
+		else if (a === '--catalog') opts.out = 'data/tags';
 		else if (a === '--omr') opts.omr = next().replace(/\/+$/, '');
 		else if (a === '--force') opts.force = true;
 		else if (a === '--no-sources') opts.saveSources = false;
@@ -411,6 +416,19 @@ function fileTagId(file: string): number | null {
 	return m ? Number(m[1]) : null;
 }
 
+/** tag_id → file for every .md already in the output dir (the catalog, when --catalog). */
+function indexExisting(dir: string): Map<number, string> {
+	const map = new Map<number, string>();
+	if (!existsSync(dir)) return map;
+	for (const name of readdirSync(dir)) {
+		if (!name.endsWith('.md')) continue;
+		const file = join(dir, name);
+		const id = fileTagId(file);
+		if (id !== null && !map.has(id)) map.set(id, file);
+	}
+	return map;
+}
+
 const ORIGIN_BY_KIND: Record<SourceKind, TagOrigin> = {
 	musicxml: 'imported-musicxml',
 	midi: 'imported-midi',
@@ -431,7 +449,12 @@ interface ReportEntry {
 	error?: string;
 }
 
-async function processRecord(rec: Record_, opts: Options, report: ReportEntry[]): Promise<void> {
+async function processRecord(
+	rec: Record_,
+	opts: Options,
+	existing: Map<number, string>,
+	report: ReportEntry[]
+): Promise<void> {
 	const entry: ReportEntry = {
 		id: rec.id,
 		title: rec.title,
@@ -442,16 +465,17 @@ async function processRecord(rec: Record_, opts: Options, report: ReportEntry[])
 	};
 	report.push(entry);
 
-	// Same title, different tag → id-suffixed file; same tag → skip unless --force.
+	// Already there (any filename) → skip unless --force, which overwrites in place;
+	// same title but a different tag → id-suffixed filename.
 	let slug = slugify(rec.title);
-	let file = join(opts.out, `${slug}.md`);
+	let file = existing.get(rec.id) ?? join(opts.out, `${slug}.md`);
 	if (existsSync(file) && fileTagId(file) !== rec.id) {
 		slug = `${slug}-${rec.id}`;
 		file = join(opts.out, `${slug}.md`);
 	}
 	if (existsSync(file) && !opts.force) {
 		entry.status = 'failed';
-		entry.error = `exists: ${file} (use --force)`;
+		entry.error = `already present: ${file} (use --force to overwrite)`;
 		console.log(`⏭  #${rec.id} ${rec.title} — ${entry.error}`);
 		return;
 	}
@@ -495,6 +519,7 @@ async function processRecord(rec: Record_, opts: Options, report: ReportEntry[])
 	if (rec.posted) tag.metadata.date_added = rec.posted;
 	if (rec.notes) tag.metadata.comments = rec.notes;
 	tag.slug = slug;
+	tag.metadata.status = 'auto-generated';
 
 	mkdirSync(opts.out, { recursive: true });
 	writeFileSync(file, serializeTag(tag));
@@ -532,7 +557,8 @@ async function main(): Promise<void> {
 		}
 	}
 
-	for (const rec of records) await processRecord(rec, opts, report);
+	const existing = indexExisting(opts.out);
+	for (const rec of records) await processRecord(rec, opts, existing, report);
 
 	mkdirSync(opts.out, { recursive: true });
 	writeFileSync(join(opts.out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
@@ -540,7 +566,11 @@ async function main(): Promise<void> {
 	console.log(
 		`\n${count('converted')} converted, ${count('skeleton')} skeleton(s), ${count('failed')} failed → ${join(opts.out, 'report.json')}`
 	);
-	console.log('Every file is a draft: review in the app (Import → tag file) before publishing.');
+	console.log(
+		opts.out === 'data/tags'
+			? 'Catalog entries carry status: auto-generated until someone marks them checked in review.'
+			: 'Every file is a draft: review in the app (Import → tag file) before publishing.'
+	);
 }
 
 main().catch((e) => {
