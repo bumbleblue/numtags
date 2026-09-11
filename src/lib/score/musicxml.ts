@@ -117,6 +117,7 @@ function extractXmlText(data: string | Uint8Array, warnings: string[]): string {
 
 interface RawEvent {
 	voiceKey: string;
+	staff: string; // <staff> number ('1' when absent); multi-staff parts are split per staff
 	chord: boolean;
 	rest: boolean;
 	step?: Step;
@@ -213,7 +214,8 @@ function parsePart(partEl: Element, name: string, ctx: ParseContext): RawPart {
 				}
 			}
 			events.push({
-				voiceKey: textOf(el, 'voice') ?? textOf(el, 'staff') ?? '1',
+				voiceKey: textOf(el, 'voice') ?? '1',
+				staff: textOf(el, 'staff') ?? '1',
 				chord: el.getElementsByTagName('chord').length > 0,
 				rest: rest || step === undefined,
 				step,
@@ -401,6 +403,99 @@ function partStreams(part: RawPart, chordSplit: boolean, warnings: string[]): St
 	return [streamStats(measures, part.name)];
 }
 
+const EPS_Q = 1e-6;
+
+/** A part written on several staves (piano-style, as OMR emits) → one pseudo-part per staff. */
+function splitByStaff(part: RawPart, warnings: string[]): RawPart[] {
+	const staves = Array.from(new Set(part.measures.flat().map((e) => e.staff))).sort();
+	if (staves.length < 2) return [part];
+	warnings.push(`Part "${part.name || '?'}" has ${staves.length} staves — each treated as its own part.`);
+	return staves.map((staff) => ({
+		name: `${part.name} (staff ${staff})`,
+		measures: part.measures.map((evs) => evs.filter((e) => e.staff === staff))
+	}));
+}
+
+/**
+ * Two singers on one staff → upper + lower streams, however the engraver
+ * wrote them: chord stacks, separate voice numbers with different rhythms,
+ * or a mix. Time is sliced at every note start/end within the measure; in
+ * each slice the highest sounding pitch sings in the upper voice and the
+ * lowest in the lower (a lone note sings in both — barbershop unison
+ * convention); slices where the same source note continues are coalesced
+ * back into one event. Lyrics go to the lower (lead) voice whichever note
+ * carries them.
+ */
+function twoVoiceStreams(part: RawPart, warnings: string[]): Stream[] {
+	const upper: NoteEvent[][] = [];
+	const lower: NoteEvent[][] = [];
+	let warnedUnison = false;
+	for (const evs of part.measures) {
+		// Onsets per voice: cumulative within the measure (voices restart at 0
+		// after <backup>); chord members share their base note's onset.
+		const timed: { ev: RawEvent; start: number; end: number }[] = [];
+		const cursor = new Map<string, number>();
+		const lastStart = new Map<string, number>();
+		for (const ev of evs) {
+			if (ev.chord) {
+				const start = lastStart.get(ev.voiceKey) ?? cursor.get(ev.voiceKey) ?? 0;
+				timed.push({ ev, start, end: start + ev.durQ });
+				continue;
+			}
+			const start = cursor.get(ev.voiceKey) ?? 0;
+			timed.push({ ev, start, end: start + ev.durQ });
+			lastStart.set(ev.voiceKey, start);
+			cursor.set(ev.voiceKey, start + ev.durQ);
+		}
+		const notes = timed.filter((x) => !x.ev.rest && x.ev.durQ > 0);
+		const cuts = Array.from(new Set(timed.flatMap((x) => [x.start, x.end]))).sort((a, b) => a - b);
+		const up: NoteEvent[] = [];
+		const low: NoteEvent[] = [];
+		let upSrc: RawEvent | 'rest' | null = null;
+		let lowSrc: RawEvent | 'rest' | null = null;
+		const emit = (out: NoteEvent[], src: RawEvent | 'rest', prev: RawEvent | 'rest' | null, len: number, lyricFrom?: RawEvent) => {
+			if (src === prev && out.length > 0) {
+				out[out.length - 1].durationBeats += len;
+				return;
+			}
+			if (src === 'rest') {
+				out.push({ kind: 'rest', durationBeats: len });
+				return;
+			}
+			const ne = { ...toNoteEvent(src), durationBeats: len };
+			if (!ne.lyric && lyricFrom?.lyric) ne.lyric = lyricFrom.lyric;
+			out.push(ne);
+		};
+		for (let i = 0; i < cuts.length - 1; i++) {
+			const t0 = cuts[i];
+			const len = cuts[i + 1] - t0;
+			if (len <= EPS_Q) continue;
+			const sounding = notes.filter((x) => x.start <= t0 + EPS_Q && x.end >= cuts[i + 1] - EPS_Q);
+			if (sounding.length === 0) {
+				emit(up, 'rest', upSrc, len);
+				emit(low, 'rest', lowSrc, len);
+				upSrc = lowSrc = 'rest';
+				continue;
+			}
+			const sorted = [...sounding].sort((a, b) => b.ev.midi - a.ev.midi);
+			const top = sorted[0].ev;
+			const bottom = sorted[sorted.length - 1].ev;
+			if (sorted.length === 1 && !warnedUnison) {
+				warnings.push(`Single notes in part "${part.name || '?'}" assigned to both voices (unison) — check in review.`);
+				warnedUnison = true;
+			}
+			const withLyric = sounding.find((x) => x.start >= t0 - EPS_Q && x.ev.lyric)?.ev;
+			emit(up, top, upSrc, len);
+			emit(low, bottom, lowSrc, len, withLyric);
+			upSrc = top;
+			lowSrc = bottom;
+		}
+		upper.push(up);
+		lower.push(low);
+	}
+	return [streamStats(upper, part.name), streamStats(lower, part.name)];
+}
+
 function roleFromName(name: string): VoiceRole | null {
 	const n = name.toLowerCase();
 	if (/tenor/.test(n)) return 'tenor';
@@ -417,7 +512,9 @@ function restMeasures(count: number, measureLenQ: number): NoteEvent[][] {
 }
 
 function assignVoices(rawParts: RawPart[], measureLenQ: number, warnings: string[]): Voice[] {
-	const partsWithNotes = rawParts.filter((p) => p.measures.flat().some((e) => !e.rest));
+	const partsWithNotes = rawParts
+		.flatMap((p) => splitByStaff(p, warnings))
+		.filter((p) => p.measures.flat().some((e) => !e.rest));
 	const byRole = new Map<VoiceRole, Stream>();
 
 	if (partsWithNotes.length >= 4) {
@@ -453,23 +550,8 @@ function assignVoices(rawParts: RawPart[], measureLenQ: number, warnings: string
 			VOICE_ROLES.forEach((role, i) => byRole.set(role, sorted[i]));
 		}
 	} else if (partsWithNotes.length === 2) {
-		// SATB-on-2-staves barbershop convention
-		const split = partsWithNotes.map((p) => {
-			let streams = partStreams(p, true, warnings);
-			if (streams.length === 1) {
-				warnings.push(
-					`Expected 2 voices in part "${p.name || '?'}" but found 1 — other voice left as rests.`
-				);
-				const count = streams[0].measures.length;
-				streams = [streams[0], streamStats(restMeasures(count, measureLenQ), p.name)];
-			} else if (streams.length > 2) {
-				warnings.push(
-					`Part "${p.name || '?'}" has ${streams.length} voices — using highest and lowest.`
-				);
-				streams = [streams[0], streams[streams.length - 1]];
-			}
-			return streams;
-		});
+		// SATB-on-2-staves barbershop convention: two singers per staff
+		const split = partsWithNotes.map((p) => twoVoiceStreams(p, warnings));
 		// which part is the treble (tenor+lead) staff?
 		const names = partsWithNotes.map((p) => p.name.toLowerCase());
 		let trebleIdx: number;

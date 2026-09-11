@@ -166,14 +166,19 @@ describe('encode: ties', () => {
 });
 
 describe('encode: posted (heuristic — final fermata or very long final note)', () => {
-	it('fermata on the final note → single X cell', () => {
+	it('fermata on the final note → its pitch cell, then X (X itself carries no pitch)', () => {
 		const s = score([[n('C', 4, 2), n('D', 4, 2, { fermata: true })]]);
+		expect(firstLine(s)).toBe('1 - 2 X |');
+	});
+
+	it('a final note tied from the previous cell is posted as X alone', () => {
+		const s = score([[n('C', 4, 2), n('C', 4, 2, { fermata: true, tiedFromPrev: true })]]);
 		expect(firstLine(s)).toBe('1 - X |');
 	});
 
-	it('final note of 4+ beats → X even without a fermata', () => {
+	it('final note of 4+ beats → posted even without a fermata', () => {
 		const s = score([[n('C', 4, 4)]]);
-		expect(firstLine(s)).toBe('X |');
+		expect(firstLine(s)).toBe('1 X |');
 	});
 
 	it('a short final note is not posted', () => {
@@ -264,7 +269,7 @@ describe('encode: lyric line (from the Lead voice)', () => {
 			[n('C', 4, 2, { lyric: lyr('la') }), n('C', 4, 2, { fermata: true, lyric: lyr('home') })]
 		]);
 		const lines = encode(s).split('\n');
-		expect(lines[0]).toBe('1 - X |');
+		expect(lines[0]).toBe('1 - 1 X |');
 		expect(lines[4]).toBe('la _ home');
 	});
 

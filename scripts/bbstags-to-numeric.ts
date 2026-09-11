@@ -27,6 +27,7 @@
  *   npm run bbstags -- --catalog 7561 4074      # into data/tags as auto-generated
  *   npm run bbstags -- --catalog --all           # everything convertible on the site
  */
+import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Window } from 'happy-dom';
@@ -34,7 +35,7 @@ import { makeDraftTag, parseBbsId, parseBbsTagsXML } from '../src/lib/import-uti
 import type { BbsAutofill } from '../src/lib/import-utils.js';
 import { normalize } from '../src/lib/notation/normalize.js';
 import { blankTemplateBody } from '../src/lib/notation/transform.js';
-import { encode, LETTER_PC, parseKeyName } from '../src/lib/score/encode.js';
+import { encode, LETTER_PC, LETTERS, parseKeyName } from '../src/lib/score/encode.js';
 import { parseMIDI } from '../src/lib/score/midi.js';
 import { parseMusicXMLWithWarnings } from '../src/lib/score/musicxml.js';
 import type { NoteEvent, ScoreModel, VoiceRole } from '../src/lib/score/types.js';
@@ -83,6 +84,7 @@ interface Options {
 	limit: number;
 	out: string;
 	omr?: string;
+	fromSources?: string; // dir with <id>-omr.musicxml files: reuse instead of calling OMR
 	force: boolean;
 	saveSources: boolean;
 	noOctaveShift: boolean;
@@ -99,6 +101,7 @@ function usage(): never {
 			'  --out <dir>       output directory (default out/bbstags)',
 			'  --catalog         shorthand for --out data/tags (entries land as status: auto-generated)',
 			'  --omr <url>       OMR service base URL for image/PDF-only tags (POST /omr)',
+			'  --from-sources <dir>  reuse <dir>/<id>-omr.musicxml from an earlier run instead of calling OMR',
 			'  --force           overwrite existing output files',
 			'  --no-sources      do not keep the downloaded source files',
 			'  --no-octave-shift keep source octaves (default: shift whole score to home the lead)',
@@ -124,6 +127,7 @@ function parseArgs(argv: string[]): Options {
 		else if (a === '--out') opts.out = next();
 		else if (a === '--catalog') opts.out = 'data/tags';
 		else if (a === '--omr') opts.omr = next().replace(/\/+$/, '');
+		else if (a === '--from-sources') opts.fromSources = next();
 		else if (a === '--force') opts.force = true;
 		else if (a === '--no-sources') opts.saveSources = false;
 		else if (a === '--no-octave-shift') opts.noOctaveShift = true;
@@ -275,6 +279,7 @@ interface Converted {
 	score: ScoreModel;
 	warnings: string[];
 	confidence?: number;
+	musicxml?: string; // OMR path only: the recognized score, for re-import
 }
 
 /**
@@ -307,7 +312,7 @@ async function runOMR(omr: string, bytes: Uint8Array, filename: string): Promise
 	}
 	const xml = await res.text();
 	const conf = res.headers.get('X-Confidence');
-	const out: Converted = parseMusicXMLWithWarnings(xml);
+	const out: Converted = { ...parseMusicXMLWithWarnings(xml), musicxml: xml };
 	if (conf !== null && !Number.isNaN(Number(conf))) {
 		out.confidence = Number(conf);
 		out.score.confidence = out.confidence;
@@ -346,26 +351,22 @@ function mergePartMidis(results: { role: VoiceRole; parsed: ReturnType<typeof pa
 }
 
 /**
- * Home the lead. The catalog notates written pitch (treble 8vb): the lead's
- * tonic sits in the bare-number window (tag 24: lead `1`, bass `1,`). MIDI
- * is sounding pitch — an octave lower — and OMR/MusicXML vary by engraver.
- * Shift the whole score by whole octaves (intervals intact) so the lead's
- * median pitch lands nearest the home tonic (tonic at octave 4).
+ * Home the lead. The catalog's transcribers put the lead where it needs the
+ * fewest octave marks (tag 24: lead `1 1 1 … 7,`; Ireland: `5 1' 7` rather
+ * than `5, 1 7,`), and shift all voices together so intervals stay intact.
+ * Try whole-octave shifts and keep the one with the fewest marked lead
+ * cells (ties → the smaller shift).
  */
 function homeTheLead(conv: Converted): void {
-	const lead = conv.score.voices.find((v) => v.role === 'lead');
-	const pitches = (lead?.measures.flat() ?? [])
-		.filter((e) => e.kind === 'note' && e.step !== undefined)
-		.map((e) => ((e.octave ?? 4) + 1) * 12 + LETTER_PC[e.step!] + (e.alter ?? 0))
-		.sort((a, b) => a - b);
-	if (pitches.length === 0) return;
-	const median = pitches[pitches.length >> 1];
 	const tonic = parseKeyName(conv.score.keyName);
-	const home = 60 + LETTER_PC[tonic.letter] + tonic.alter; // tonic at octave 4
+	const tonicPos = 4 * 7 + LETTERS.indexOf(tonic.letter);
+	const lead = conv.score.voices.find((v) => v.role === 'lead');
+	const notes = (lead?.measures.flat() ?? []).filter((e) => e.kind === 'note' && e.step !== undefined);
+	if (notes.length === 0) return;
+	const marks = (k: number) =>
+		notes.filter((e) => Math.floor((((e.octave ?? 4) + k) * 7 + LETTERS.indexOf(e.step!) - tonicPos) / 7) !== 0).length;
 	let best = 0;
-	for (const k of [-2, -1, 0, 1, 2]) {
-		if (Math.abs(median + 12 * k - home) < Math.abs(median + 12 * best - home)) best = k;
-	}
+	for (const k of [-1, 1, -2, 2]) if (marks(k) < marks(best)) best = k;
 	if (best === 0) return;
 	conv.score = {
 		...conv.score,
@@ -437,10 +438,41 @@ async function convert(rec: Record_, source: Source, opts: Options, saveSource: 
 		return conv;
 	}
 	// image / PDF
+	const saved = opts.fromSources ? join(opts.fromSources, `${rec.id}-omr.musicxml`) : null;
+	if (saved && existsSync(saved)) {
+		const xml = readFileSync(saved, 'utf8');
+		const conv: Converted = { ...parseMusicXMLWithWarnings(xml), musicxml: xml };
+		conv.warnings.push(`Recognized score reused from ${saved}.`);
+		trebleStaffIs8vb(conv);
+		return conv;
+	}
 	if (!opts.omr) throw new Error('image-only tag: pass --omr <service url> to run OMR');
 	const bytes = await download(source.media[0]);
 	saveSource(source.media[0], bytes);
-	return runOMR(opts.omr, bytes, `${rec.id}.${source.media[0].type}`);
+	const conv = await runOMR(opts.omr, bytes, `${rec.id}.${source.media[0].type}`);
+	// Keep the recognized MusicXML next to the image: importer changes can then
+	// be re-run without paying for OMR again.
+	if (conv.musicxml) saveSource({ field: 'omr', type: 'musicxml', url: '' }, new TextEncoder().encode(conv.musicxml));
+	trebleStaffIs8vb(conv);
+	return conv;
+}
+
+/**
+ * Barbershop scores write tenor/lead on a treble clef sounding an octave
+ * lower ("8vb"). OMR reads the clef as plain treble, so those two voices
+ * come back an octave above the bass staff's (sounding) pitches. Correct
+ * that before homing the lead so all four voices share one octave frame.
+ */
+function trebleStaffIs8vb(conv: Converted): void {
+	conv.score = {
+		...conv.score,
+		voices: conv.score.voices.map((v) =>
+			v.role === 'tenor' || v.role === 'lead'
+				? { ...v, measures: v.measures.map((m) => m.map((e) => (e.kind === 'note' && e.octave !== undefined ? { ...e, octave: e.octave - 1 } : e))) }
+				: v
+		)
+	};
+	conv.warnings.push('Tenor/lead read as treble 8vb (one octave below the OMR reading).');
 }
 
 // ── output ──────────────────────────────────────────────────────────────────
@@ -459,6 +491,21 @@ function slugify(title: string): string {
 function fileTagId(file: string): number | null {
 	const m = /^tag_id:\s*(\d+)/m.exec(readFileSync(file, 'utf8'));
 	return m ? Number(m[1]) : null;
+}
+
+/**
+ * A catalog file a person has worked on must survive --force: status
+ * `checked`, or the last commit touching it is a wiki edit/revert through
+ * the catalog bot ("Edit tag 7: … (by Casey)") rather than a script run.
+ */
+function touchedByPeople(file: string): boolean {
+	if (/^status: "checked"$/m.test(readFileSync(file, 'utf8'))) return true;
+	try {
+		const subject = execSync(`git log -1 --format=%s -- ${JSON.stringify(file)}`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+		return /^(Edit|Revert) tag \d+/.test(subject);
+	} catch {
+		return false;
+	}
 }
 
 /** tag_id → file for every .md already in the output dir (the catalog, when --catalog). */
@@ -522,6 +569,12 @@ async function processRecord(
 		entry.status = 'failed';
 		entry.error = `already present: ${file} (use --force to overwrite)`;
 		console.log(`⏭  #${rec.id} ${rec.title} — ${entry.error}`);
+		return;
+	}
+	if (existsSync(file) && opts.force && touchedByPeople(file)) {
+		entry.status = 'failed';
+		entry.error = `kept: ${file} was checked or edited by a person`;
+		console.log(`🔒 #${rec.id} ${rec.title} — ${entry.error}`);
 		return;
 	}
 

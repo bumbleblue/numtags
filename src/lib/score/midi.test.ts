@@ -279,7 +279,7 @@ describe('parseMIDI → encode smoke test', () => {
 		);
 		const { score } = parseMIDI(bytes);
 		expect(encode(score)).toBe(
-			['3 - 3 - | X |', '1 - 7, - | X |', '5, - 4, - | X |', '1, - 5,, - | X |'].join('\n')
+			['3 - 3 - | 4 X |', '1 - 7, - | 1 X |', '5, - 4, - | 6, X |', '1, - 5,, - | 4,, X |'].join('\n')
 		);
 	});
 });

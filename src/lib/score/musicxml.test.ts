@@ -18,6 +18,7 @@ interface XNoteOpts {
 	fermata?: boolean;
 	lyric?: [text: string, syllabic?: string];
 	rest?: boolean;
+	staff?: number;
 }
 
 function xnote(step: string, octave: number, dur: number, opts: XNoteOpts = {}): string {
@@ -37,6 +38,7 @@ function xnote(step: string, octave: number, dur: number, opts: XNoteOpts = {}):
 	parts.push(`<duration>${dur}</duration>`);
 	if (opts.tie) parts.push(`<tie type="${opts.tie}"/>`);
 	if (opts.voice !== undefined) parts.push(`<voice>${opts.voice}</voice>`);
+	if (opts.staff !== undefined) parts.push(`<staff>${opts.staff}</staff>`);
 	if (opts.fermata) parts.push('<notations><fermata/></notations>');
 	if (opts.lyric) {
 		parts.push(
@@ -255,12 +257,63 @@ describe('integration: MusicXML → ScoreModel → encode (golden pattern, §13)
 		const score = parseMusicXML(FOUR_PART_F);
 		expect(encode(score)).toBe(
 			[
-				'3 | 3 - 2 4 | ~4 X |',
-				'1 | 1 1 7, - | X |',
-				'5, | 5, - #4, 5, | X |',
-				'1, | 1, - 2, 5,, | X |',
+				'3 | 3 - 2 4 | ~4 3 X |',
+				'1 | 1 1 7, - | 1 X |',
+				'5, | 5, - #4, 5, | 5, X |',
+				'1, | 1, - 2, 5,, | 1, X |',
 				'Oh ne-ver more _ roam'
 			].join('\n')
 		);
+	});
+});
+
+
+describe('parseMusicXML: one piano-style part with two staves (as OMR emits)', () => {
+	const ATTRS_C = `<attributes><divisions>1</divisions><key><fifths>0</fifths></key><time><beats>4</beats><beat-type>4</beat-type></time></attributes>`;
+	const m1 = [
+		// staff 1, voice 1: chords (tenor over lead)
+		xnote('E', 5, 1, { voice: 1, staff: 1 }), xnote('C', 5, 1, { voice: 1, staff: 1, chord: true, lyric: ['Close'] }),
+		xnote('G', 5, 1, { voice: 1, staff: 1 }), xnote('C', 5, 1, { voice: 1, staff: 1, chord: true, lyric: ['your'] }),
+		xnote('F', 5, 2, { voice: 1, staff: 1 }), xnote('C', 5, 2, { voice: 1, staff: 1, chord: true, lyric: ['eyes'] }),
+		// staff 2, voice 5: chords (bari over bass)
+		xnote('G', 3, 1, { voice: 5, staff: 2 }), xnote('C', 3, 1, { voice: 5, staff: 2, chord: true }),
+		xnote('G', 3, 1, { voice: 5, staff: 2 }), xnote('E', 3, 1, { voice: 5, staff: 2, chord: true }),
+		xnote('G', 3, 2, { voice: 5, staff: 2 }), xnote('D', 3, 2, { voice: 5, staff: 2, chord: true })
+	].join('');
+	const m2 = [
+		// staff 1: lead moves in voice 1 while the tenor holds an F in voice 2
+		xnote('D', 5, 1, { voice: 1, staff: 1 }), xnote('C', 5, 1, { voice: 1, staff: 1 }),
+		xnote('B', 4, 1, { voice: 1, staff: 1 }), xnote('B', 4, 1, { voice: 1, staff: 1 }),
+		xnote('F', 5, 3, { voice: 2, staff: 1 }), xnote('F', 5, 1, { voice: 2, staff: 1 }),
+		// staff 2: one held chord
+		xnote('G', 3, 4, { voice: 5, staff: 2 }), xnote('D', 3, 4, { voice: 5, staff: 2, chord: true })
+	].join('');
+	const XML =
+		'<?xml version="1.0"?><score-partwise version="4.0">' +
+		partList(['Piano']) +
+		`<part id="P1"><measure number="1">${ATTRS_C}${m1}</measure><measure number="2">${m2}</measure></part>` +
+		'</score-partwise>';
+	const { score, warnings } = parseMusicXMLWithWarnings(XML);
+	const steps = (v: number, m: number) => score.voices[v].measures[m].map((e) => e.step);
+	const durs = (v: number, m: number) => score.voices[v].measures[m].map((e) => e.durationBeats);
+
+	it('splits the staves into tenor/lead and baritone/bass by pitch, per time slice', () => {
+		expect(warnings).toContain('Part "Piano" has 2 staves — each treated as its own part.');
+		expect(steps(0, 0)).toEqual(['E', 'G', 'F']); // tenor
+		expect(steps(1, 0)).toEqual(['C', 'C', 'C']); // lead
+		expect(steps(2, 0)).toEqual(['G', 'G', 'G']); // baritone
+		expect(steps(3, 0)).toEqual(['C', 'E', 'D']); // bass
+	});
+
+	it('keeps a sustained upper voice whole while the lower voice moves', () => {
+		expect(steps(0, 1)).toEqual(['F', 'F']);
+		expect(durs(0, 1)).toEqual([3, 1]);
+		expect(steps(1, 1)).toEqual(['D', 'C', 'B', 'B']);
+		expect(steps(2, 1)).toEqual(['G']);
+		expect(steps(3, 1)).toEqual(['D']);
+	});
+
+	it('hands lyrics to the lead even when they sit on the chord top', () => {
+		expect(score.voices[1].measures[0].map((e) => e.lyric?.text)).toEqual(['Close', 'your', 'eyes']);
 	});
 });

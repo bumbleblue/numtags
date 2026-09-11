@@ -122,7 +122,7 @@ export function encode(score: ScoreModel): string {
 
 	const renderVoice = (voice: Voice): Cell[][] => {
 		// Posted heuristic: the voice's final event, if a note with a fermata
-		// or lasting ≥ 4 beats, becomes a single X cell.
+		// or lasting ≥ 4 beats, is posted (pitch cell + X; X alone when tied).
 		let postedM = -1;
 		let postedI = -1;
 		for (let m = measureCount - 1; m >= 0; m--) {
@@ -158,7 +158,12 @@ export function encode(score: ScoreModel): string {
 				}
 				flushRest();
 				if (m === postedM && i === postedI) {
-					cells.push({ text: 'X', lyric: ev.lyric ?? null });
+					// Posted (§3): X carries no pitch of its own — it rings whatever
+					// precedes it — so a final note that changes pitch is written as
+					// its pitch cell followed by X (golden "seasons": `| 1 X |`); a
+					// note tied from the previous cell is just X.
+					if (!ev.tiedFromPrev) cells.push({ text: pitchText(ev), lyric: ev.lyric ?? null });
+					cells.push({ text: 'X', lyric: null });
 					continue;
 				}
 				const pitch = (ev.tiedFromPrev ? '~' : '') + pitchText(ev);
