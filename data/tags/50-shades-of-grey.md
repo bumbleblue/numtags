@@ -1,5 +1,5 @@
 ---
-title: "50 Shades of Grey"
+title: "Fifty Shades of Grey"
 tag_id: 2079
 arranger: "Patrick McAlexander"
 difficulty: "Easy"

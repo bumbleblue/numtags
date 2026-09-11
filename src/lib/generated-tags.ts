@@ -1,5 +1,5 @@
 // Auto-generated file - do not edit manually
-// Generated on: 2026-09-10T16:36:08.707Z
+// Generated on: 2026-09-11T08:16:34.857Z
 // Source: data/tags/ directory
 
 import type { Tag } from './types';
