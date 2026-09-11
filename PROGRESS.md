@@ -1,7 +1,40 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-09-10 (branch `main`).
+Last updated: 2026-09-11 (branch `claude/safari-ios-visibility-4509f7`).
+
+## Where we left off (session of 2026-09-11, iOS Safari crash on the library page)
+
+- **Symptom:** iOS Safari showed "A problem repeatedly occurred on
+  https://numtags.app/" while desktop browsers were fine. Cause: once the
+  catalog reached 335 tags, `/` server-rendered every card *with* its
+  notation preview — a 12.6 MB page, ~180k DOM nodes, 52k BeatCells
+  hydrated as components, ~400 MB JS heap in Chromium and a ~2.2 GB WebKit
+  content process in desktop Safari. iOS caps a page at roughly 1–2 GB
+  (device-dependent) and kills it; two kills in a row give that message.
+  Ruled out: service-worker reload loops, ResizeObserver oscillation,
+  compositing-heavy CSS — it was pure volume.
+- **Fix:** `src/lib/components/TagGrid.svelte` pages both library grids
+  (24 cards, "Show 24 more", paging restarts whenever the result list
+  changes); `TagCard` mounts its `NotationRenderer` only when the card comes
+  within a screen of the viewport (IntersectionObserver; `eager` for the
+  first 6 so the first paint has previews). The preview box is a fixed
+  150 px (was max-height) so the placeholder → preview swap never shifts
+  the grid. Library page now: ~5.2k DOM nodes, 6 previews at load, ~33 MB
+  JS heap, SSR HTML well under 0.5 MB. Tests 1229 green, svelte-check
+  clean, build green.
+- **Also found on phones:** a dozen MIDI-converted tags have a barline-less
+  opening "measure" of 256–576 beats (`what-ll-i-do.md` 576,
+  `the-next-ten-minutes.md` 384, six at 256). Because the mobile grid
+  column was `auto`, one such card stretched the whole library page to
+  ~15,700 px wide. The grid is now `grid-cols-1` (minmax(0, 1fr)) so the
+  measure scrolls inside its card; the data itself still needs fixing in
+  the MIDI importer/encoder (the tag page renders such a measure as one
+  15k px row).
+- **Keep in mind as the catalog grows:** the list is now O(page), but the
+  search index (Fuse) and `allTags` still load the whole bundle — the note
+  below about moving the snapshot out of the JS bundle still applies before
+  OMR adds thousands of tags.
 
 ## Where we left off (session of 2026-09-10, catalog populated)
 

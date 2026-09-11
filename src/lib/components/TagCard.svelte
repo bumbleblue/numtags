@@ -7,11 +7,39 @@
 
 	interface Props {
 		tag: Tag;
+		/** Render the notation preview at once (server included) instead of when the card scrolls near the viewport. */
+		eager?: boolean;
 	}
 
-	let { tag }: Props = $props();
+	let { tag, eager = false }: Props = $props();
 
 	const local = $derived(isLocalId(tag.metadata.tag_id));
+
+	// The preview is the expensive part of a card (a few hundred DOM nodes, a
+	// parsed tag, a ResizeObserver). Off-screen cards keep a same-sized
+	// placeholder until they come within a screen of the viewport.
+	let previewHost: HTMLAnchorElement | undefined = $state();
+	let revealed = $state(false);
+	const showPreview = $derived(eager || revealed);
+
+	$effect(() => {
+		if (showPreview || !previewHost) return;
+		if (typeof IntersectionObserver === 'undefined') {
+			revealed = true;
+			return;
+		}
+		const io = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((e) => e.isIntersecting)) {
+					revealed = true;
+					io.disconnect();
+				}
+			},
+			{ rootMargin: '100% 0px' },
+		);
+		io.observe(previewHost);
+		return () => io.disconnect();
+	});
 
 	function getDifficultyColor(difficulty: string) {
 		switch (difficulty) {
@@ -77,14 +105,19 @@
 			{/if}
 		</div>
 
-		<!-- Preview: first measures, lyrics hidden (NotationRenderer maxMeasures) -->
+		<!-- Preview: first measures, lyrics hidden (NotationRenderer maxMeasures).
+		     Fixed height so the placeholder → preview swap never shifts the grid. -->
 		<a
 			href="/tag/id/{tag.metadata.tag_id}"
-			class="block rounded overflow-hidden"
-			style="max-height: 150px;"
+			bind:this={previewHost}
+			class="block rounded overflow-hidden h-[150px]"
 			aria-label="Open {tag.metadata.title}"
 		>
-			<NotationRenderer body={tag.content} mode="wrapped" maxMeasures={3} fontScale={0.7} />
+			{#if showPreview}
+				<NotationRenderer body={tag.content} mode="wrapped" maxMeasures={3} fontScale={0.7} />
+			{:else}
+				<div class="h-full rounded-sm border border-paper-3 bg-paper-0" aria-hidden="true"></div>
+			{/if}
 		</a>
 
 		<!-- Actions -->

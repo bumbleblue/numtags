@@ -10,7 +10,7 @@
 	} from '$lib/data';
 	import { isLocalId } from '$lib/library/db';
 	import type { SearchResult } from '$lib/types';
-	import TagCard from '$lib/components/TagCard.svelte';
+	import TagGrid from '$lib/components/TagGrid.svelte';
 	import SearchFiltersComponent from '$lib/components/SearchFilters.svelte';
 
 	let searchQuery = $state('');
@@ -127,11 +127,7 @@
 	<section class="space-y-4 border-t border-paper-2 pt-6">
 		<h2 class="text-xl sm:text-2xl font-semibold text-ink">Your tags</h2>
 		{#if localResults.length > 0}
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{#each localResults as result (result.item.metadata.tag_id)}
-					<TagCard tag={result.item} />
-				{/each}
-			</div>
+			<TagGrid results={localResults} />
 		{:else if anyLocalAtAll}
 			<p class="text-sm text-ink-muted">None of your tags match the current search.</p>
 		{:else}
@@ -162,11 +158,8 @@
 		</div>
 
 		{#if catalogResults.length > 0}
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{#each catalogResults as result (result.item.metadata.tag_id)}
-					<TagCard tag={result.item} />
-				{/each}
-			</div>
+			<!-- Paged + lazy previews: the full catalog at once crashed iOS Safari (memory). -->
+			<TagGrid results={catalogResults} />
 		{:else if hasFilters}
 			<div class="text-center py-12">
 				<h3 class="text-xl font-medium text-ink mb-2">No tags match</h3>
