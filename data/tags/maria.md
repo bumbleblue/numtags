@@ -1,9 +1,8 @@
 ---
 title: "Maria"
 tag_id: 1178
-arranger: "unknown"
+arranger: "Zac Booles"
 difficulty: "Easy"
-source_url: "https://www.barbershoptags.com/tag-1178"
 date_added: "2010-02-24"
 parts: 4
 comments: "One of my favourites. A real beauty. Don't you just love that final resolution. Unfortunately I don't know who to credit it to. Any ideas?"
