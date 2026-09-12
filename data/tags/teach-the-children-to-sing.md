@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-7351"
 date_added: "2026-01-31"
 parts: 4
 lyrics: "Teach the Children to Sing, woah yeah!"
-comments: "ok, this is actually the first tag I ever came up with and I never actually wrote it down until now, but here is the context.  In the early days of Westminster, we were doing some performance and someone requested that we learn Teach the Children to Sing for it.  Nobody learned it fully, but we tried performing it anyways and it was a total abomination.  And as a cheeky tribute to our collective rejection of the song, I came up with this tag.  Enjoy!"
+comments: "ok, this is actually the first tag I ever came up with and I never actually wrote it down until now, but here is the context. In the early days of Westminster, we were doing some performance and someone requested that we learn Teach the Children to Sing for it. Nobody learned it fully, but we tried performing it anyways and it was a total abomination. And as a cheeky tribute to our collective rejection of the song, I came up with this tag. Enjoy!"
 original_key: "Bb"
 origin: "catalog"
 status: "auto-generated"

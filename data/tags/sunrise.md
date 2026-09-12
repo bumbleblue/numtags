@@ -6,7 +6,7 @@ difficulty: "Easy"
 source_url: "https://www.barbershoptags.com/tag-1161"
 date_added: "2010-01-31"
 parts: 4
-comments: "This is the first tag I have written and shared with friends.  All parts start in unison and break off in the second measure, with a lead post.  The first chord made is my favorite.  I hope you enjoy this as much as I do!"
+comments: "This is the first tag I have written and shared with friends. All parts start in unison and break off in the second measure, with a lead post. The first chord made is my favorite. I hope you enjoy this as much as I do!"
 original_key: "F"
 origin: "catalog"
 status: "auto-generated"

@@ -12,7 +12,8 @@ original_key: "Bm"
 origin: "catalog"
 status: "auto-generated"
 ---
-5/ 5/ 6 1' 6 | ~6 6 4 4 | 4 - b4 - | X |
-1/ 3/ 4 4 4 | ~4 4 b2 b2 | b2 - b2 - | X |
-3/ b2/ 1 6, 7,/ 1/ | b2 1 7, 6, | 5, - 5, - | X |
-1/ 7,/ 4, 3, 2, | b2, b2, b2, 1, | 7,, - b7,, - | X |
+5/ 5/ 6 1' 6 | ~6 6 4 4 | 4 - b4 - | 3 X |
+3/ b2/ 1 6, 7,/ 1/ | b2 1 7, 6, | 5, - 5, - | 1 X |
+1/ 3/ 4 4 4 | ~4 4 b2 b2 | b2 - b2 - | 7, X |
+1/ 7,/ 4, 3, 2, | b2, b2, b2, 1, | 7,, - b7,, - | 6,, X |
+Young or old you on-ly ma-tter if you have _ a _ gold.

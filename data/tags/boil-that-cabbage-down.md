@@ -23,6 +23,6 @@ status: "auto-generated"
 5, - 4,/ 0 0 | 1 1 b6, b6, | b3, b3, b6, b6, | 1 - - - |
 
 X |
-X |
+3 X |
 X |
 X |

@@ -1,7 +1,48 @@
 # numtags — build status
 
 Tracks the Fable rebuild against [FABLE_SPEC.md](FABLE_SPEC.md) §12 milestones.
-Last updated: 2026-09-11 (branch `claude/safari-ios-visibility-4509f7`).
+Last updated: 2026-09-12 (branch `main`).
+
+## Where we left off (session of 2026-09-12, OMR evaluation — local-only homr)
+
+- **Decision (Eileen): OMR stays local-only.** homr (AGPL-3.0) runs on the
+  Mac as a tool (`uv tool install --python 3.12 homr`, binary at
+  `~/.local/bin/homr`; ONNX on CPU, no torch), fronted by the service run
+  locally (`cd services && HOMR_CMD=~/.local/bin/homr
+  RATE_LIMIT_WRITE_REQUESTS=100000 .venv/bin/uvicorn app.main:app --port
+  8000`), and the script converts with `--omr http://localhost:8000`.
+  The public service keeps `HOMR_CMD=homr-not-installed` (§14 stays
+  satisfied; spec §6.3 "zero-hosting for contributions").
+- **Accuracy sample (25 tags: the 5 goldens + 20 popular image-only):**
+  ~21 s per tag on CPU. Against the hand-transcribed goldens, cell-level
+  similarity per voice is 73–100% (tag 24: lead 100%; Ireland 87–96%;
+  So Tired 73–82%; Seasons 63–85% with later-system recognition slips);
+  tag 7 isn't comparable (the golden transcribes a different version).
+  Recognition on clean 4/4 PDFs is essentially right — the misses that
+  remain: **homr emits no ties at all** (every `~` becomes a re-attack),
+  rests sometimes read as holds, occasional single-note octave slips,
+  dense bass-clef chords can lose a staff (The Impossible Dream, 12/8),
+  only page 1 of multi-page PDFs (1 of 16 sample PDFs), and enharmonic
+  spelling follows the print (`#2` where a transcriber wrote `b3`). All
+  25 outputs parse with 4 voices and zero parse warnings.
+- **Pipeline fixes the evaluation forced (commit 8397716):** homr's
+  layout is one "Piano" part with two `<staff>`s and mixed voice
+  numbers/chords — the importer now splits parts by staff and separates
+  two singers per staff by time-slicing (fixes engraver files too);
+  the encoder's posted `X` was lossy (it replaced the final pitch —
+  golden "seasons" writes `| 1 X |`), now pitch cell + X; the script
+  treats OMR's tenor/lead as treble 8vb, homes the lead by fewest
+  octave marks (matches every golden), keeps OMR MusicXML in `sources/`
+  and re-imports it with `--from-sources`, and `--force` never touches a
+  file a person checked or edited via the bot.
+- **Catalog regenerated** with those fixes (`--catalog --all --force`;
+  the 330 MIDI/MusicXML entries — their final chords were lossy).
+- **Bulk OMR run: not started.** Prerequisites before pointing it at the
+  6,491 image-only tags (~40 h CPU; `--coreml-encoder` may speed it up):
+  move the catalog snapshot out of the JS bundle, and decide a quality
+  bar (parse cleanly + 4 voices + no lost staff is a reasonable gate).
+  Sample outputs live only in the session scratchpad; nothing OMR-derived
+  is in `data/tags`.
 
 ## Where we left off (session of 2026-09-11, iOS Safari crash on the library page)
 

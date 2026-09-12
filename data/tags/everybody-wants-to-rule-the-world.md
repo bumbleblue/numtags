@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-6582"
 date_added: "2024-06-26"
 parts: 4
 lyrics: "Help me make the most of freedom and of pleasure, nothing ever lasts forever. Everybody wants to rule the world"
-comments: "fixed a previous notation error.  will delete other submission"
+comments: "fixed a previous notation error. will delete other submission"
 original_key: "Am"
 origin: "catalog"
 status: "auto-generated"
@@ -22,7 +22,7 @@ b4 7, 7, 7, | 3 5 3 4 | 3 - - - | 3 - b2 - |
 1 5, 5, 5, | 1 4 1 7, | 3 - - - | 5, - 7, - |
 5, 1, #1, 1, | 4, 1 4, 3, | 1 - 0 0 | b2, - 3, - |
 
-X |
-X |
-X |
-X |
+b4 X |
+1 X |
+5, X |
+1, X |

@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-2711"
 date_added: "2014-06-18"
 parts: 4
 lyrics: "Do it for the vine, I ain't gonna do it. (2x) A-bung-bung!"
-comments: "Vine tag.  Fits into the space of a Vine if you do it fast enough."
+comments: "Vine tag. Fits into the space of a Vine if you do it fast enough."
 original_key: "G"
 origin: "catalog"
 status: "auto-generated"

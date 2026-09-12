@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-7340"
 date_added: "2026-01-25"
 parts: 4
 lyrics: "Feeling like a freak on a leash Feeling like I have no release"
-comments: "this was based off a Korn song, so if you are looking for straight barbershop you won't find it here.  Still has some cool and crunchy chords though."
+comments: "this was based off a Korn song, so if you are looking for straight barbershop you won't find it here. Still has some cool and crunchy chords though."
 original_key: "G"
 origin: "catalog"
 status: "auto-generated"

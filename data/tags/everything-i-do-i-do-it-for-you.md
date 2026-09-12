@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-2062"
 date_added: "2012-09-05"
 parts: 4
 lyrics: "You know it's true, everything I do, I do it for you."
-comments: "Yes, this is a tag for the classic Bryan Adams song.  Enjoy!"
+comments: "Yes, this is a tag for the classic Bryan Adams song. Enjoy!"
 original_key: "A"
 origin: "catalog"
 status: "auto-generated"

@@ -17,8 +17,8 @@ status: "auto-generated"
 1, 5,/ 1,/ 5,/ 5,/ 5, | 1, - - 4,, | 6,, 6,,/ 6,,/ 7,,/ 7,,/ 7,, | 3, - 6,,/ 3,/ 2,/ |
 Stay, lit-tle Val-en-tine, stay, _ _ _ Each day is Val-en-tine's Day, _ Val-en-tine's
 
-X |
-X |
-X |
-X |
+5 X |
+3 X |
+7, X |
+3, X |
 Day.

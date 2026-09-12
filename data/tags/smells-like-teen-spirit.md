@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-7354"
 date_added: "2026-02-04"
 parts: 4
 lyrics: "With the light out, it's less dangerous, here we are now, entertain us!"
-comments: "Sorry.  It just had to happen."
+comments: "Sorry. It just had to happen."
 original_key: "Am"
 origin: "catalog"
 status: "auto-generated"

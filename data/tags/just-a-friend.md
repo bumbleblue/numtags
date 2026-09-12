@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-7349"
 date_added: "2026-01-30"
 parts: 4
 lyrics: "You, you got what I need But you say he's just a friend But you say he's just a friend"
-comments: "I guess there is a very low bar for the kind of music I will try to turn into a tag.  Hope you enjoy it."
+comments: "I guess there is a very low bar for the kind of music I will try to turn into a tag. Hope you enjoy it."
 original_key: "Bb"
 origin: "catalog"
 status: "auto-generated"

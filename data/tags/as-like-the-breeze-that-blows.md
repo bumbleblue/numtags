@@ -12,8 +12,8 @@ original_key: "C"
 origin: "catalog"
 status: "auto-generated"
 ---
-3 - 3 3 | 3 2 1 - | b3 - 2 - | X |
-1 - 7, b7, | b7, b7, b7, - | 1 - 1 - | X |
-5, - 5, 5, | 5, 5, 5, - | 6, - b6, - | X |
-1, - 1, 1, | 1, 2, 3, - | 4, - 4, - | X |
+3' - 3' 3' | 3' 2' 1' - | b3' - 2' - | 3' X |
+1' - 7 b7 | b7 b7 b7 - | 1' - 1' - | 1' X |
+5 - 5 5 | 5 5 5 - | 6 - b6 - | 5 X |
+1 - 1 1 | 1 2 3 - | 4 - 4 - | 1 X |
 As _ like the breeze that blows, _ my _ love's _ gone.

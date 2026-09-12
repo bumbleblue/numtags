@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-2486"
 date_added: "2013-11-25"
 parts: 4
 lyrics: "And miles to go before I sleep"
-comments: "A tag for 'Stopping By Woods on a Snowy Evening' from Randall Thompson's 'Frostiana' - a musical adaptation of Robert Frost poetry.  Tenor melody."
+comments: "A tag for 'Stopping By Woods on a Snowy Evening' from Randall Thompson's 'Frostiana' - a musical adaptation of Robert Frost poetry. Tenor melody."
 original_key: "Gm"
 origin: "catalog"
 status: "auto-generated"
@@ -17,7 +17,7 @@ status: "auto-generated"
 0 0 0 b1 | 5, - 0 5, | 1 2 3 3 | 1 - - - |
 0 0 0 5, | 1, - 0 1, | 6, - - 3, | 4, - - - |
 
-5 - - - | X |
-3 - - - | X |
-7, - - - | X |
-3, - - - | X |
+5 - - - | 4 X |
+3 - - - | 2 X |
+7, - - - | 7, X |
+3, - - - | 7,, X |

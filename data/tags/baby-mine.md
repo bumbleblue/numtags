@@ -7,7 +7,7 @@ source_url: "https://www.barbershoptags.com/tag-7448"
 date_added: "2026-05-05"
 parts: 4
 lyrics: "Rest your head, close to my heart, never to part, baby of mine (baby of mine)"
-comments: "So I know that I usually do goofy stuff, but this one is for my little girl.    I used to hold her hand through the bars of her crib as she fell asleep so this one hits me right in the feels."
+comments: "So I know that I usually do goofy stuff, but this one is for my little girl. I used to hold her hand through the bars of her crib as she fell asleep so this one hits me right in the feels."
 original_key: "F"
 origin: "catalog"
 status: "auto-generated"

@@ -166,14 +166,23 @@ interface Record_ {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function fetchOk(url: string): Promise<Response> {
+async function fetchOk(url: string, attempt = 1): Promise<Response> {
 	await sleep(POLITE_DELAY_MS);
-	const res = await fetch(url, {
-		headers: { 'User-Agent': 'numtags-importer (+https://numtags.app)' },
-		signal: AbortSignal.timeout(60_000)
-	});
-	if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
-	return res;
+	try {
+		const res = await fetch(url, {
+			headers: { 'User-Agent': 'numtags-importer (+https://numtags.app)' },
+			signal: AbortSignal.timeout(90_000)
+		});
+		if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+		return res;
+	} catch (e) {
+		// The site has slow spells; one patient retry recovers most timeouts.
+		if (attempt < 2 && e instanceof Error && /abort|timeout/i.test(e.message)) {
+			await sleep(3_000);
+			return fetchOk(url, attempt + 1);
+		}
+		throw e;
+	}
 }
 
 function textOf(el: Element, name: string): string | undefined {
